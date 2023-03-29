@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "321014729586",
+    "firebase_url": "https://foodieweekly-534cf-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "foodieweekly-534cf",
+    "storage_bucket": "foodieweekly-534cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321014729586:android:8d2d91042999f4cebbebeb",
+        "android_client_info": {
+          "package_name": "com.example.foodieweekly_appv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "321014729586-3vnmpi06p3hluq5bbma2ol73rmkbc536.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApEOXuZPEdCLdQkCRks4iMrjrtFgkIpy0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "321014729586-3vnmpi06p3hluq5bbma2ol73rmkbc536.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
