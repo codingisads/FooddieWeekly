@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,25 +22,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.model.recipesApi.Hit
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.ui.theme.Poppins
+import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
 
 
 @Composable
-fun RecipesScreen(llistaRecipes : MutableState<List<Hit>>) {
+fun RecipesScreen(llistaRecipes : MutableState<MutableList<Hit>>, vm: RecipesViewModel) {
 
     Log.d("recipesList", llistaRecipes.value.size.toString())
 
+    val listState = rememberLazyGridState()
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-
-
+            state = listState,
             contentPadding = PaddingValues(4.dp),
             verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
@@ -50,6 +51,12 @@ fun RecipesScreen(llistaRecipes : MutableState<List<Hit>>) {
             items(llistaRecipes.value)
             {element ->
                 RecipeElement(element.recipe)
+
+            }
+
+            if(listState.firstVisibleItemIndex == llistaRecipes.value.size - 8){
+                Log.d("recipesList", "getMore")
+                vm.get()
             }
         }
 }
@@ -69,73 +76,79 @@ fun RecipeElement(recipe : Recipe) {
             },
         horizontalAlignment = Alignment.Start
     ) {
-        Log.d("image", "https://i.pinimg.com/736x/47/cd/a8/47cda8eca5f5f013d14ce7dd6b408bfd.jpg")
 
-                Box(modifier = Modifier.heightIn(min=260.dp).background(MaterialTheme.colorScheme.surface), contentAlignment = Alignment.TopCenter){
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()){
-
-
-
-                        if(recipe.images.lARGE != null){
-
-                            Log.d("imageURL", recipe.images.lARGE.toString())
-                            AsyncImage(
-                                model = recipe.images.lARGE.url,
-                                contentDescription = "recipeImage",
-                                modifier = Modifier.fillMaxSize()
-                                    .clip(RoundedCornerShape(15.dp))
-                            )
-                        }
-                        else if(recipe.images.rEGULAR != null){
-
-                            Log.d("imageURL", recipe.images.rEGULAR.toString())
-                            AsyncImage(
-                                model = recipe.images.rEGULAR.url,
-                                contentDescription = "recipeImage",
-                                contentScale = ContentScale.FillWidth,
-                                modifier = Modifier.fillMaxSize()
-                                    .clip(RoundedCornerShape(15.dp))
-                            )
-                        }
-                        else{
-                            Log.d("imageURL", recipe.images.sMALL.toString())
-                            AsyncImage(
-                                model = recipe.images.sMALL.url,
-                                contentDescription = "recipeImage",
-                                contentScale = ContentScale.FillWidth,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(15.dp))
-
-                            )
-                        }
+            Box(modifier = Modifier
+                .heightIn(min = 260.dp)
+                .background(MaterialTheme.colorScheme.surface), contentAlignment = Alignment.TopCenter){
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()){
 
 
-                        Text(text = retallaText(recipe.label, 25),
-                            fontSize = 14.sp,
-                            modifier = Modifier.fillMaxWidth().padding(start=10.dp, top=10.dp),
-                            fontFamily = Poppins,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 16.sp
-                        )
 
-                        Text(text = (recipe.calories.toInt() / recipe.yield).toInt().toString() + "cals/serving",
-                            fontSize = 12.sp,
-                            modifier = Modifier.fillMaxWidth().padding(start=10.dp),
-                            fontFamily = Poppins,
-                            lineHeight = 16.sp
-                        )
-                        Text(text = recipe.totalTime.toInt().toString() + " minutes",
-                            fontSize = 12.sp,
-                            modifier = Modifier.fillMaxWidth().padding(start=10.dp),
-                            fontFamily = Poppins,
-                            lineHeight = 16.sp
+                    if(recipe.images.lARGE != null){
+
+                        Log.d("imageURL", recipe.images.lARGE.toString())
+                        AsyncImage(
+                            model = recipe.images.lARGE.url,
+                            contentDescription = "recipeImage",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(15.dp))
                         )
                     }
+                    else if(recipe.images.rEGULAR != null){
+
+                        Log.d("imageURL", recipe.images.rEGULAR.toString())
+                        AsyncImage(
+                            model = recipe.images.rEGULAR.url,
+                            contentDescription = "recipeImage",
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(15.dp))
+                        )
+                    }
+                    else{
+                        Log.d("imageURL", recipe.images.sMALL.toString())
+                        AsyncImage(
+                            model = recipe.images.sMALL.url,
+                            contentDescription = "recipeImage",
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(15.dp))
+
+                        )
+                    }
+
+
+                    Text(text = retallaText(recipe.label, 25),
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp, top = 10.dp),
+                        fontFamily = Poppins,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 16.sp
+                    )
+
+                    Text(text = (recipe.calories.toInt() / recipe.yield).toInt().toString() + "cals/serving",
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp),
+                        fontFamily = Poppins,
+                        lineHeight = 16.sp
+                    )
+                    Text(text = recipe.totalTime.toInt().toString() + " minutes",
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp),
+                        fontFamily = Poppins,
+                        lineHeight = 16.sp
+                    )
                 }
-
-
-
+            }
 
     }
 }

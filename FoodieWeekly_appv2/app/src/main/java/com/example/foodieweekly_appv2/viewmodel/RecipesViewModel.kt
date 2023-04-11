@@ -3,14 +3,15 @@ package com.example.foodieweekly_appv2.viewmodel
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodieweekly_appv2.model.recipesApi.*
+import com.example.foodieweekly_appv2.model.recipesApi.Hit
+import com.example.foodieweekly_appv2.model.recipesApi.LinksX
+import com.example.foodieweekly_appv2.model.recipesApi.Next
+import com.example.foodieweekly_appv2.model.recipesApi.Recipes
 import com.example.foodieweekly_appv2.xarxa.RecipesClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 class RecipesViewModel : ViewModel() {
 
@@ -22,7 +23,7 @@ class RecipesViewModel : ViewModel() {
 
     val respostaRecipes = _respostaRecipes;
 
-    private var _llistaRecipes : MutableState<List<Hit>> =  mutableStateOf(emptyList())
+    private var _llistaRecipes : MutableState<MutableList<Hit>> =  mutableStateOf(mutableListOf())
 
     val llistaRecipes = _llistaRecipes
 
@@ -36,7 +37,7 @@ class RecipesViewModel : ViewModel() {
                         RecipesClient.APP_ID,"oat","public")
 
                 respostaRecipes.value = resultat
-                llistaRecipes.value = respostaRecipes.value.hits
+                llistaRecipes.value.addAll(respostaRecipes.value.hits)
 
                 llistaRecipes.value.forEach{
                     Log.d("getRecipes recipes", it.recipe.label.toString())
@@ -44,8 +45,6 @@ class RecipesViewModel : ViewModel() {
 
                 Log.d("getRecipes", "done")
                 //llistaRecipes.value = respostaRecipes.value.results
-
-
             }
             catch(e : Exception){
                 Log.d("getRecipes", e.message.toString())

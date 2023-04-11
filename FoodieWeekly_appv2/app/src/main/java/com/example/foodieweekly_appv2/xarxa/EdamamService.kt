@@ -10,7 +10,7 @@ interface EdamamService {
     suspend fun getRecipesOf(
         @Query("app_key") appkey : String,
         @Query("app_id") appid : String,
-        @Query("q") q : String,
+        @Query("q") q : String?,
         @Query("type") type : String
     ): Recipes
 }

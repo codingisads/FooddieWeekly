@@ -14,7 +14,6 @@ class UserHealthCondition {
 
     var userPreferencesStr = mutableListOf<String>()
 
-
     var preferencesToList = fun() : Unit  {
         userPreferences.forEach {
             label ->

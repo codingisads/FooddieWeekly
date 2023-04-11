@@ -7,7 +7,6 @@ import androidx.navigation.NavHostController
 import com.example.foodieweekly_appv2.model.Calendar
 import com.example.foodieweekly_appv2.model.User
 import com.example.foodieweekly_appv2.model.Week
-import com.example.foodieweekly_appv2.navigation.Destinations
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -15,7 +14,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.collections.ArrayList
 
 class RealtimeDatabase {
 
@@ -191,17 +189,23 @@ class RealtimeDatabase {
                                 val res1 = res.get(1) as java.util.HashMap<*, *>
 
                                 Log.d("changeDay", "res1 + " + res1.get("date"))
-                                val res2 = res1.get("date").toString().replace('/', '-')
+
+                                val date = res1.get("date").toString().replace('/', '-')
 
                                 val formatter = DateTimeFormatter.ofPattern("E/d", Locale.ENGLISH)
                                 val formatterDays = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
 
                                 val dateNow = LocalDate.now()
-                                val dateLate = LocalDate.parse(res2 as CharSequence?)
+                                val dateLate = LocalDate.parse(date as CharSequence?)
+
+                                Log.d("changeDay", "dateLate + " + dateLate.toString())
 
                                 val diference = dateLate.until(dateNow, ChronoUnit.DAYS)
 
-                                val latestDate = dateLate.plusDays(7);
+                                Log.d("changeDay", "diference + " + diference.toString())
+
+                                val latestDate = dateLate.plusDays(5);
+                                Log.d("changeDay", "latestDate +" + latestDate.toString())
 
                                 //if(LocalDate.now().minusDays(LocalDate.from(res2)))
 
@@ -209,9 +213,10 @@ class RealtimeDatabase {
                                 val newArray = res.toMutableList()
 
                                 for(i in 0 until diference.toInt()){
-                                    newArray.removeAt(i)
+                                    newArray.removeAt(0)
 
                                     val toAddDate = latestDate.plusDays(i.toLong() + 1);
+                                    Log.d("changeDay", "toAddDate + "+ toAddDate.toString())
 
                                     val newEntry = mutableMapOf<String, String>()
                                     newEntry["date"] = toAddDate.format(formatterDays)
@@ -220,10 +225,14 @@ class RealtimeDatabase {
                                 }
                                 Log.d("changeDay", "adding")
 
-                                FirebaseDatabase.getInstance().reference.root.child("Weeks").child(weekId.toString())
-                                    .child("days").setValue(newArray).addOnCompleteListener {
-                                        Log.d("changeDay", "done")
-                                    }
+                                if(!newArray.containsAll(res)){
+                                    FirebaseDatabase.getInstance().reference.root.child("Weeks").child(weekId.toString())
+                                        .child("days").setValue(newArray).addOnCompleteListener {
+                                            Log.d("changeDay", "done")
+                                        }
+                                }
+
+
 
                             }
 

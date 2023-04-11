@@ -1,60 +1,35 @@
 package com.example.foodieweekly_appv2
 
 import android.content.Intent
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
-import com.example.foodieweekly_appv2.model.enums.MealType
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.navigation.ItemsBarraNavegacio
 import com.example.foodieweekly_appv2.pantalles.*
 import com.example.foodieweekly_appv2.ui.theme.FoodieWeekly_appv2Theme
-import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.viewmodel.MainViewModel
-import com.example.foodieweekly_appv2.xarxa.RecipesClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import androidx.lifecycle.viewModelScope
-import com.example.foodieweekly_appv2.model.recipesApi.Hit
-import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
-import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
-import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
 
 var _showSignupConfig =  mutableStateOf(false)
 val showSignupConfig = _showSignupConfig
@@ -150,7 +125,7 @@ fun Main(vm: MainViewModel, navController: NavHostController, activity: MainActi
             PantallaPrincipal(authenticator, vm.pantallaPrincipalViewModel, vm.recipesViewModel, navController)
         }
         composable(Destinations.RecipesScreen.ruta) {
-            RecipesScreen(vm.recipesViewModel.llistaRecipes)
+            RecipesScreen(vm.recipesViewModel.llistaRecipes, vm.recipesViewModel)
         }
     }
 

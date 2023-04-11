@@ -1,7 +1,10 @@
 package com.example.foodieweekly_appv2.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
@@ -9,8 +12,6 @@ import com.google.firebase.database.FirebaseDatabase
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class PantallaPrincipalViewModel : ViewModel() {
 
@@ -111,7 +112,7 @@ class PantallaPrincipalViewModel : ViewModel() {
 
         if(calId.value != ""){
             currentDate = LocalDate.now().format(formatter)
-                db.getCalendarWeekId(authenticator.currentUID.value, calId, weekId)
+            db.getCalendarWeekId(authenticator.currentUID.value, calId, weekId)
 
 
                 if(weekId.value != ""){
