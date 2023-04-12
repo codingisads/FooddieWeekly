@@ -43,7 +43,7 @@ fun PantallaPrincipal(authenticator : Authenticator,
     }}
 
 
-    vm.settingUp(authenticator, daysAndMeals)
+    vm.settingUp(authenticator, daysAndMeals, vmRecipes)
 
     if(vm.completed.value)
     {
@@ -58,7 +58,6 @@ fun PantallaPrincipal(authenticator : Authenticator,
             Box(Modifier.padding(10.dp)){
                 Column(){
                     Button(onClick = {
-                        vmRecipes.get()
                         Log.d("getRecipes recipesList", vmRecipes.llistaRecipes.value.size.toString())
 
                         navController.navigate(Destinations.RecipesScreen.ruta)

@@ -32,6 +32,8 @@ class PantallaPrincipalViewModel : ViewModel() {
     val calId = mutableStateOf("")
     val weekId = mutableStateOf("")
 
+    val gettingAPIValues = mutableStateOf(false)
+
     fun getMealsFromDay(
         compl: MutableState<Boolean>,
         daysAndMeals: MutableList<MutableList<MutableList<String>>>, weekId : String
@@ -101,7 +103,8 @@ class PantallaPrincipalViewModel : ViewModel() {
     @Composable
     fun settingUp(
         authenticator: Authenticator,
-        daysAndMeals: MutableList<MutableList<MutableList<String>>>
+        daysAndMeals: MutableList<MutableList<MutableList<String>>>,
+        vmRecipes : RecipesViewModel
     ) {
 
         authenticator.getUserUsername(username)
@@ -123,6 +126,13 @@ class PantallaPrincipalViewModel : ViewModel() {
                     db.getWeekDateInDate(calId.value, dies, diesNum)
 
                     getMealsFromDay(completed, daysAndMeals, weekId.value)
+
+                    if(!gettingAPIValues.value){
+                        Log.d("PantallaPrincipal", "gettingRecipes")
+                        vmRecipes.get()
+                        gettingAPIValues.value = true
+                    }
+
                 }
             }
 

@@ -20,12 +20,13 @@ class RecipesViewModel : ViewModel() {
     val respostaRecipes = _respostaRecipes;*/
 
     private var _respostaRecipes = mutableStateOf(Recipes(0, 0, emptyList(), LinksX(Next("", "")), 0))
-
     val respostaRecipes = _respostaRecipes;
 
     private var _llistaRecipes : MutableState<MutableList<Hit>> =  mutableStateOf(mutableListOf())
-
     val llistaRecipes = _llistaRecipes
+
+    private var _nextPageLink = mutableStateOf("")
+    public val nextPageLink = _nextPageLink
 
     fun get() {
         viewModelScope.launch(Dispatchers.IO){
@@ -34,16 +35,17 @@ class RecipesViewModel : ViewModel() {
 
                 val resultat = RecipesClient.servei
                     .getRecipesOf(RecipesClient.APP_KEY,
-                        RecipesClient.APP_ID,"oat","public")
+                        RecipesClient.APP_ID)
 
                 respostaRecipes.value = resultat
+
+                nextPageLink.value = respostaRecipes.value.links.next.href
+
+                Log.d("getRecipes recipes page", nextPageLink.value)
+
                 llistaRecipes.value.addAll(respostaRecipes.value.hits)
 
-                llistaRecipes.value.forEach{
-                    Log.d("getRecipes recipes", it.recipe.label.toString())
-                }
 
-                Log.d("getRecipes", "done")
                 //llistaRecipes.value = respostaRecipes.value.results
             }
             catch(e : Exception){
@@ -55,6 +57,36 @@ class RecipesViewModel : ViewModel() {
 
         Log.d("getRecipes returning", llistaRecipes.value.size.toString())
 
+    }
+
+    fun getNextPage() {
+        viewModelScope.launch(Dispatchers.IO){
+
+            try{
+
+                val resultat = RecipesClient.servei
+                    .getNextPage(nextPageLink.value)
+
+                respostaRecipes.value = resultat
+
+                val listParams = (respostaRecipes.value.links.next.href).replace("https://api.edamam.com/api/recipes/v2?", "").split('&')
+                nextPageLink.value = respostaRecipes.value.links.next.href
+
+                Log.d("getRecipes recipes page", nextPageLink.value)
+
+                llistaRecipes.value.addAll(respostaRecipes.value.hits)
+
+                Log.d("getRecipes page", "done")
+                //llistaRecipes.value = respostaRecipes.value.results
+            }
+            catch(e : Exception){
+                Log.d("getRecipes page", e.message.toString())
+            }
+
+        }
+
+
+        Log.d("getRecipes returning", llistaRecipes.value.size.toString())
     }
 
 }

@@ -178,6 +178,48 @@ fun ShowAlert(showDialog: MutableState<Boolean>, title: String, text: String, ic
 }
 
 @Composable
+fun TabScreenRecipes(tabs: List<String>, showRecipes: @Composable () -> Unit) {
+    var tabIndex = remember { mutableStateOf(0) }
+
+    val showAll= remember { mutableStateOf(false)}
+    val showSaved = remember { mutableStateOf(false)}
+    val showMine = remember { mutableStateOf(false)}
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 30.dp)) {
+        TabRow(selectedTabIndex = tabIndex.value) {
+            tabs.forEachIndexed { index, title ->
+                Tab(text = { if(tabIndex.value == index) Text(title, fontFamily = Poppins) else Text(title, fontFamily = Poppins, color = Color.Gray) },
+                    selected = tabIndex.value == index,
+                    onClick = { tabIndex.value = index })
+            }
+        }
+        when (tabIndex.value) {
+            0 -> {showAll.value = true
+                showSaved.value = false
+                showMine.value = false}
+
+            1 -> {showAll.value = false
+                showSaved.value = true
+                showMine.value = false}
+
+            2 -> {showAll.value = false
+                showSaved.value = false
+                showMine.value = true}
+        }
+    }
+
+    if(showAll.value){
+
+        Column() {
+            showRecipes()
+        }
+
+    }
+}
+
+@Composable
 fun TabScreen(day: MutableList<MutableList<String>>) {
     var tabIndex = remember { mutableStateOf(0) }
 
@@ -211,6 +253,7 @@ fun TabScreen(day: MutableList<MutableList<String>>) {
 
     }
 }
+
 
 @Composable
 fun Meals(day: MutableList<MutableList<String>>) {
