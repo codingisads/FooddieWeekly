@@ -11,11 +11,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -25,9 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,12 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.compose.ImagePainter
 import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.model.recipesApi.Hit
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.ui.theme.Poppins
-import com.example.foodieweekly_appv2.utils.OutlinedTextFieldCustom
 import com.example.foodieweekly_appv2.utils.TabScreenRecipes
 import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
 
@@ -89,12 +82,33 @@ fun RecipesScreen(llistaRecipes : MutableState<MutableList<Hit>>, vm: RecipesVie
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                keyboardActions = KeyboardActions(
+                    onDone  = {
+                        Log.d("RecipesScreen", "search for")
+
+                        try {
+                            if(!vs.value.isNullOrEmpty()){
+                                vm.getRecipesOf(vs.value)
+                                Log.d("RecipesScreen", "with ingredient")
+                            }
+                            else{
+                                vm.get()
+                                Log.d("RecipesScreen", "without ingredient")
+                            }
+                        }
+                        catch(e : Exception){
+
+                            Log.d("RecipesScreen", e.message.toString())
+                        }
+
+                    }
+                )
             )
         }
 
 
-        TabScreenRecipes(listOf("All", "Saved", "Mine"), { ShowRecipes(llistaRecipes, vm) })
+        TabScreenRecipes(listOf("All", "Saved", "Mine"), llistaRecipes, vm)
     }
 
 

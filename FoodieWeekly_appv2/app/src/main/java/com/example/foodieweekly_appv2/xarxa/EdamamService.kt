@@ -18,6 +18,7 @@ interface EdamamService {
         @Query("imageSize") imageSize : Array<String> = arrayOf("REGULAR")
     ): Recipes
 
+
     @GET()
     suspend fun getNextPage(
         @Url() path : String

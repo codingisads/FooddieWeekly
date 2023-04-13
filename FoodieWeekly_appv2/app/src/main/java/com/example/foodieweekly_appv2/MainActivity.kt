@@ -5,20 +5,34 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
@@ -26,6 +40,7 @@ import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.navigation.ItemsBarraNavegacio
 import com.example.foodieweekly_appv2.pantalles.*
 import com.example.foodieweekly_appv2.ui.theme.FoodieWeekly_appv2Theme
+import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.viewmodel.MainViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -59,8 +74,8 @@ class MainActivity : ComponentActivity() {
 
                     //val llistaRecipes : MutableState<List<Hit>> =  mutableStateOf(emptyList())
 
-
-                    Main(vm, navController, activity, authenticator)
+                    ShowRecipeInfo()
+                    //Main(vm, navController, activity, authenticator)
                     //RecipeElement()
                     //Total()
                     //PrincipalBarraDeNavegacio(navController)
@@ -184,5 +199,83 @@ fun BarraDeNavegacio(navController: NavHostController) {
 }
 
 
+@Preview(showSystemUi = true)
+@Composable
+fun ShowRecipeInfo(){
 
+    val tags = listOf("Gluten free", "Vegan")
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())) {
+        AsyncImage(
+            model = "https://i.pinimg.com/474x/88/c6/43/88c643c969e350f687f724e9742733c9.jpg",
+            contentDescription = "recipeImage",
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+        )
 
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp), horizontalArrangement = Arrangement.SpaceAround){
+            Image(painter = painterResource(R.drawable.clock), contentDescription = "time")
+            Text("10 minutes", fontFamily = Poppins)
+            Image(painter = painterResource(R.drawable.cals), contentDescription = "cals")
+            Text("250kcals", fontFamily = Poppins)
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+            Text("Oat chia pudding with walnuts and pistachio",
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = Poppins,
+                modifier = Modifier.weight(3F))
+            Image(painter = painterResource(R.drawable.cals), contentDescription = "cals",
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1F))
+
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 15.dp)) {
+            for (i in 0 .. tags.size-1){
+                Box(
+                    Modifier
+                        .padding(end = 10.dp)
+                        .clip(RoundedCornerShape(35.dp))
+                        .background(
+                            if (isSystemInDarkTheme())
+                                Color(0xFF7d9e57)
+                            else
+                                Color(0xFFc0eb8f)
+                        ),
+                    contentAlignment = Alignment.Center)
+                {
+                    Text(tags[i], textAlign = TextAlign.Center,
+                        fontFamily = Poppins,
+                        modifier = Modifier.padding(top=5.dp, bottom=5.dp, start=10.dp, end=10.dp),
+                        fontSize = 12.sp)
+                }
+            }
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp)) {
+            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "User",
+                modifier = Modifier.padding(end=10.dp))
+            Text("usernamo",textAlign = TextAlign.Center,
+                fontFamily = Poppins,fontSize = 16.sp, fontWeight = FontWeight.ExtraLight)
+        }
+
+    }
+}

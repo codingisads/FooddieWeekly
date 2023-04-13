@@ -25,7 +25,10 @@ import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
+import com.example.foodieweekly_appv2.model.recipesApi.Hit
+import com.example.foodieweekly_appv2.pantalles.ShowRecipes
 import com.example.foodieweekly_appv2.ui.theme.Poppins
+import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -178,7 +181,11 @@ fun ShowAlert(showDialog: MutableState<Boolean>, title: String, text: String, ic
 }
 
 @Composable
-fun TabScreenRecipes(tabs: List<String>, showRecipes: @Composable () -> Unit) {
+fun TabScreenRecipes(
+    tabs: List<String>,
+    llistaRecipes: MutableState<MutableList<Hit>>,
+    vm: RecipesViewModel
+) {
     var tabIndex = remember { mutableStateOf(0) }
 
     val showAll= remember { mutableStateOf(false)}
@@ -213,7 +220,7 @@ fun TabScreenRecipes(tabs: List<String>, showRecipes: @Composable () -> Unit) {
     if(showAll.value){
 
         Column() {
-            showRecipes()
+            ShowRecipes(llistaRecipes, vm)
         }
 
     }

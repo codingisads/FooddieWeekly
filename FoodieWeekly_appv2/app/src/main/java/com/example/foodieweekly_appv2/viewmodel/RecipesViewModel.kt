@@ -43,6 +43,39 @@ class RecipesViewModel : ViewModel() {
 
                 Log.d("getRecipes recipes page", nextPageLink.value)
 
+                llistaRecipes.value.clear()
+                llistaRecipes.value.addAll(respostaRecipes.value.hits)
+
+
+                //llistaRecipes.value = respostaRecipes.value.results
+            }
+            catch(e : Exception){
+                Log.d("getRecipes", e.message.toString())
+            }
+
+        }
+
+
+        Log.d("getRecipes returning", llistaRecipes.value.size.toString())
+
+    }
+
+    fun getRecipesOf(ingredient : String) {
+        viewModelScope.launch(Dispatchers.IO){
+
+            try{
+                val resultat = RecipesClient.servei
+                    .getRecipesOf(RecipesClient.APP_KEY,
+                        RecipesClient.APP_ID, q = ingredient)
+
+                respostaRecipes.value = resultat
+
+                nextPageLink.value = respostaRecipes.value.links.next.href
+
+                Log.d("getRecipes recipes page", nextPageLink.value)
+
+
+                llistaRecipes.value.clear()
                 llistaRecipes.value.addAll(respostaRecipes.value.hits)
 
 
@@ -69,7 +102,6 @@ class RecipesViewModel : ViewModel() {
 
                 respostaRecipes.value = resultat
 
-                val listParams = (respostaRecipes.value.links.next.href).replace("https://api.edamam.com/api/recipes/v2?", "").split('&')
                 nextPageLink.value = respostaRecipes.value.links.next.href
 
                 Log.d("getRecipes recipes page", nextPageLink.value)
