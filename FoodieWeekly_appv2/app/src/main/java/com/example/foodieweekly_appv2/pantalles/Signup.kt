@@ -28,6 +28,7 @@ import com.example.foodieweekly_appv2.utils.OutlinedTextFieldCustomPassword
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldEmail
 import com.example.foodieweekly_appv2.utils.ShowAlert
 import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
+import com.example.foodieweekly_appv2.vm
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -37,7 +38,11 @@ import java.util.logging.Handler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Signup(vm: SignupViewModel, navController: NavHostController, authenticator: Authenticator, activity : Activity){
+fun Signup(activity : Activity){
+    val authenticator = vm.authenticator
+    val navController = vm.navController
+    val vm = vm.signupViewModel
+
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.Center) {
 
 
@@ -95,7 +100,7 @@ fun Signup(vm: SignupViewModel, navController: NavHostController, authenticator:
                     Button(
                         onClick = {
 
-                            authenticator.checkIfEmailIsNotRegistered(vm.email.value, vm, navController)
+                            authenticator.checkIfEmailIsNotRegistered(vm.email.value)
 
                             Log.d("FIREBASE ON signup", vm.goToUserPreferences.value.toString())
 

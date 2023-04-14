@@ -1,10 +1,8 @@
 package com.example.foodieweekly_appv2.pantalles
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -13,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -36,19 +35,21 @@ import com.example.foodieweekly_appv2.model.recipesApi.Hit
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
+import com.example.foodieweekly_appv2.utils.TabScreenMals
 import com.example.foodieweekly_appv2.utils.TabScreenRecipes
+import com.example.foodieweekly_appv2.utils.retallaText
 import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
 import com.example.foodieweekly_appv2.vm
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipesScreen(
-    llistaRecipes: MutableState<MutableList<Hit>>,
-    vm: RecipesViewModel,
-    navController: NavHostController
-) {
-
+fun RecipesScreen() {
+    val llistaRecipes = com.example.foodieweekly_appv2.vm.recipesViewModel.llistaRecipes
+    val navController = com.example.foodieweekly_appv2.vm.navController
+    val vm = com.example.foodieweekly_appv2.vm.recipesViewModel
     Log.d("recipesList", llistaRecipes.value.size.toString())
 
     val vs = remember { mutableStateOf("")}
@@ -164,7 +165,10 @@ fun RecipeElement(recipe: Recipe, navController: NavHostController) {
                 indication = null
             ) {
                 vm.recipesViewModel.setActualRecipe(recipe)
-                navController.navigate(Destinations.ShowRecipeInfo.ruta)
+                navController.navigate(Destinations.ShowRecipeInfo.ruta){
+                    popUpTo(Destinations.ShowRecipeInfo.ruta)
+                    launchSingleTop = true
+                }
             },
         horizontalAlignment = Alignment.Start
     ) {
@@ -245,7 +249,131 @@ fun RecipeElement(recipe: Recipe, navController: NavHostController) {
     }
 }
 
-private fun retallaText(text: String, mida: Int) = if (text.length <= mida) text else {
-    val textAmbEllipsis = text.removeRange(startIndex = mida, endIndex = text.length)
-    "$textAmbEllipsis..."
+
+@Composable
+fun ShowRecipeInfo(actualRecipe: Recipe) {
+
+    var colorsLight = listOf<Color>(Color(0xFFf0cb67), Color(0xFFc0eb8f),
+        Color(0xFFf09767), Color(0xFF78D6B8), Color(0xFF8B81E6)
+    )
+
+    var colorsDark = listOf<Color>(Color(0xFFCFAC4C), Color(0xFF89C75D),
+        Color(0xFFD1724D), Color(0xFF4A99A0), Color(0xFF4959AA)
+    )
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())) {
+
+        Log.d("ShowRecipeInfo", "checking images")
+        if(actualRecipe.images.lARGE != null){
+
+            Log.d("ShowRecipeInfo", "big images")
+            AsyncImage(
+                model = actualRecipe.images.lARGE.url,
+                contentDescription = "recipeImage",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+            )
+        }
+        else if(actualRecipe.images.rEGULAR != null){
+
+            Log.d("ShowRecipeInfo", "medium images")
+            AsyncImage(
+                model = actualRecipe.images.rEGULAR.url,
+                contentDescription = "recipeImage",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+            )
+        }
+        else{
+
+            Log.d("ShowRecipeInfo", "smol images")
+            AsyncImage(
+                model = actualRecipe.images.sMALL.url,
+                contentDescription = "recipeImage",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+            )
+        }
+
+
+
+        Log.d("ShowRecipeInfo", "writing info")
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp), horizontalArrangement = Arrangement.SpaceAround){
+            Image(painter = painterResource(R.drawable.clock), contentDescription = "time")
+            Text("10 minutes", fontFamily = Poppins)
+            Image(painter = painterResource(R.drawable.cals), contentDescription = "cals")
+            Text("250kcals", fontFamily = Poppins)
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+            Text(actualRecipe.label,
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = Poppins,
+                modifier = Modifier.weight(3F))
+            Image(painter = painterResource(R.drawable.cals), contentDescription = "cals",
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1F))
+
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 15.dp)
+                .horizontalScroll(rememberScrollState())) {
+
+            for (i in 0 until actualRecipe.healthLabels.size){
+                Box(
+                    Modifier
+                        .padding(end = 10.dp)
+                        .clip(RoundedCornerShape(35.dp))
+                        .background(
+                            if (isSystemInDarkTheme())
+                                colorsDark[i%5]
+                            else
+                                colorsLight[i%5]
+                        ),
+                    contentAlignment = Alignment.Center)
+                {
+                    Text(actualRecipe.healthLabels[i], textAlign = TextAlign.Center,
+                        fontFamily = Poppins,
+                        modifier = Modifier
+                            .padding(top = 5.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
+                        ,
+                        fontSize = 12.sp)
+                }
+            }
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp)) {
+            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "User",
+                modifier = Modifier.padding(end=10.dp))
+            Text("usernamo",textAlign = TextAlign.Center,
+                fontFamily = Poppins,fontSize = 16.sp, fontWeight = FontWeight.ExtraLight)
+        }
+
+        TabScreenMals(actualRecipe)
+
+    }
 }
+

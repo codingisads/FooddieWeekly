@@ -168,11 +168,11 @@ class RealtimeDatabase {
             .child("calendarIdList").get().addOnCompleteListener {
                 var calendar = it.result.children
 
-                var firstCalId = calendar.first().value
+                //var firstCalId = calendar.first().value
 
-                Log.d("changeDay", "firstCalId " + firstCalId)
+                //Log.d("changeDay", "firstCalId " + firstCalId)
 
-                FirebaseDatabase.getInstance().reference.root.child("Calendars").child(firstCalId.toString())
+                FirebaseDatabase.getInstance().reference.root.child("Calendars").child(calendarId)
                     .child("currentWeekId")
                     .get().addOnCompleteListener {
                             cal ->

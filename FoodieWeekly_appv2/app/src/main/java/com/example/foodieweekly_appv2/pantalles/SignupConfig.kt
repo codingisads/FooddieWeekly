@@ -36,13 +36,17 @@ import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.*
 import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
 import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
+import com.example.foodieweekly_appv2.vm
 import java.util.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignupConfig(vm: SignupViewModel, navController: NavHostController, authenticator: Authenticator){ //DONE!
+fun SignupConfig(){ //DONE!
 
+    val navController = vm.navController
+    val authenticator = vm.authenticator
+    val vm = vm.signupViewModel
     val username = remember { mutableStateOf("") }
     val firstName = remember {
         mutableStateOf("")
@@ -169,8 +173,11 @@ fun SignupConfig(vm: SignupViewModel, navController: NavHostController, authenti
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignupUserBodyConfig(vm: SignupViewModel, navController: NavHostController, authenticator: Authenticator){ //DONE!
+fun SignupUserBodyConfig(){ //DONE!
 
+    val navController = vm.navController
+    val authenticator = vm.authenticator
+    val vm = vm.signupViewModel
 
     val weight = remember {
         mutableStateOf("")
@@ -593,8 +600,11 @@ fun SignupUserBodyConfig(vm: SignupViewModel, navController: NavHostController, 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignupUserDiet(vm: SignupViewModel, navController: NavHostController, authenticator: Authenticator) { //DONE!
+fun SignupUserDiet() { //DONE!
 
+    val navController = com.example.foodieweekly_appv2.vm.navController
+    val authenticator = com.example.foodieweekly_appv2.vm.authenticator
+    val vm = com.example.foodieweekly_appv2.vm.signupViewModel
     val dietIndex = remember { mutableStateOf(-1) }
     val errorMessage = remember { mutableStateOf("") }
 
@@ -821,8 +831,10 @@ fun SignupUserDiet(vm: SignupViewModel, navController: NavHostController, authen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignupUserPreferences(vm: SignupViewModel, navController: NavHostController, authenticator: Authenticator) { //DONE!
-
+fun SignupUserPreferences() { //DONE!
+    val navController = com.example.foodieweekly_appv2.vm.navController
+    val authenticator = com.example.foodieweekly_appv2.vm.authenticator
+    val vm = com.example.foodieweekly_appv2.vm.signupViewModel
     val arr = enumValues<HealthLabels>()
 
     Column(
@@ -922,8 +934,10 @@ fun SignupUserPreferences(vm: SignupViewModel, navController: NavHostController,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignupLastScreen(vm: SignupViewModel, navController: NavHostController, authenticator: Authenticator, signup : SignupViewModel) {
-
+fun SignupLastScreen() {
+    val navController = com.example.foodieweekly_appv2.vm.navController
+    val authenticator = com.example.foodieweekly_appv2.vm.authenticator
+    val vm = com.example.foodieweekly_appv2.vm.signupViewModel
     val calories = remember { mutableStateOf(vm.calculateCalories().toString()) }
 
     var isError = remember {mutableStateOf(false)}
@@ -1040,7 +1054,7 @@ fun SignupLastScreen(vm: SignupViewModel, navController: NavHostController, auth
                 //Calculate calories based on health
 
                 Log.d("signup", vm.user.username)
-                authenticator.signup(vm.email.value, vm.password.value, vm.user, navController, signup)
+                authenticator.signup(vm.email.value, vm.password.value, vm.user, navController, vm)
 
 
 

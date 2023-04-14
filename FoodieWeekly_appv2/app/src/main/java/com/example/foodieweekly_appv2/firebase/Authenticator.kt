@@ -19,6 +19,7 @@ import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.showSignupConfig
 import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
 import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
+import com.example.foodieweekly_appv2.vm
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -293,7 +294,7 @@ class Authenticator {
         }
     }
 
-    public val checkIfEmailIsNotRegistered = fun(email : String, vm : SignupViewModel,navController : NavHostController) {
+    public val checkIfEmailIsNotRegistered = fun(email : String) {
 
         fire.fetchSignInMethodsForEmail(email).addOnCompleteListener {
 
@@ -303,11 +304,11 @@ class Authenticator {
                 alreadyRegisteredEmail.value = res.isNotEmpty()
 
 
-                vm.showDialog.value = alreadyRegisteredEmail.value
-                vm.goToUserPreferences.value = !alreadyRegisteredEmail.value
+                vm.signupViewModel.showDialog.value = alreadyRegisteredEmail.value
+                vm.signupViewModel.goToUserPreferences.value = !alreadyRegisteredEmail.value
 
-                if (vm.goToUserPreferences.value) {
-                    navController.navigate(Destinations.SignupConfig.ruta)
+                if (vm.signupViewModel.goToUserPreferences.value) {
+                    vm.navController.navigate(Destinations.SignupConfig.ruta)
                 }
                 else{
                     registered.value = "This email is already registered!"
@@ -316,8 +317,8 @@ class Authenticator {
             else
             {
                 alreadyRegisteredEmail.value = false
-                vm.showDialog.value = alreadyRegisteredEmail.value
-                vm.goToUserPreferences.value = false
+                vm.signupViewModel.showDialog.value = alreadyRegisteredEmail.value
+                vm.signupViewModel.goToUserPreferences.value = false
             }
         }
     }

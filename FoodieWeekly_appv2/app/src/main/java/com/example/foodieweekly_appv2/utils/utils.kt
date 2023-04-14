@@ -29,9 +29,11 @@ import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
 import com.example.foodieweekly_appv2.model.recipesApi.Hit
 import com.example.foodieweekly_appv2.model.recipesApi.Ingredient
+import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.pantalles.ShowRecipes
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -266,7 +268,7 @@ fun TabScreen(day: MutableList<MutableList<String>>) {
 }
 
 @Composable
-fun TabScreenMals() {
+fun TabScreenMals(recipe : Recipe) {
     var tabIndex = remember { mutableStateOf(0) }
 
     val showIngredients = remember { mutableStateOf(false)}
@@ -306,22 +308,9 @@ fun TabScreenMals() {
 
     if(showIngredients.value){
 
-        var lst = listOf<Ingredient>(
-            Ingredient("culo", "frito",
-            "1", "seh", "gr", 12.0, "se", 15.0),
-            Ingredient("culo", "frito",
-                "1", "seh", "gr", 12.0, "se", 15.0),
-            Ingredient("culo", "frito",
-                "1", "seh", "gr", 12.0, "se", 15.0),
-            Ingredient("culo", "frito",
-                "1", "seh", "gr", 12.0, "se", 15.0),
-            Ingredient("culo", "frito",
-                "1", "seh", "gr", 12.0, "se", 15.0),
 
-
-            )
         Column() {
-            ShowRecipeIngredients(lst)
+            ShowRecipeIngredients(recipe.ingredients, recipe.yield.toInt())
         }
 
     }
@@ -342,7 +331,7 @@ fun TabScreenMals() {
 }
 
 @Composable
-fun ShowRecipeIngredients(ingredients : List<Ingredient>){
+fun ShowRecipeIngredients(ingredients : List<Ingredient>, servings : Int){
     Column(Modifier.background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)))
     {
         Text("You will need", Modifier
@@ -353,13 +342,13 @@ fun ShowRecipeIngredients(ingredients : List<Ingredient>){
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
             Box(Modifier
                 .fillMaxWidth()
-                .padding(40.dp).clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.surface)
+                .padding(30.dp).clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.surface)
                 ){
 
                 Column(Modifier
                     .fillMaxWidth()) {
 
-                    Text("Per 4 servings", Modifier.fillMaxWidth()
+                    Text("Per " + servings +  " servings", Modifier.fillMaxWidth()
                         .padding(10.dp), fontSize = 10.sp,
                         fontFamily = Poppins, fontWeight = FontWeight.ExtraLight, textAlign = TextAlign.End
                     )
@@ -367,8 +356,14 @@ fun ShowRecipeIngredients(ingredients : List<Ingredient>){
                     for (i in 0 until ingredients.size){
                         Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp,
                             bottom = 20.dp)) {
-                            Text(ingredients[i].text)
-                            Text(ingredients[i].food,Modifier.fillMaxWidth(), textAlign = TextAlign.End)
+                            Text(ingredients[i].food, Modifier.weight(2F), fontFamily = Poppins, fontWeight = FontWeight.Bold)
+                            if(ingredients[i].quantity.roundToInt() > 0){
+                                Text(ingredients[i].quantity.roundToInt().toString()+" "+ingredients[i].measure,Modifier.weight(1F),
+                                    textAlign = TextAlign.End, fontFamily = Poppins, fontSize = 12.sp)
+                            }
+                            else{
+                                Text("as pleased",Modifier.weight(1F), textAlign = TextAlign.End, fontFamily = Poppins, fontSize = 12.sp)
+                            }
                         }
                     }
                 }
@@ -379,7 +374,10 @@ fun ShowRecipeIngredients(ingredients : List<Ingredient>){
     }
 }
 
-
+fun retallaText(text: String, mida: Int) = if (text.length <= mida) text else {
+    val textAmbEllipsis = text.removeRange(startIndex = mida, endIndex = text.length)
+    "$textAmbEllipsis..."
+}
 
 @Composable
 fun Meals(day: MutableList<MutableList<String>>) {

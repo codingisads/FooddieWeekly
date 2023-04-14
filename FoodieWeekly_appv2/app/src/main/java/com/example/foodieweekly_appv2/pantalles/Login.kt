@@ -41,13 +41,18 @@ import com.example.foodieweekly_appv2.utils.OutlinedTextFieldCustomPassword
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldEmail
 import com.example.foodieweekly_appv2.utils.ShowAlert
 import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
+import com.example.foodieweekly_appv2.vm
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(vm : LoginViewModel, navController: NavHostController, authenticator: Authenticator, activity : Activity) {
+fun Login(activity : Activity) {
+
+    val authenticator = vm.authenticator
+    val navController = vm.navController
+    val vm = vm.loginViewModel
 
     Log.d("autenticacion google", "Login")
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(20.dp)) {

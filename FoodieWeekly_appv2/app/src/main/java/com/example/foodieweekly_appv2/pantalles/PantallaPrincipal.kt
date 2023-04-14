@@ -31,10 +31,12 @@ import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
 
 
 @Composable
-fun PantallaPrincipal(authenticator : Authenticator,
-                      vm : PantallaPrincipalViewModel,
-                      vmRecipes : RecipesViewModel, navController : NavHostController
-){
+fun PantallaPrincipal(){
+
+    val navController = com.example.foodieweekly_appv2.vm.navController
+    val authenticator = com.example.foodieweekly_appv2.vm.authenticator
+    val vmRecipes = com.example.foodieweekly_appv2.vm.recipesViewModel
+    val vm = com.example.foodieweekly_appv2.vm.pantallaPrincipalViewModel
 
     var daysAndMeals = remember {MutableList(7){
         MutableList(4){
@@ -61,12 +63,6 @@ fun PantallaPrincipal(authenticator : Authenticator,
                         Log.d("getRecipes recipesList", vmRecipes.llistaRecipes.value.size.toString())
 
                         navController.navigate(Destinations.RecipesScreen.ruta)
-                        {
-                            popUpTo(Destinations.PantallaPrincipal.ruta)
-                            {
-                                inclusive = false
-                            }
-                        }
                     }) {
                         Text("Recipes")
                     }

@@ -6,9 +6,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -100,22 +104,23 @@ class PantallaPrincipalViewModel : ViewModel() {
             }
     }
 
-    @Composable
+
     fun settingUp(
         authenticator: Authenticator,
         daysAndMeals: MutableList<MutableList<MutableList<String>>>,
         vmRecipes : RecipesViewModel
     ) {
 
-        authenticator.getUserUsername(username)
+        runBlocking {
+            authenticator.getUserUsername(username)
 
-        val db = RealtimeDatabase()
+            val db = RealtimeDatabase()
 
-        db.getCalendarId(authenticator.currentUID.value, calId)
+            db.getCalendarId(authenticator.currentUID.value, calId)
 
-        if(calId.value != ""){
-            currentDate = LocalDate.now().format(formatter)
-            db.getCalendarWeekId(authenticator.currentUID.value, calId, weekId)
+            if(calId.value != ""){
+                currentDate = LocalDate.now().format(formatter)
+                db.getCalendarWeekId(authenticator.currentUID.value, calId, weekId)
 
 
                 if(weekId.value != ""){
@@ -135,6 +140,10 @@ class PantallaPrincipalViewModel : ViewModel() {
 
                 }
             }
+
+
+        }
+
 
     }
 }
