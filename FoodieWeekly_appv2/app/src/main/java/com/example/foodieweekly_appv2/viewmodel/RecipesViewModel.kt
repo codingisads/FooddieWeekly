@@ -5,10 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodieweekly_appv2.model.recipesApi.Hit
-import com.example.foodieweekly_appv2.model.recipesApi.LinksX
-import com.example.foodieweekly_appv2.model.recipesApi.Next
-import com.example.foodieweekly_appv2.model.recipesApi.Recipes
+import com.example.foodieweekly_appv2.model.recipesApi.*
 import com.example.foodieweekly_appv2.xarxa.RecipesClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +24,8 @@ class RecipesViewModel : ViewModel() {
 
     private var _nextPageLink = mutableStateOf("")
     public val nextPageLink = _nextPageLink
+
+    lateinit var selectedRecipe : Recipe
 
     fun get() {
         viewModelScope.launch(Dispatchers.IO){
@@ -121,4 +120,12 @@ class RecipesViewModel : ViewModel() {
         Log.d("getRecipes returning", llistaRecipes.value.size.toString())
     }
 
+
+    fun setActualRecipe(rec : Recipe)  {
+        selectedRecipe = rec
+    }
+
+    fun getActualRecipe() : Recipe {
+        return selectedRecipe
+    }
 }

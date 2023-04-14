@@ -10,6 +10,7 @@ sealed class Destinations (val ruta:String){
     object SignupLastScreen: Destinations("SignupLastScreen")
     object PantallaPrincipal: Destinations("PantallaPrincipal")
     object RecipesScreen: Destinations("RecipesScreen")
+    object ShowRecipeInfo: Destinations("ShowRecipeInfo")
 
 
 }

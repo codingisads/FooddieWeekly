@@ -18,13 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -36,11 +33,13 @@ import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
+import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.navigation.ItemsBarraNavegacio
 import com.example.foodieweekly_appv2.pantalles.*
 import com.example.foodieweekly_appv2.ui.theme.FoodieWeekly_appv2Theme
 import com.example.foodieweekly_appv2.ui.theme.Poppins
+import com.example.foodieweekly_appv2.utils.TabScreenMals
 import com.example.foodieweekly_appv2.viewmodel.MainViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -74,8 +73,8 @@ class MainActivity : ComponentActivity() {
 
                     //val llistaRecipes : MutableState<List<Hit>> =  mutableStateOf(emptyList())
 
-                    ShowRecipeInfo()
-                    //Main(vm, navController, activity, authenticator)
+                    //ShowRecipeInfo()
+                    Main(vm, navController, activity, authenticator)
                     //RecipeElement()
                     //Total()
                     //PrincipalBarraDeNavegacio(navController)
@@ -140,7 +139,10 @@ fun Main(vm: MainViewModel, navController: NavHostController, activity: MainActi
             PantallaPrincipal(authenticator, vm.pantallaPrincipalViewModel, vm.recipesViewModel, navController)
         }
         composable(Destinations.RecipesScreen.ruta) {
-            RecipesScreen(vm.recipesViewModel.llistaRecipes, vm.recipesViewModel)
+            RecipesScreen(vm.recipesViewModel.llistaRecipes, vm.recipesViewModel, navController)
+        }
+        composable(Destinations.ShowRecipeInfo.ruta) {
+            ShowRecipeInfo(vm.recipesViewModel.getActualRecipe())
         }
     }
 
@@ -199,23 +201,47 @@ fun BarraDeNavegacio(navController: NavHostController) {
 }
 
 
-@Preview(showSystemUi = true)
 @Composable
-fun ShowRecipeInfo(){
+fun ShowRecipeInfo(actualRecipe: Recipe) {
+
 
     val tags = listOf("Gluten free", "Vegan")
     Column(
         Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())) {
-        AsyncImage(
-            model = "https://i.pinimg.com/474x/88/c6/43/88c643c969e350f687f724e9742733c9.jpg",
-            contentDescription = "recipeImage",
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
-        )
+
+        if(!actualRecipe.images.lARGE.url.isNullOrEmpty()){
+            AsyncImage(
+                model = actualRecipe.images.lARGE.url,
+                contentDescription = "recipeImage",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+            )
+        }
+        else if(!actualRecipe.images.rEGULAR.url.isNullOrEmpty()){
+            AsyncImage(
+                model = actualRecipe.images.rEGULAR.url,
+                contentDescription = "recipeImage",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+            )
+        }
+        else{
+            AsyncImage(
+                model = actualRecipe.images.sMALL.url,
+                contentDescription = "recipeImage",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+            )
+        }
+
 
         Row(
             Modifier
@@ -231,7 +257,7 @@ fun ShowRecipeInfo(){
             Modifier
                 .fillMaxWidth()
                 .padding(15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-            Text("Oat chia pudding with walnuts and pistachio",
+            Text(actualRecipe.label,
                 style = MaterialTheme.typography.titleMedium,
                 fontFamily = Poppins,
                 modifier = Modifier.weight(3F))
@@ -245,8 +271,10 @@ fun ShowRecipeInfo(){
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(start = 15.dp)) {
-            for (i in 0 .. tags.size-1){
+                .padding(start = 15.dp)
+                .horizontalScroll(rememberScrollState())) {
+
+            for (i in 0 until actualRecipe.healthLabels.size){
                 Box(
                     Modifier
                         .padding(end = 10.dp)
@@ -259,9 +287,11 @@ fun ShowRecipeInfo(){
                         ),
                     contentAlignment = Alignment.Center)
                 {
-                    Text(tags[i], textAlign = TextAlign.Center,
+                    Text(actualRecipe.healthLabels[i], textAlign = TextAlign.Center,
                         fontFamily = Poppins,
-                        modifier = Modifier.padding(top=5.dp, bottom=5.dp, start=10.dp, end=10.dp),
+                        modifier = Modifier
+                            .padding(top = 5.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
+                            ,
                         fontSize = 12.sp)
                 }
             }
@@ -276,6 +306,8 @@ fun ShowRecipeInfo(){
             Text("usernamo",textAlign = TextAlign.Center,
                 fontFamily = Poppins,fontSize = 16.sp, fontWeight = FontWeight.ExtraLight)
         }
+
+        TabScreenMals()
 
     }
 }

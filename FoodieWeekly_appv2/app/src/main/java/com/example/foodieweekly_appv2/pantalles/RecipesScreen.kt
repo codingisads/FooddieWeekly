@@ -29,18 +29,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.model.recipesApi.Hit
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
+import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.TabScreenRecipes
 import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
+import com.example.foodieweekly_appv2.vm
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipesScreen(llistaRecipes : MutableState<MutableList<Hit>>, vm: RecipesViewModel) {
+fun RecipesScreen(
+    llistaRecipes: MutableState<MutableList<Hit>>,
+    vm: RecipesViewModel,
+    navController: NavHostController
+) {
 
     Log.d("recipesList", llistaRecipes.value.size.toString())
 
@@ -108,14 +115,18 @@ fun RecipesScreen(llistaRecipes : MutableState<MutableList<Hit>>, vm: RecipesVie
         }
 
 
-        TabScreenRecipes(listOf("All", "Saved", "Mine"), llistaRecipes, vm)
+        TabScreenRecipes(listOf("All", "Saved", "Mine"), llistaRecipes, vm, navController)
     }
 
 
 }
 
 @Composable
-fun ShowRecipes(llistaRecipes : MutableState<MutableList<Hit>>, vm: RecipesViewModel) {
+fun ShowRecipes(
+    llistaRecipes: MutableState<MutableList<Hit>>,
+    vm: RecipesViewModel,
+    navController: NavHostController
+) {
 
     val listState = rememberLazyGridState()
     LazyVerticalGrid(
@@ -130,7 +141,7 @@ fun ShowRecipes(llistaRecipes : MutableState<MutableList<Hit>>, vm: RecipesViewM
         Log.d("recipesList into", llistaRecipes.value.size.toString())
         items(llistaRecipes.value)
         {element ->
-            RecipeElement(element.recipe)
+            RecipeElement(element.recipe, navController)
 
         }
 
@@ -143,7 +154,7 @@ fun ShowRecipes(llistaRecipes : MutableState<MutableList<Hit>>, vm: RecipesViewM
 
 
 @Composable
-fun RecipeElement(recipe : Recipe) {
+fun RecipeElement(recipe: Recipe, navController: NavHostController) {
     Column(
         modifier = Modifier
             .padding(8.dp)
@@ -152,7 +163,8 @@ fun RecipeElement(recipe : Recipe) {
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-
+                vm.recipesViewModel.setActualRecipe(recipe)
+                navController.navigate(Destinations.ShowRecipeInfo.ruta)
             },
         horizontalAlignment = Alignment.Start
     ) {

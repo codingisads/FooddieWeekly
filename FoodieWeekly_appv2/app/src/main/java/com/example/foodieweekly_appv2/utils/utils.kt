@@ -3,7 +3,6 @@ package com.example.foodieweekly_appv2.utils
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import com.example.foodieweekly_appv2.R
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -21,11 +20,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
 import com.example.foodieweekly_appv2.model.recipesApi.Hit
+import com.example.foodieweekly_appv2.model.recipesApi.Ingredient
 import com.example.foodieweekly_appv2.pantalles.ShowRecipes
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
@@ -184,7 +187,8 @@ fun ShowAlert(showDialog: MutableState<Boolean>, title: String, text: String, ic
 fun TabScreenRecipes(
     tabs: List<String>,
     llistaRecipes: MutableState<MutableList<Hit>>,
-    vm: RecipesViewModel
+    vm: RecipesViewModel,
+    navController: NavHostController
 ) {
     var tabIndex = remember { mutableStateOf(0) }
 
@@ -220,7 +224,7 @@ fun TabScreenRecipes(
     if(showAll.value){
 
         Column() {
-            ShowRecipes(llistaRecipes, vm)
+            ShowRecipes(llistaRecipes, vm, navController)
         }
 
     }
@@ -260,6 +264,121 @@ fun TabScreen(day: MutableList<MutableList<String>>) {
 
     }
 }
+
+@Composable
+fun TabScreenMals() {
+    var tabIndex = remember { mutableStateOf(0) }
+
+    val showIngredients = remember { mutableStateOf(false)}
+    val showNutrition = remember { mutableStateOf(false)}
+    val showSteps = remember { mutableStateOf(false)}
+    val tabs = listOf("Ingredients", "Steps", "Nutrition")
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 30.dp)) {
+        TabRow(selectedTabIndex = tabIndex.value) {
+            tabs.forEachIndexed { index, title ->
+                Tab(text = { if(tabIndex.value == index) Text(title, fontFamily = Poppins) else Text(title, fontFamily = Poppins, color = Color.Gray) },
+                    selected = tabIndex.value == index,
+                    onClick = { tabIndex.value = index })
+            }
+        }
+        when (tabIndex.value) {
+            0 -> {
+                showIngredients.value = true
+                showNutrition.value = false
+                showSteps.value =false
+            }
+            1 -> {
+                showIngredients.value = false
+                showNutrition.value = false
+                showSteps.value = true
+            }
+
+            2 -> {
+                showIngredients.value = false
+                showNutrition.value = true
+                showSteps.value = false
+            }
+        }
+    }
+
+    if(showIngredients.value){
+
+        var lst = listOf<Ingredient>(
+            Ingredient("culo", "frito",
+            "1", "seh", "gr", 12.0, "se", 15.0),
+            Ingredient("culo", "frito",
+                "1", "seh", "gr", 12.0, "se", 15.0),
+            Ingredient("culo", "frito",
+                "1", "seh", "gr", 12.0, "se", 15.0),
+            Ingredient("culo", "frito",
+                "1", "seh", "gr", 12.0, "se", 15.0),
+            Ingredient("culo", "frito",
+                "1", "seh", "gr", 12.0, "se", 15.0),
+
+
+            )
+        Column() {
+            ShowRecipeIngredients(lst)
+        }
+
+    }
+    if(showNutrition.value){
+
+        Column() {
+
+        }
+
+    }
+    if(showSteps.value){
+
+        Column() {
+
+        }
+
+    }
+}
+
+@Composable
+fun ShowRecipeIngredients(ingredients : List<Ingredient>){
+    Column(Modifier.background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)))
+    {
+        Text("You will need", Modifier
+            .padding(start = 40.dp, top=20.dp),
+            fontFamily = Poppins,fontSize = 18.sp, fontWeight = FontWeight.Bold
+        )
+
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+            Box(Modifier
+                .fillMaxWidth()
+                .padding(40.dp).clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.surface)
+                ){
+
+                Column(Modifier
+                    .fillMaxWidth()) {
+
+                    Text("Per 4 servings", Modifier.fillMaxWidth()
+                        .padding(10.dp), fontSize = 10.sp,
+                        fontFamily = Poppins, fontWeight = FontWeight.ExtraLight, textAlign = TextAlign.End
+                    )
+
+                    for (i in 0 until ingredients.size){
+                        Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp,
+                            bottom = 20.dp)) {
+                            Text(ingredients[i].text)
+                            Text(ingredients[i].food,Modifier.fillMaxWidth(), textAlign = TextAlign.End)
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+}
+
 
 
 @Composable
@@ -524,7 +643,8 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
             contentDescription = "",
             alignment = Alignment.Center,
             modifier = Modifier
-                .fillMaxWidth().clickable {
+                .fillMaxWidth()
+                .clickable {
                     displayAll.value = !displayAll.value
                 }
         )
