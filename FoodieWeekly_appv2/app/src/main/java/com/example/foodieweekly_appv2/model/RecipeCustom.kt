@@ -6,7 +6,7 @@ class RecipeCustom {
     public var label : String = ""
 
     public var uri : String = ""
-    public var saves : Int = 0
+    public var saves : Int = 1
     public var time : Int = 0
     public var totalKcals : Int = 0
     public var kcalsPerServing : Int = 0
@@ -47,7 +47,13 @@ class RecipeCustom {
 
         for (i in 0 until recipe.ingredients.size){
             ingredientsNameList.add(recipe.ingredients[i].food)
-            ingredientsMeasureList.add(recipe.ingredients[i].measure)
+            if(recipe.ingredients[i].measure == null){
+                ingredientsMeasureList.add("as pleased")
+            }
+            else{
+                ingredientsMeasureList.add(recipe.ingredients[i].measure)
+            }
+
             ingredientsQuantityList.add(recipe.ingredients[i].quantity.toInt())
         }
 

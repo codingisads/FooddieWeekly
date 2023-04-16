@@ -363,192 +363,244 @@ fun ShowRecipeInfo(actualRecipe: Recipe) {
         Color(0xFFD1724D), Color(0xFF4A99A0), Color(0xFF4959AA)
     )
 
-    val savedRecipe = remember { mutableStateOf(vm.recipesViewModel.userSavedRecipes.contains(actualRecipe.uri))}
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())) {
-
-        Log.d("ShowRecipeInfo", "checking images")
-        if(actualRecipe.images.lARGE != null){
-
-            Log.d("ShowRecipeInfo", "big images")
-            AsyncImage(
-                model = actualRecipe.images.lARGE.url,
-                contentDescription = "recipeImage",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
-            )
-        }
-        else if(actualRecipe.images.rEGULAR != null){
-
-            Log.d("ShowRecipeInfo", "medium images")
-            AsyncImage(
-                model = actualRecipe.images.rEGULAR.url,
-                contentDescription = "recipeImage",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
-            )
-        }
-        else{
-
-            Log.d("ShowRecipeInfo", "smol images")
-            AsyncImage(
-                model = actualRecipe.images.sMALL.url,
-                contentDescription = "recipeImage",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
-            )
-        }
-
-
-
-        Log.d("ShowRecipeInfo", "writing info")
-
-        Row(
+        val savedRecipe = remember { mutableStateOf(vm.recipesViewModel.userSavedRecipes.contains(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", "")))}
+        vm.recipesViewModel.getRecipesSaves(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+        Column(
             Modifier
                 .fillMaxWidth()
-                .padding(15.dp), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically){
+                .verticalScroll(rememberScrollState())) {
 
-            Image(painter = painterResource(R.drawable.saves), contentDescription = "saves")
-            Text("32 saves", fontFamily = Poppins, fontSize = 12.sp)
+            Log.d("ShowRecipeInfo", "checking images")
+            if(actualRecipe.images.lARGE != null){
 
-            Image(painter = painterResource(R.drawable.clock), contentDescription = "time")
-            Text(actualRecipe.totalTime.toInt().toString()+" minutes", fontFamily = Poppins, fontSize = 12.sp)
-
-
-            Image(painter = painterResource(R.drawable.cals), contentDescription = "cals")
-            Text((actualRecipe.calories.toInt()/actualRecipe.yield.toInt()).toString()+"kcals", fontFamily = Poppins, fontSize = 12.sp)
-        }
-
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-            Text(actualRecipe.label,
-                style = MaterialTheme.typography.titleMedium,
-                fontFamily = Poppins,
-                modifier = Modifier.weight(3F))
-
-
-            if(savedRecipe.value){
-
-                Image(painter = painterResource(R.drawable.bookmark), contentDescription = "cals",
+                Log.d("ShowRecipeInfo", "big images")
+                AsyncImage(
+                    model = actualRecipe.images.lARGE.url,
+                    contentDescription = "recipeImage",
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
-                        .clickable {
-                            savedRecipe.value = !savedRecipe.value
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+                )
+            }
+            else if(actualRecipe.images.rEGULAR != null){
 
-                            //quitar de savedRecipes
-
-                            Log.d("savedRecipes", "quitado savedRecipes")
-
-                            vm.recipesViewModel.userSavedRecipes.remove(actualRecipe.uri)
-
-                            FirebaseDatabase.getInstance().reference.root.child("Users")
-                                .child(vm.authenticator.currentUID.value.toString())
-                                .child("savedRecipes")
-                                .setValue(vm.recipesViewModel.userSavedRecipes)
-
-
-                        }
-                        .fillMaxHeight()
-                        .weight(1F))
-
+                Log.d("ShowRecipeInfo", "medium images")
+                AsyncImage(
+                    model = actualRecipe.images.rEGULAR.url,
+                    contentDescription = "recipeImage",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+                )
             }
             else{
-                Image(painter = painterResource(R.drawable.bookmark_border), contentDescription = "cals",
+
+                Log.d("ShowRecipeInfo", "smol images")
+                AsyncImage(
+                    model = actualRecipe.images.sMALL.url,
+                    contentDescription = "recipeImage",
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
-                        .clickable {
-                            savedRecipe.value = !savedRecipe.value
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+                )
+            }
 
-                            //Meterle a savedRecipes
-                            Log.d("savedRecipes", "meterle savedRecipes")
 
-                            vm.recipesViewModel.userSavedRecipes.add(actualRecipe.uri)
 
-                            val firebase = FirebaseDatabase.getInstance().reference.root
+            Log.d("ShowRecipeInfo", "writing info")
 
-                            firebase.child("Users")
-                                .child(vm.authenticator.currentUID.value.toString())
-                                .child("savedRecipes")
-                                .setValue(vm.recipesViewModel.userSavedRecipes)
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically){
 
-                            val newRecipe = RecipeCustom()
-                            newRecipe.parseRecipe(actualRecipe)
+                Image(painter = painterResource(R.drawable.saves), contentDescription = "saves")
+                Text(vm.recipesViewModel.selectedRecipeSaves.value.toString()+" saves", fontFamily = Poppins, fontSize = 12.sp)
 
-                            Log.d("savedRecipes", "recipe Parsed")
+                Image(painter = painterResource(R.drawable.clock), contentDescription = "time")
+                Text(actualRecipe.totalTime.toInt().toString()+" minutes", fontFamily = Poppins, fontSize = 12.sp)
 
-                            firebase
-                                .child("EdamamRecipes")
-                                .child(actualRecipe.uri).get().addOnCompleteListener {
-                                    if(!it.result.exists()){
+
+                Image(painter = painterResource(R.drawable.cals), contentDescription = "cals")
+                Text((actualRecipe.calories.toInt()/actualRecipe.yield.toInt()).toString()+"kcals", fontFamily = Poppins, fontSize = 12.sp)
+            }
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+                Text(actualRecipe.label,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontFamily = Poppins,
+                    modifier = Modifier.weight(3F))
+
+
+                if(savedRecipe.value){
+
+                    Image(painter = painterResource(R.drawable.bookmark), contentDescription = "cals",
+                        modifier = Modifier
+                            .clickable {
+
+                                try{
+                                    savedRecipe.value = !savedRecipe.value
+
+                                    var firebase = FirebaseDatabase.getInstance().reference.root
+
+                                    //quitar de savedRecipes
+
+                                    Log.d("savedRecipes", "quitado savedRecipes")
+
+                                    vm.recipesViewModel.userSavedRecipes.remove(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+
+                                    firebase
+                                        .child("Users")
+                                        .child(vm.authenticator.currentUID.value.toString())
+                                        .child("savedRecipes")
+                                        .setValue(vm.recipesViewModel.userSavedRecipes)
+
+
+                                    if(!vm.recipesViewModel.userSavedRecipes.contains(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))){
                                         firebase
                                             .child("EdamamRecipes")
-                                            .child(actualRecipe.uri).setValue(newRecipe)
+                                            .child(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                                            .child("saves").get().addOnCompleteListener {
+                                                val saved = it.result.value.toString().toInt() - 1
+                                                Log.d("savedRecipes", "into edamam")
+                                                if(saved <= 0){
+                                                    firebase
+                                                        .child("EdamamRecipes")
+                                                        .child(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                                                        .removeValue()
+                                                    Log.d("savedRecipes", "quitado recipe de firebase")
+                                                }
+                                                else
+                                                {
+                                                    firebase
+                                                        .child("EdamamRecipes")
+                                                        .child(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                                                        .child("saves").setValue(saved)
+
+
+                                                }
+
+                                                Log.d("savedRecipes", "final quitado")
+
+
+                                            }
                                     }
+
+
+                                }
+                                catch(e : Exception){
+                                    Log.d("savedRecipes", e.message.toString())
                                 }
 
 
-                        }
-                        .fillMaxHeight()
-                        .weight(1F))
-            }
 
+                            }
+                            .fillMaxHeight()
+                            .weight(1F))
 
-
-        }
-
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 15.dp)
-                .horizontalScroll(rememberScrollState())) {
-
-            for (i in 0 until actualRecipe.healthLabels.size){
-                Box(
-                    Modifier
-                        .padding(end = 10.dp)
-                        .clip(RoundedCornerShape(35.dp))
-                        .background(
-                            if (isSystemInDarkTheme())
-                                colorsDark[i % 5]
-                            else
-                                colorsLight[i % 5]
-                        ),
-                    contentAlignment = Alignment.Center)
-                {
-                    Text(actualRecipe.healthLabels[i], textAlign = TextAlign.Center,
-                        fontFamily = Poppins,
-                        modifier = Modifier
-                            .padding(top = 5.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
-                        ,
-                        fontSize = 12.sp)
                 }
+                else{
+                    Image(painter = painterResource(R.drawable.bookmark_border), contentDescription = "cals",
+                        modifier = Modifier
+                            .clickable {
+
+                                try{
+                                    savedRecipe.value = !savedRecipe.value
+
+                                    //Meterle a savedRecipes
+                                    Log.d("savedRecipes", "meterle savedRecipes")
+
+                                    vm.recipesViewModel.userSavedRecipes.add(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+
+                                    val firebase = FirebaseDatabase.getInstance().reference.root
+
+                                    firebase.child("Users")
+                                        .child(vm.authenticator.currentUID.value.toString())
+                                        .child("savedRecipes")
+                                        .setValue(vm.recipesViewModel.userSavedRecipes)
+
+                                    val newRecipe = RecipeCustom()
+                                    newRecipe.parseRecipe(actualRecipe)
+
+                                    Log.d("savedRecipes", "recipe Parsed")
+
+                                    firebase
+                                        .child("EdamamRecipes")
+                                        .child(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", "")).get().addOnCompleteListener {
+                                            if(!it.result.exists()){
+                                                firebase
+                                                    .child("EdamamRecipes")
+                                                    .child(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", "")).setValue(newRecipe)
+                                            }
+                                        }
+                                }
+                                catch(e : Exception){
+                                    Log.d("savedRecipes error", e.message.toString())
+                                }
+
+
+
+                            }
+                            .fillMaxHeight()
+                            .weight(1F))
+                }
+
+
+
             }
 
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.dp)
+                    .horizontalScroll(rememberScrollState())) {
+
+                for (i in 0 until actualRecipe.healthLabels.size){
+                    Box(
+                        Modifier
+                            .padding(end = 10.dp)
+                            .clip(RoundedCornerShape(35.dp))
+                            .background(
+                                if (isSystemInDarkTheme())
+                                    colorsDark[i % 5]
+                                else
+                                    colorsLight[i % 5]
+                            ),
+                        contentAlignment = Alignment.Center)
+                    {
+                        Text(actualRecipe.healthLabels[i], textAlign = TextAlign.Center,
+                            fontFamily = Poppins,
+                            modifier = Modifier
+                                .padding(top = 5.dp, bottom = 5.dp, start = 10.dp, end = 10.dp)
+                            ,
+                            fontSize = 12.sp)
+                    }
+                }
+
+
+            }
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)) {
+                Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "User",
+                    modifier = Modifier.padding(end=10.dp))
+                Text("Edamam",textAlign = TextAlign.Center,
+                    fontFamily = Poppins,fontSize = 16.sp, fontWeight = FontWeight.ExtraLight)
+            }
+
+            TabScreenMeals(actualRecipe)
 
         }
 
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(15.dp)) {
-            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "User",
-                modifier = Modifier.padding(end=10.dp))
-            Text("Edamam",textAlign = TextAlign.Center,
-                fontFamily = Poppins,fontSize = 16.sp, fontWeight = FontWeight.ExtraLight)
-        }
 
-        TabScreenMeals(actualRecipe)
-
-    }
 }
 
 @Composable
@@ -608,7 +660,28 @@ fun TabScreenRecipes(
 @Composable
 fun ShowSavedRecipes(recipesList : ArrayList<Any>){
     if(recipesList.size > 0){
+        val listState = rememberLazyGridState()
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            state = listState,
+            contentPadding = PaddingValues(4.dp),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))
+        )
+        {
+            /*Log.d("recipesList into", llistaRecipes.value.size.toString())
+            items(llistaRecipes.value)
+            {element ->
+                RecipeElement(element.recipe, navController)
 
+            }
+
+            if(listState.firstVisibleItemIndex == llistaRecipes.value.size - 8){
+                Log.d("recipesList", "getMore")
+                vm.getNextPage()
+            }*/
+        }
     }
     else{
 

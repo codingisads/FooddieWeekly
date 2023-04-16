@@ -31,6 +31,8 @@ class RecipesViewModel : ViewModel() {
 
     lateinit var selectedRecipe : Recipe
 
+    var selectedRecipeSaves = mutableStateOf(0)
+
     private var _addMode = mutableStateOf(false)
     public val addMode = _addMode
 
@@ -166,5 +168,21 @@ class RecipesViewModel : ViewModel() {
 
     fun getRecipesSaves(uri : String) {
 
+        var firebase = FirebaseDatabase.getInstance().reference.root
+
+        firebase.child("EdamamRecipes").child(uri).get()
+            .addOnCompleteListener {
+                if(it.result.exists()){
+                     firebase.child("EdamamRecipes").child(uri).child("saves").get().addOnCompleteListener {
+                         if(it.result.value != null && it.result.value != ""){
+                             selectedRecipeSaves.value = it.result.value.toString().toInt()
+                         }
+
+                     }
+                }
+                else{
+                    selectedRecipeSaves.value = 0
+                }
+            }
     }
 }
