@@ -1,19 +1,13 @@
 package com.example.foodieweekly_appv2.pantalles
 import android.app.Activity
-import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import com.example.foodieweekly_appv2.R
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,29 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.example.foodieweekly_appv2.alreadyInDb
-import com.example.foodieweekly_appv2.firebase.Authenticator
-import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
+import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.navigation.Destinations
-import com.example.foodieweekly_appv2.pantalles.ui.theme.FoodieWeekly_appv2Theme
-import com.example.foodieweekly_appv2.showSignupConfig
 import com.example.foodieweekly_appv2.ui.theme.Poppins
-import com.example.foodieweekly_appv2.utils.OutlinedTextFieldCustom
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldCustomPassword
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldEmail
 import com.example.foodieweekly_appv2.utils.ShowAlert
-import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
 import com.example.foodieweekly_appv2.vm
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +73,7 @@ fun Login(activity : Activity) {
                     Button(
                         onClick = {
 
-                            authenticator.login(vm.email.value, vm.password.value, navController, vm)
+                            authenticator.login(vm.email.value, vm.password.value)
 
                         },
                         enabled = vm.email.value.isNotEmpty() && vm.validEmail.value && vm.validPassword.value,

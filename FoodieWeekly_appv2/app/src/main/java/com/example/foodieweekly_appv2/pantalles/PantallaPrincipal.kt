@@ -1,12 +1,9 @@
 package com.example.foodieweekly_appv2.pantalles
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.rounded.Share
@@ -21,13 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.TabScreen
-import com.example.foodieweekly_appv2.viewmodel.PantallaPrincipalViewModel
-import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
 
 
 @Composable
@@ -44,8 +37,7 @@ fun PantallaPrincipal(){
         }
     }}
 
-
-    vm.settingUp(authenticator, daysAndMeals, vmRecipes)
+    vm.settingUp(daysAndMeals)
 
     if(vm.completed.value)
     {
@@ -60,9 +52,12 @@ fun PantallaPrincipal(){
             Box(Modifier.padding(10.dp)){
                 Column(){
                     Button(onClick = {
-                        Log.d("getRecipes recipesList", vmRecipes.llistaRecipes.value.size.toString())
 
-                        navController.navigate(Destinations.RecipesScreen.ruta)
+                            vmRecipes.getUserSavedRecipes()
+                            vmRecipes.addMode.value = false;
+                            Log.d("getRecipes recipesList", vmRecipes.llistaRecipes.value.size.toString())
+                            navController.navigate(Destinations.RecipesScreen.ruta)
+
                     }) {
                         Text("Recipes")
                     }
@@ -72,8 +67,7 @@ fun PantallaPrincipal(){
                             Icons.Outlined.AccountCircle,
                             modifier = Modifier
                                 .size(40.dp),
-                            contentDescription = "drawable icons",
-                            tint = Color.Unspecified
+                            contentDescription = "drawable icons"
                         )
                     }
 
@@ -99,8 +93,7 @@ fun PantallaPrincipal(){
                                         Icons.Rounded.Share,
                                         modifier = Modifier
                                             .size(30.dp),
-                                        contentDescription = "drawable icons",
-                                        tint = Color.Unspecified
+                                        contentDescription = "drawable icons"
                                     )
                                 }
 
@@ -122,7 +115,9 @@ fun PantallaPrincipal(){
                                             .background(/*if(isSystemInDarkTheme()) Color(0xFF464646)
                                     else Color(0xFFEAEAEA)*/ if (vm.selectedIndex.value == i)
                                                 MaterialTheme.colorScheme.primary
-                                            else Color(0xFFEAEAEA)
+                                            else  {
+                                                if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)
+                                            }
                                             )
                                             .clickable {
 

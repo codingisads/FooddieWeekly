@@ -1,17 +1,14 @@
 package com.example.foodieweekly_appv2.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
+import com.example.foodieweekly_appv2.navigation.Destinations
+import com.example.foodieweekly_appv2.vm
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -106,44 +103,55 @@ class PantallaPrincipalViewModel : ViewModel() {
 
 
     fun settingUp(
-        authenticator: Authenticator,
-        daysAndMeals: MutableList<MutableList<MutableList<String>>>,
-        vmRecipes : RecipesViewModel
+        daysAndMeals: MutableList<MutableList<MutableList<String>>>
     ) {
 
-        runBlocking {
-            authenticator.getUserUsername(username)
+        val authenticator = vm.authenticator
+        val vmRecipes = vm.recipesViewModel
 
-            val db = RealtimeDatabase()
+        try{
+            runBlocking {
+                authenticator.getUserUsername(username)
 
-            db.getCalendarId(authenticator.currentUID.value, calId)
+                val db = RealtimeDatabase()
 
-            if(calId.value != ""){
-                currentDate = LocalDate.now().format(formatter)
-                db.getCalendarWeekId(authenticator.currentUID.value, calId, weekId)
+                db.getCalendarId(authenticator.currentUID.value, calId)
+
+                if(calId.value != ""){
+                    currentDate = LocalDate.now().format(formatter)
+                    db.getCalendarWeekId(authenticator.currentUID.value, calId, weekId)
 
 
-                if(weekId.value != ""){
+                    if(weekId.value != ""){
 
-                    Log.d("PantallaPrincipal", "iniciando")
-                    db.changeDay(authenticator.currentUID.value, calId.value)
-                    Log.d("PantallaPrincipal", "getWeekDateInDate")
-                    db.getWeekDateInDate(calId.value, dies, diesNum)
+                        Log.d("PantallaPrincipal", "iniciando")
+                        db.changeDay(authenticator.currentUID.value, calId.value)
+                        Log.d("PantallaPrincipal", "getWeekDateInDate")
+                        db.getWeekDateInDate(calId.value, dies, diesNum)
 
-                    getMealsFromDay(completed, daysAndMeals, weekId.value)
+                        getMealsFromDay(completed, daysAndMeals, weekId.value)
 
-                    if(!gettingAPIValues.value){
-                        Log.d("PantallaPrincipal", "gettingRecipes")
-                        vmRecipes.get()
-                        gettingAPIValues.value = true
+                        if(!gettingAPIValues.value){
+                            Log.d("PantallaPrincipal", "gettingRecipes")
+                            vmRecipes.get()
+                            gettingAPIValues.value = true
+                        }
+
                     }
-
                 }
+
+
             }
-
-
+        }
+        catch(e : Exception){
+            Log.d("settingUp", e.message.toString())
         }
 
 
+    }
+
+    fun openRecipesInAddMode(vmRecipes: RecipesViewModel) {
+        vmRecipes.addMode.value = true;
+        vm.navController.navigate(Destinations.RecipesScreen.ruta)
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,17 +23,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
-import com.example.foodieweekly_appv2.model.recipesApi.Hit
 import com.example.foodieweekly_appv2.model.recipesApi.Ingredient
-import com.example.foodieweekly_appv2.model.recipesApi.Recipe
-import com.example.foodieweekly_appv2.pantalles.ShowRecipes
+import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
-import com.example.foodieweekly_appv2.viewmodel.RecipesViewModel
+import com.example.foodieweekly_appv2.vm
 import kotlin.math.roundToInt
 
 
@@ -185,52 +183,7 @@ fun ShowAlert(showDialog: MutableState<Boolean>, title: String, text: String, ic
     //}
 }
 
-@Composable
-fun TabScreenRecipes(
-    tabs: List<String>,
-    llistaRecipes: MutableState<MutableList<Hit>>,
-    vm: RecipesViewModel,
-    navController: NavHostController
-) {
-    var tabIndex = remember { mutableStateOf(0) }
 
-    val showAll= remember { mutableStateOf(false)}
-    val showSaved = remember { mutableStateOf(false)}
-    val showMine = remember { mutableStateOf(false)}
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 30.dp)) {
-        TabRow(selectedTabIndex = tabIndex.value) {
-            tabs.forEachIndexed { index, title ->
-                Tab(text = { if(tabIndex.value == index) Text(title, fontFamily = Poppins) else Text(title, fontFamily = Poppins, color = Color.Gray) },
-                    selected = tabIndex.value == index,
-                    onClick = { tabIndex.value = index })
-            }
-        }
-        when (tabIndex.value) {
-            0 -> {showAll.value = true
-                showSaved.value = false
-                showMine.value = false}
-
-            1 -> {showAll.value = false
-                showSaved.value = true
-                showMine.value = false}
-
-            2 -> {showAll.value = false
-                showSaved.value = false
-                showMine.value = true}
-        }
-    }
-
-    if(showAll.value){
-
-        Column() {
-            ShowRecipes(llistaRecipes, vm, navController)
-        }
-
-    }
-}
 
 @Composable
 fun TabScreen(day: MutableList<MutableList<String>>) {
@@ -267,68 +220,6 @@ fun TabScreen(day: MutableList<MutableList<String>>) {
     }
 }
 
-@Composable
-fun TabScreenMals(recipe : Recipe) {
-    var tabIndex = remember { mutableStateOf(0) }
-
-    val showIngredients = remember { mutableStateOf(false)}
-    val showNutrition = remember { mutableStateOf(false)}
-    val showSteps = remember { mutableStateOf(false)}
-    val tabs = listOf("Ingredients", "Steps", "Nutrition")
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 30.dp)) {
-        TabRow(selectedTabIndex = tabIndex.value) {
-            tabs.forEachIndexed { index, title ->
-                Tab(text = { if(tabIndex.value == index) Text(title, fontFamily = Poppins) else Text(title, fontFamily = Poppins, color = Color.Gray) },
-                    selected = tabIndex.value == index,
-                    onClick = { tabIndex.value = index })
-            }
-        }
-        when (tabIndex.value) {
-            0 -> {
-                showIngredients.value = true
-                showNutrition.value = false
-                showSteps.value =false
-            }
-            1 -> {
-                showIngredients.value = false
-                showNutrition.value = false
-                showSteps.value = true
-            }
-
-            2 -> {
-                showIngredients.value = false
-                showNutrition.value = true
-                showSteps.value = false
-            }
-        }
-    }
-
-    if(showIngredients.value){
-
-
-        Column() {
-            ShowRecipeIngredients(recipe.ingredients, recipe.yield.toInt())
-        }
-
-    }
-    if(showNutrition.value){
-
-        Column() {
-
-        }
-
-    }
-    if(showSteps.value){
-
-        Column() {
-
-        }
-
-    }
-}
 
 @Composable
 fun ShowRecipeIngredients(ingredients : List<Ingredient>, servings : Int){
@@ -342,20 +233,26 @@ fun ShowRecipeIngredients(ingredients : List<Ingredient>, servings : Int){
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
             Box(Modifier
                 .fillMaxWidth()
-                .padding(30.dp).clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.surface)
+                .padding(30.dp)
+                .clip(RoundedCornerShape(25.dp))
+                .background(MaterialTheme.colorScheme.surface)
                 ){
 
                 Column(Modifier
                     .fillMaxWidth()) {
 
-                    Text("Per " + servings +  " servings", Modifier.fillMaxWidth()
-                        .padding(10.dp), fontSize = 10.sp,
+                    Text("Per " + servings +  " servings",
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp), fontSize = 10.sp,
                         fontFamily = Poppins, fontWeight = FontWeight.ExtraLight, textAlign = TextAlign.End
                     )
 
                     for (i in 0 until ingredients.size){
-                        Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp,
-                            bottom = 20.dp)) {
+                        Row(Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp,
+                                bottom = 20.dp)) {
                             Text(ingredients[i].food, Modifier.weight(2F), fontFamily = Poppins, fontWeight = FontWeight.Bold)
                             if(ingredients[i].quantity.roundToInt() > 0){
                                 Text(ingredients[i].quantity.roundToInt().toString()+" "+ingredients[i].measure,Modifier.weight(1F),
@@ -441,6 +338,20 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                 fontFamily = Poppins, style = MaterialTheme.typography.labelSmall,
                 color = if (isSystemInDarkTheme()) Color(0xFFFBFCFE) else Color(0xFF191C1E)
             )
+
+            Box(Modifier.fillMaxWidth().fillMaxHeight(), contentAlignment = Alignment.CenterEnd){
+                Image(painter = painterResource(R.drawable.add), contentDescription = "add_recipe",
+                    modifier = Modifier
+                        .clickable {
+                            vm.recipesViewModel.addMode.value = true;
+                            vm.navController.navigate(Destinations.RecipesScreen.ruta)
+                        }
+
+                )
+            }
+
+
+
         }
 
 
@@ -496,14 +407,6 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                                     )
                                 }
 
-
-                                Image(
-                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                                    contentDescription = "",
-                                    Modifier
-                                        .fillMaxSize()
-                                        .weight(1F)
-                                )
                             }
 
                         }
@@ -561,13 +464,6 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                             }
 
 
-                            Image(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_forward_24),
-                                contentDescription = "",
-                                Modifier
-                                    .fillMaxSize()
-                                    .weight(1F)
-                            )
                         }
 
                     }
@@ -592,10 +488,7 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
 
                 Image(
                     imageVector = ImageVector.vectorResource(
-                        id = if(isSystemInDarkTheme())
-                            R.drawable.add_circle_outline_white_36dp
-                        else
-                            R.drawable.add_circle_outline_black_36dp),
+                        id = R.drawable.add_circle_outline),
                     contentDescription = "",
                     alignment = Alignment.Center,
                     modifier = Modifier
@@ -633,11 +526,7 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
 
 
         Image(
-            imageVector = ImageVector.vectorResource(
-                id = if(isSystemInDarkTheme())
-                    R.drawable.more_horiz_white_24dp
-                else
-                    R.drawable.more_horiz_black_24dp),
+            imageVector = ImageVector.vectorResource(id = R.drawable.more_horiz),
             contentDescription = "",
             alignment = Alignment.Center,
             modifier = Modifier

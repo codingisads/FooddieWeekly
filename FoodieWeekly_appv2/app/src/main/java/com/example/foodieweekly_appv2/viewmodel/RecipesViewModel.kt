@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodieweekly_appv2.model.recipesApi.*
+import com.example.foodieweekly_appv2.vm
 import com.example.foodieweekly_appv2.xarxa.RecipesClient
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,13 +21,19 @@ class RecipesViewModel : ViewModel() {
     private var _respostaRecipes = mutableStateOf(Recipes(0, 0, emptyList(), LinksX(Next("", "")), 0))
     val respostaRecipes = _respostaRecipes;
 
-    private var _llistaRecipes : MutableState<MutableList<Hit>> =  mutableStateOf(mutableListOf())
+    private var _llistaRecipes : MutableState<MutableList<Hit>> =mutableStateOf(mutableListOf())
     val llistaRecipes = _llistaRecipes
 
     private var _nextPageLink = mutableStateOf("")
     public val nextPageLink = _nextPageLink
 
+    public var userSavedRecipes = arrayListOf<Any>()
+
     lateinit var selectedRecipe : Recipe
+
+    private var _addMode = mutableStateOf(false)
+    public val addMode = _addMode
+
 
     fun get() {
         viewModelScope.launch(Dispatchers.IO){
@@ -127,5 +135,36 @@ class RecipesViewModel : ViewModel() {
 
     fun getActualRecipe() : Recipe {
         return selectedRecipe
+    }
+
+    fun getUserSavedRecipes() {
+        FirebaseDatabase.getInstance().reference.root.child("Users")
+            .child(vm.authenticator.currentUID.value.toString())
+            .child("savedRecipes").get().addOnCompleteListener {
+                var uid = vm.authenticator.currentUID
+                var shild = it.result
+                var key = it.result.key
+                var result = it.result.value
+
+                if(result != null && result != ""){
+                    userSavedRecipes = result as ArrayList<Any>
+                }
+
+            }
+
+    }
+
+    fun addToSavedRecipes(recipe : Recipe) {
+        userSavedRecipes.add(recipe.uri)
+
+
+
+        FirebaseDatabase.getInstance().reference.root.child("Users")
+            .child(vm.authenticator.currentUID.value.toString())
+            .child("savedRecipes").setValue(userSavedRecipes)
+    }
+
+    fun getRecipesSaves(uri : String) {
+
     }
 }

@@ -5,41 +5,26 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.firebase.Authenticator
-import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
-import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.navigation.ItemsBarraNavegacio
 import com.example.foodieweekly_appv2.pantalles.*
 import com.example.foodieweekly_appv2.ui.theme.FoodieWeekly_appv2Theme
-import com.example.foodieweekly_appv2.ui.theme.Poppins
-import com.example.foodieweekly_appv2.utils.TabScreenMals
 import com.example.foodieweekly_appv2.viewmodel.MainViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -75,6 +60,7 @@ class MainActivity : ComponentActivity() {
 
                     vm.navController = navController
                     vm.authenticator = authenticator
+
                     //ShowRecipeInfo()
                     Main(vm, activity)
                     //RecipeElement()

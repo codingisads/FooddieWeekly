@@ -5,19 +5,13 @@ import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.alreadyInDb
-import com.example.foodieweekly_appv2.model.Calendar
-import com.example.foodieweekly_appv2.model.Day
 import com.example.foodieweekly_appv2.model.User
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.showSignupConfig
-import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
 import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
 import com.example.foodieweekly_appv2.vm
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -29,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 
 class Authenticator {
 
@@ -91,13 +85,7 @@ class Authenticator {
 
                                 currentUID.value = getUserUID().toString()
 
-
-
                                 db.createCalendarOnDB(currentUID.value, "Main Calendar", navController, this)
-
-
-
-
 
                             }
                             else{
@@ -130,16 +118,9 @@ class Authenticator {
 
                 db.createCalendarOnDB(currentUID.value, "Main Calendar", navController, this)
 
-
-
                 loggedIn.value = true
                 vm.showDialog.value = false
             }
-
-
-
-
-
         }
         catch (er : FirebaseAuthUserCollisionException){
             registered.value = er.message.toString()
@@ -148,7 +129,12 @@ class Authenticator {
 
     }
 
-    public val login = fun(email: String, passw : String, navController : NavHostController, vm : LoginViewModel) : Unit {
+    public val login = fun(email: String, passw : String) : Unit {
+
+        val navController = vm.navController
+        val mainVm = vm
+        val vm = vm.loginViewModel
+
         try{
 
             runBlocking {
@@ -271,14 +257,6 @@ class Authenticator {
 
 
 
-    public val getFirstCalendar = fun() : Unit {
-        FirebaseDatabase.getInstance().reference.root.child("Users").child(currentUID.value)
-            .child("calendarIdList").get().addOnCompleteListener {
-                var calendar = it.result.value as Calendar
-
-
-            }
-    }
 
 
 
@@ -288,7 +266,6 @@ class Authenticator {
 
 
         if(uid != null){
-
             navController.navigate(Destinations.PantallaPrincipal.ruta)
 
         }
