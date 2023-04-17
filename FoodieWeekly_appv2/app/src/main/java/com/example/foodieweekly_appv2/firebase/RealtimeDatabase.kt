@@ -25,7 +25,7 @@ class RealtimeDatabase {
     public val usernameExists = _usernameExists
 
 
-    public val checkIfUsernameExists = fun(username : String){
+    public val checkIfUsernameExists = fun(username : String, checked : MutableState<Boolean>){
 
         var database = FirebaseDatabase.getInstance().reference
 
@@ -33,6 +33,7 @@ class RealtimeDatabase {
             .addOnSuccessListener {
 
                 usernameExists.value = it.exists()
+                checked.value = true
             }
     }
 

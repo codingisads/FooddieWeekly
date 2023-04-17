@@ -100,26 +100,32 @@ fun SignupConfig(){ //DONE!
                     Button(onClick =
                     {
                         val db = RealtimeDatabase()
+                        val checked = mutableStateOf(false)
 
                         if(!username.value.isNullOrEmpty()){
-                            db.checkIfUsernameExists(username.value)
+                            db.checkIfUsernameExists(username.value, checked)
 
-                            if(db.usernameExists.value){
-                                showDialog.value = true
-                                messageDialog.value = "Username already exists"
-                            }
-                            else if(firstName.value.isNullOrEmpty() && lastName.value.isNullOrEmpty()){
-                                showDialog.value = true
-                                messageDialog.value = "Names can't be empty"
-                            }
-                            else{
-                                vm.user.firstName = firstName.value;
-                                vm.user.lastName = lastName.value
-                                vm.user.username = username.value
+                            if(checked.value){
+                                if(db.usernameExists.value){
+                                    showDialog.value = true
+                                    messageDialog.value = "Username already exists"
+                                }
+                                else if(firstName.value.isNullOrEmpty() && lastName.value.isNullOrEmpty()){
+                                    showDialog.value = true
+                                    messageDialog.value = "Names can't be empty"
+                                }
+                                else{
+                                    vm.user.firstName = firstName.value;
+                                    vm.user.lastName = lastName.value
+                                    vm.user.username = username.value
 
 
-                                navController.navigate(Destinations.SignupUserBodyConfig.ruta)
+                                    navController.navigate(Destinations.SignupUserBodyConfig.ruta)
+                                }
+
+                                checked.value = false
                             }
+
                         }
                         else{
                             showDialog.value = true
