@@ -20,6 +20,10 @@ class RecipeCustom {
     var ingredientsQuantityList : MutableList<Int> = mutableListOf()
     var ingredientsMeasureList : MutableList<String> = mutableListOf()
 
+    var nutritionLabels : MutableList<String> = mutableListOf()
+    var nutritionQuantity : MutableList<Int> = mutableListOf()
+    var nutritionUnits : MutableList<String> = mutableListOf()
+
     init{
 
     }
@@ -55,6 +59,12 @@ class RecipeCustom {
             }
 
             ingredientsQuantityList.add(recipe.ingredients[i].quantity.toInt())
+        }
+
+        for (i in 0 until recipe.digest.size){
+            nutritionLabels.add(recipe.digest[i].label)
+            nutritionQuantity.add(recipe.digest[i].total.toInt())
+            nutritionUnits.add(recipe.digest[i].unit)
         }
 
     }

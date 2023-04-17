@@ -221,55 +221,6 @@ fun TabScreen(day: MutableList<MutableList<String>>) {
 }
 
 
-@Composable
-fun ShowRecipeIngredients(ingredients : List<Ingredient>, servings : Int){
-    Column(Modifier.background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)))
-    {
-        Text("You will need", Modifier
-            .padding(start = 40.dp, top=20.dp),
-            fontFamily = Poppins,fontSize = 18.sp, fontWeight = FontWeight.Bold
-        )
-
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
-            Box(Modifier
-                .fillMaxWidth()
-                .padding(30.dp)
-                .clip(RoundedCornerShape(25.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                ){
-
-                Column(Modifier
-                    .fillMaxWidth()) {
-
-                    Text("Per " + servings +  " servings",
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp), fontSize = 10.sp,
-                        fontFamily = Poppins, fontWeight = FontWeight.ExtraLight, textAlign = TextAlign.End
-                    )
-
-                    for (i in 0 until ingredients.size){
-                        Row(Modifier
-                            .fillMaxWidth()
-                            .padding(start = 20.dp, end = 20.dp,
-                                bottom = 20.dp)) {
-                            Text(ingredients[i].food, Modifier.weight(2F), fontFamily = Poppins, fontWeight = FontWeight.Bold)
-                            if(ingredients[i].quantity.roundToInt() > 0){
-                                Text(ingredients[i].quantity.roundToInt().toString()+" "+ingredients[i].measure,Modifier.weight(1F),
-                                    textAlign = TextAlign.End, fontFamily = Poppins, fontSize = 12.sp)
-                            }
-                            else{
-                                Text("as pleased",Modifier.weight(1F), textAlign = TextAlign.End, fontFamily = Poppins, fontSize = 12.sp)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
-    }
-}
 
 fun retallaText(text: String, mida: Int) = if (text.length <= mida) text else {
     val textAmbEllipsis = text.removeRange(startIndex = mida, endIndex = text.length)

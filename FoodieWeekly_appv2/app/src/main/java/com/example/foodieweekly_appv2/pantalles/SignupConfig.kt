@@ -37,6 +37,7 @@ import com.example.foodieweekly_appv2.utils.*
 import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
 import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
 import com.example.foodieweekly_appv2.vm
+import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 
@@ -57,6 +58,7 @@ fun SignupConfig(){ //DONE!
 
     val showDialog = remember { mutableStateOf(false)}
     val messageDialog = remember { mutableStateOf("")}
+
 
     Column(
         Modifier
@@ -100,31 +102,37 @@ fun SignupConfig(){ //DONE!
                     Button(onClick =
                     {
                         val db = RealtimeDatabase()
-                        val checked = mutableStateOf(false)
+
+                        var database = FirebaseDatabase.getInstance().reference
+
+
 
                         if(!username.value.isNullOrEmpty()){
-                            db.checkIfUsernameExists(username.value, checked)
 
-                            if(checked.value){
-                                if(db.usernameExists.value){
-                                    showDialog.value = true
-                                    messageDialog.value = "Username already exists"
+                            database.root.child("UsersUsernames").child(username.value).get()
+                                .addOnCompleteListener {
+
+                                    if(it.result.exists()){
+                                        Log.d("showingAlert", "I should be showing an alert 1")
+                                        showDialog.value = true
+                                        messageDialog.value = "Username already exists"
+                                    }
+                                    else if(firstName.value.isNullOrEmpty() || lastName.value.isNullOrEmpty()){
+                                        Log.d("showingAlert", "I should be showing an alert2")
+                                        showDialog.value = true
+                                        messageDialog.value = "Names can't be empty"
+                                    }
+                                    else{
+                                        vm.user.firstName = firstName.value;
+                                        vm.user.lastName = lastName.value
+                                        vm.user.username = username.value
+
+
+                                        navController.navigate(Destinations.SignupUserBodyConfig.ruta)
+                                    }
                                 }
-                                else if(firstName.value.isNullOrEmpty() && lastName.value.isNullOrEmpty()){
-                                    showDialog.value = true
-                                    messageDialog.value = "Names can't be empty"
-                                }
-                                else{
-                                    vm.user.firstName = firstName.value;
-                                    vm.user.lastName = lastName.value
-                                    vm.user.username = username.value
 
 
-                                    navController.navigate(Destinations.SignupUserBodyConfig.ruta)
-                                }
-
-                                checked.value = false
-                            }
 
                         }
                         else{
@@ -164,6 +172,7 @@ fun SignupConfig(){ //DONE!
 
                         if(showDialog.value){
 
+                            Log.d("showingAlert", "I should be showing an alert")
                             ShowAlert(showDialog = showDialog, "Atention", messageDialog.value, Icons.Filled.AccountCircle)
                         }
 
