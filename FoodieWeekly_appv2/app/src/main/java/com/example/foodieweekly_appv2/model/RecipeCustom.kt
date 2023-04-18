@@ -5,16 +5,17 @@ import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 class RecipeCustom {
     public var label : String = ""
 
-    public var uri : String = ""
-    public var saves : Int = 1
-    public var time : Int = 0
-    public var totalKcals : Int = 0
-    public var kcalsPerServing : Int = 0
-    public var imageUrl : String = "";
-    var healthLabels : List<String> = listOf()
+    var uri : String = ""
+    var saves : Int = 1
+    var time : Int = 0
+    var totalKcals : Int = 0
+    var kcalsPerServing : Int = 0
+    var imageUrl : String = "";
     var username : String = "Edamam"
-
     var servings : Int = 0
+
+
+    var healthLabels : List<String> = listOf()
 
     var ingredientsNameList : MutableList<String> = mutableListOf()
     var ingredientsQuantityList : MutableList<Int> = mutableListOf()
@@ -29,6 +30,7 @@ class RecipeCustom {
     }
 
     fun parseRecipe(recipe: Recipe){
+
         this.uri = recipe.uri
 
         this.label = recipe.label
@@ -45,6 +47,8 @@ class RecipeCustom {
         else{
             this.imageUrl =  recipe.images.sMALL.url
         }
+
+
 
         this.healthLabels = recipe.healthLabels
         this.servings = recipe.yield.toInt()
@@ -68,4 +72,35 @@ class RecipeCustom {
         }
 
     }
+
+
+    fun parseRecipeCustom(recipe : HashMap<Any, Any>){
+        this.label = recipe["label"] as String
+        this.uri = recipe["uri"] as String
+
+        var re =  recipe["saves"]
+        this.saves = (recipe["saves"] as Long).toInt()
+
+
+        this.time = (recipe["time"] as Long).toInt()
+        this.totalKcals = (recipe["totalKcals"] as Long).toInt()
+        this.kcalsPerServing = (recipe["kcalsPerServing"] as Long).toInt()
+        this.imageUrl = recipe["imageUrl"] as String
+        this.username = recipe["username"] as String
+        this.servings = (recipe["servings"] as Long).toInt()
+
+        this.healthLabels = recipe["healthLabels"] as List<String>
+
+        this.ingredientsNameList = recipe["ingredientsNameList"] as MutableList<String>
+        this.ingredientsMeasureList = recipe["ingredientsMeasureList"] as MutableList<String>
+        this.ingredientsQuantityList = recipe["ingredientsQuantityList"] as MutableList<Int>
+
+
+        this.nutritionLabels = recipe["nutritionLabels"] as MutableList<String>
+        this.nutritionUnits = recipe["nutritionUnits"] as MutableList<String>
+        this.nutritionQuantity = recipe["nutritionQuantity"] as MutableList<Int>
+
+    }
+
+
 }

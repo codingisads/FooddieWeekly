@@ -53,7 +53,8 @@ fun PantallaPrincipal(){
                 Column(){
                     Button(onClick = {
 
-                            vmRecipes.getUserSavedRecipes()
+                            vmRecipes.getUserSavedRecipesIds()
+
                             vmRecipes.addMode.value = false;
                             Log.d("getRecipes recipesList", vmRecipes.llistaRecipes.value.size.toString())
                             navController.navigate(Destinations.RecipesScreen.ruta)

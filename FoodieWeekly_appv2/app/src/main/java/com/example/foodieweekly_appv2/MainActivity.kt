@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -60,6 +61,30 @@ class MainActivity : ComponentActivity() {
 
                     vm.navController = navController
                     vm.authenticator = authenticator
+
+                    val context = LocalContext.current
+
+                    vm.context = context
+
+
+                    Log.d("si", "si")
+                    /*FirebaseDatabase.getInstance().reference.root
+                        .child("EdamamRecipes")
+                        .child("recipe_20022d91be0968092a8eab1aceee81be")
+                        .get().addOnCompleteListener {
+                            val res = it.result.value as HashMap<Any, Any>
+
+                            val recipe = RecipeCustom()
+                            recipe.parseRecipeCustom(res)
+
+                            Log.d("si", "si")
+                        }*/
+
+
+
+
+
+
 
                     //ShowRecipeInfo()
                     Main(vm, activity)
