@@ -471,11 +471,7 @@ class RecipesViewModel : ViewModel() {
                         newRecipe.parseRecipe(actualRecipe)
 
 
-                        addImageToStorage(newRecipe.imageUrl, newRecipe.uri, newRecipe.username == "Edamam")
-
-
-
-
+                        addImageToStorage(actualRecipe, newRecipe)
 
                     }
                     else {
@@ -577,71 +573,64 @@ class RecipesViewModel : ViewModel() {
     }
 
 
-    fun addImageToStorage(recipe : Any, edamamRecipe : Boolean = true) {
+    fun addImageToStorage(recipeEdamam : Recipe, customRecipe : RecipeCustom) {
         viewModelScope.launch {
 
             try {
-                if (edamamRecipe) {
-                    val imageLoader = ImageLoader(vm.context)
-                    val request = ImageRequest.Builder(vm.context)
-                        .data(imageUrl)
-                        .build()
 
-                    val bitmap = imageLoader.execute(request).drawable?.toBitmap()
+                val image =
+                    if(recipeEdamam.images.lARGE != null) recipeEdamam.images.lARGE.url
+                    else if(recipeEdamam.images.rEGULAR != null) recipeEdamam.images.rEGULAR.url
+                    else recipeEdamam.images.sMALL.url
 
 
-                    val storageRef =
-                        FirebaseStorage.getInstance().reference.child("EdamamRecipesImages/" + recipeUri)
 
-                    val baos = ByteArrayOutputStream()
-                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                    val data = baos.toByteArray()
 
-                    val uploadTask = storageRef.putBytes(data)
-                    uploadTask.addOnSuccessListener {
-                        // Image uploaded successfully
-                        Log.d("successsssss", "TOMA YA PUTOS")
+                val imageLoader = ImageLoader(vm.context)
+                val request = ImageRequest.Builder(vm.context)
+                    .data(image)
+                    .build()
+
+                val bitmap = imageLoader.execute(request).drawable?.toBitmap()
+
+
+                val storageRef =
+                    FirebaseStorage.getInstance().reference.child("EdamamRecipesImages/" + recipeEdamam.uri
+                        .replace(
+                            "http://www.edamam.com/ontologies/edamam.owl#",
+                            ""
+                        ))
+
+                val baos = ByteArrayOutputStream()
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val data = baos.toByteArray()
+
+                val uploadTask = storageRef.putBytes(data)
+                uploadTask.addOnSuccessListener {
+                    // Image uploaded successfully
+                    Log.d("successsssss", "TOMA YA PUTOS")
+
+                    storageRef.downloadUrl.addOnCompleteListener {
+                        customRecipe.imageUrl = it.result.toString()
 
                         FirebaseDatabase.getInstance().reference.root
                             .child("EdamamRecipes")
                             .child(
-                                recipeUri.replace(
+                                recipeEdamam.uri.replace(
                                     "http://www.edamam.com/ontologies/edamam.owl#",
                                     ""
                                 )
                             )
-                            .setValue(newRecipe)
-                    }.addOnFailureListener { exception ->
-                        // Handle any errors
-                        Log.d("successsssss", "TOMA YA PUTOS")
-                    }
-                } else {
-                    val imageLoader = ImageLoader(vm.context)
-                    val request = ImageRequest.Builder(vm.context)
-                        .data(imageUrl)
-                        .build()
-
-                    val bitmap = imageLoader.execute(request).drawable?.toBitmap()
-
-
-                    val storageRef =
-                        FirebaseStorage.getInstance().reference.child("UsersPublicRecipesImages/" + recipeUri)
-
-                    val baos = ByteArrayOutputStream()
-                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                    val data = baos.toByteArray()
-
-                    val uploadTask = storageRef.putBytes(data)
-                    uploadTask.addOnSuccessListener {
-                        // Image uploaded successfully
-                        Log.d("successsssss", "TOMA YA PUTOS")
-                    }.addOnFailureListener { exception ->
-                        // Handle any errors
-                        Log.d("successsssss", "TOMA YA PUTOS")
+                            .setValue(customRecipe)
                     }
 
 
-                }
+
+                }.addOnFailureListener { exception ->
+                    // Handle any errors
+                    Log.d("successsssss", "TOMA YA PUTOS")
+
+            }
             } catch (e: Exception) {
                 Log.d("dhjdhfjd", e.message.toString())
             }
@@ -653,7 +642,7 @@ class RecipesViewModel : ViewModel() {
 
         viewModelScope.launch{
             if(edamamRecipe){
-                val storageRef = FirebaseStorage.getInstance().reference.child("EdamamRecipes/$recipeUri")
+                val storageRef = FirebaseStorage.getInstance().reference.child("EdamamRecipesImages/$recipeUri")
 
                 storageRef.delete()
             }

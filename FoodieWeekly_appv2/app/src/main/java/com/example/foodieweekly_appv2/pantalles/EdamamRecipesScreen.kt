@@ -1,6 +1,5 @@
 package com.example.foodieweekly_appv2.pantalles
 
-import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,16 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
-import coil.imageLoader
-import coil.request.ImageRequest
 import com.example.foodieweekly_appv2.model.RecipeCustom
 import com.example.foodieweekly_appv2.model.recipesApi.Hit
 import com.example.foodieweekly_appv2.model.recipesApi.Ingredient
@@ -40,9 +35,6 @@ import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.retallaText
 import com.example.foodieweekly_appv2.vm
-import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.runBlocking
-import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 
 @Composable
@@ -177,7 +169,12 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
                             }
 
                             Image(painter = painterResource(id = com.example.foodieweekly_appv2.R.drawable.add_circle_outline_recipes),
-                                contentDescription = "addRecipeButton", modifier = Modifier.fillMaxSize())
+                                contentDescription = "addRecipeButton",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable {
+
+                                    })
 
                         }
 
@@ -570,6 +567,23 @@ fun ShowRecipeInfo(recipe: Any) {
 
             TabScreenMeals(actualRecipe)
 
+
+            Box(Modifier
+                .padding(top = 100.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp))
+                .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
+
+                Box(Modifier
+                    .padding(25.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(MaterialTheme.colorScheme.surface)) {
+
+                    Text("Hola serda")
+                }
+
+            }
+
         }
     }
     else{
@@ -595,6 +609,8 @@ fun ShowRecipeInfo(recipe: Any) {
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
             )
+
+            Log.d("ShowRecipeInfo img url", actualRecipe.imageUrl)
 
 
 
@@ -721,6 +737,22 @@ fun ShowRecipeInfo(recipe: Any) {
 
             TabScreenMeals(actualRecipe)
 
+            Box(Modifier
+                .padding(top = 100.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp))
+                .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
+
+                Box(Modifier
+                    .padding(25.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(MaterialTheme.colorScheme.surface)) {
+
+                    Text("Hola serda")
+                }
+
+            }
+
         }
     }
 
@@ -789,6 +821,7 @@ fun TabScreenMeals(recipeRaw : Any) {
             Column(
                 Modifier
                     .fillMaxHeight()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
                     .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
                 ShowRecipeSteps()
             }
@@ -814,8 +847,9 @@ fun TabScreenMeals(recipeRaw : Any) {
             Column(
                 Modifier
                     .fillMaxHeight()
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
                     .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
-                ShowRecipeSteps()
+                ShowRecipeSteps(recipe.username == "Edamam")
             }
 
         }
@@ -826,7 +860,9 @@ fun TabScreenMeals(recipeRaw : Any) {
 
 @Composable
 fun ShowRecipeIngredients(ingredientsList : List<Any>, servings : Int){
-    Column(Modifier.background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)))
+    Column(Modifier
+        .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+        .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)))
     {
         Text("You will need", Modifier
             .padding(start = 40.dp, top=20.dp),
@@ -889,7 +925,9 @@ fun ShowRecipeIngredients(ingredientsList : List<Any>, servings : Int){
 
 @Composable
 fun ShowRecipeCustomIngredients(ingrName : List<String>, ingrQuantity : List<Int>, ingrMeasure : List<String>, servings : Int){
-    Column(Modifier.background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)))
+    Column(Modifier
+        .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+        .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)))
     {
         Text("You will need", Modifier
             .padding(start = 40.dp, top=20.dp),
@@ -940,12 +978,11 @@ fun ShowRecipeCustomIngredients(ingrName : List<String>, ingrQuantity : List<Int
     }
 
 @Composable
-fun ShowRecipeSteps(){
+fun ShowRecipeSteps(isEdamam : Boolean = true){
     Box(
         Modifier
             .fillMaxWidth()
             .padding(30.dp)
-            .clip(RoundedCornerShape(25.dp))
             .background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.Center){
 
@@ -968,6 +1005,7 @@ fun ShowRecipeNutrition(recipeRaw : Any) {
         Column(
             Modifier
                 .fillMaxHeight()
+                .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
                 .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
             Box(
                 Modifier
@@ -1004,11 +1042,10 @@ fun ShowRecipeNutrition(recipeRaw : Any) {
                                             .height(15.dp)
                                             .clip(RoundedCornerShape(55.dp))
                                             .background(
-                                                if(isSystemInDarkTheme()){
-                                                    colorsDark[i%3]
-                                                }
-                                                else{
-                                                    colorsLight[i%3]
+                                                if (isSystemInDarkTheme()) {
+                                                    colorsDark[i % 3]
+                                                } else {
+                                                    colorsLight[i % 3]
                                                 }
                                             )) {
 
@@ -1017,14 +1054,16 @@ fun ShowRecipeNutrition(recipeRaw : Any) {
                                     Text(recipe.digest[i].label.uppercase(), Modifier.padding(start = 5.dp), fontFamily = Poppins )
 
                                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
-                                        Text(recipe.digest[i].daily.toInt().toString()+recipe.digest[i].unit,
+                                        Text(recipe.digest[i].total.toInt().toString()+recipe.digest[i].unit,
                                             fontFamily = Poppins, textAlign = TextAlign.End, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                     }
                                 }
 
                                 if(i == 2)
-                                    Divider(Modifier.padding(top=15.dp, bottom=15.dp).border(
-                                        BorderStroke(1.dp, MaterialTheme.colorScheme.outline)))
+                                    Divider(Modifier
+                                        .padding(top = 15.dp, bottom = 15.dp)
+                                        .border(
+                                            BorderStroke(1.dp, MaterialTheme.colorScheme.outline)))
                             }
                             else{
 
@@ -1039,6 +1078,97 @@ fun ShowRecipeNutrition(recipeRaw : Any) {
 
                                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
                                         Text(recipe.digest[i].total.toInt().toString()+recipe.digest[i].unit,
+                                            fontFamily = Poppins, textAlign = TextAlign.End, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+
+            }
+        }
+    }
+    else{
+        val recipe = recipeRaw as RecipeCustom
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+                .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp)
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center){
+
+                Box(Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp, bottom = 40.dp), contentAlignment = Alignment.Center){
+                    Column(horizontalAlignment = Alignment.CenterHorizontally){
+                        Text(recipe.servings.toString()+" servings", fontFamily = Poppins, textAlign = TextAlign.Center)
+                        Text((recipe.kcalsPerServing/recipe.servings).toString()+" kcal/serving", fontFamily = Poppins,
+                            textAlign = TextAlign.Center, fontSize = 18.sp, fontWeight = FontWeight.Bold
+                        )
+
+
+
+
+                        Divider(Modifier.border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline)))
+
+                        for (i in 0 until recipe.nutritionLabels.size){
+
+                            if(recipe.nutritionLabels[i] == "Protein" ||
+                                recipe.nutritionLabels[i] == "Carbs" ||
+                                recipe.nutritionLabels[i] == "Fat"){
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+                                    Box(
+                                        Modifier
+                                            .width(15.dp)
+                                            .height(15.dp)
+                                            .clip(RoundedCornerShape(55.dp))
+                                            .background(
+                                                if (isSystemInDarkTheme()) {
+                                                    colorsDark[i % 3]
+                                                } else {
+                                                    colorsLight[i % 3]
+                                                }
+                                            )) {
+
+                                    }
+
+                                    Text(recipe.nutritionLabels[i].uppercase(), Modifier.padding(start = 5.dp), fontFamily = Poppins )
+
+                                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
+                                        Text(recipe.nutritionQuantity[i].toString()+recipe.nutritionUnits[i],
+                                            fontFamily = Poppins, textAlign = TextAlign.End, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+
+                                if(i == 2)
+                                    Divider(Modifier
+                                        .padding(top = 15.dp, bottom = 15.dp)
+                                        .border(
+                                            BorderStroke(1.dp, MaterialTheme.colorScheme.outline)))
+                            }
+                            else{
+
+                                Row(
+
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+
+
+                                    Text(recipe.nutritionLabels[i], Modifier.padding(start = 5.dp), fontFamily = Poppins , fontSize = 10.sp)
+
+                                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
+                                        Text(recipe.nutritionQuantity[i].toString()+recipe.nutritionUnits[i],
                                             fontFamily = Poppins, textAlign = TextAlign.End, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                     }
                                 }

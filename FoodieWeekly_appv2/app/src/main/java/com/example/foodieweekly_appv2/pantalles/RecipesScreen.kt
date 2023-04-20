@@ -26,7 +26,6 @@ import com.example.foodieweekly_appv2.vm
 @Composable
 fun RecipesScreen() {
     val llistaRecipes = remember {com.example.foodieweekly_appv2.vm.recipesViewModel.llistaRecipes}
-    val navController = com.example.foodieweekly_appv2.vm.navController
     val vm = com.example.foodieweekly_appv2.vm.recipesViewModel
     Log.d("recipesList", llistaRecipes.value.size.toString())
 

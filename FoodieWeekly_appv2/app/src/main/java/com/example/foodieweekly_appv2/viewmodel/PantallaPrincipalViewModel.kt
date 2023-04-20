@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
-import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.vm
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.runBlocking
@@ -150,8 +149,5 @@ class PantallaPrincipalViewModel : ViewModel() {
 
     }
 
-    fun openRecipesInAddMode(vmRecipes: RecipesViewModel) {
-        vmRecipes.addMode.value = true;
-        vm.navController.navigate(Destinations.RecipesScreen.ruta)
-    }
+
 }
