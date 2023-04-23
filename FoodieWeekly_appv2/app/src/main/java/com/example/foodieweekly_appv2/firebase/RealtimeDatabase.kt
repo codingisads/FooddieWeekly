@@ -76,35 +76,32 @@ class RealtimeDatabase {
     public val createCalendarOnDB = fun(uid : String, name : String, navController : NavHostController , auth : Authenticator) : Unit {
 
         try{
-            FirebaseDatabase.getInstance().reference.root.child("Weeks").get().addOnCompleteListener {
+
+            val weekKey = FirebaseDatabase.getInstance().reference.root.child("Weeks").push().key
+            val newWeek = Week()
+            newWeek.fillCurrentWeek()
 
 
-                val newWeek = Week()
-                newWeek.fillCurrentWeek()
-                newWeek.weekId = it.result.childrenCount.toString()
+            FirebaseDatabase.getInstance().reference.root.child("Weeks")
+                .child(weekKey.toString()).setValue(newWeek).addOnCompleteListener {
+                    Log.d("createCalendarOnDB", "adding")
+                    //Log.d("createCalendarOnDB", newCalendar.ownerUID)
 
-                val newCalendar = Calendar()
-                newCalendar.ownerUID = uid;
-                newCalendar.calendarName = name;
-                newCalendar.currentWeekId = newWeek.weekId;
 
-                FirebaseDatabase.getInstance().reference.root.child("Weeks").child(it.result.childrenCount.toString())
-                    .setValue(newWeek).addOnCompleteListener {
-                        Log.d("createCalendarOnDB", "adding")
-                        //Log.d("createCalendarOnDB", newCalendar.ownerUID)
+                    val newCalendar = Calendar()
+                    newCalendar.ownerUID = uid;
+                    newCalendar.calendarName = name;
+                    newCalendar.currentWeekId = weekKey.toString();
 
-                        FirebaseDatabase.getInstance().reference.root.child("Calendars").get().addOnCompleteListener {
-                            val index = it.result.childrenCount
+                    val key = FirebaseDatabase.getInstance().reference.root.child("Calendars").push().key
+                    FirebaseDatabase.getInstance().reference.root.child("Calendars").
+                    child(key.toString()).setValue(newCalendar)
+                    Log.d("createCalendarOnDB", "done")
 
-                            FirebaseDatabase.getInstance().reference.root.child("Calendars").
-                            child(index.toString()).setValue(newCalendar)
-                            Log.d("createCalendarOnDB", "done")
+                    addCalendarToUser(key.toString(), uid, navController, auth)
+                }
 
-                            addCalendarToUser(index.toString(), uid, navController, auth)
-                        }
-                    }
 
-            }
 
 
 

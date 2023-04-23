@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Week {
-    public var weekId : String = ""
     public var days = mutableListOf<Day>()
 
 
