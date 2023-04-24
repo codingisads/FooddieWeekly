@@ -176,7 +176,11 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .clickable {
+                                        //Open Dialog
+                                        //Triar servings
+                                        //Cancelar / Afirmar
 
+                                        //afegir a calendari,
                                     })
 
                         }
