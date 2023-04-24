@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.retallaText
 import com.example.foodieweekly_appv2.vm
+import com.google.firebase.database.FirebaseDatabase
 import kotlin.math.roundToInt
 
 @Composable
@@ -387,6 +390,10 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
 @Composable
 fun ShowRecipeInfo(recipe: Any) {
 
+    var originalText = remember { mutableStateOf("")}
+
+    val newText = remember { mutableStateOf("")}
+
     val colorsLight = listOf<Color>(Color(0xFFf0cb67), Color(0xFFc0eb8f),
         Color(0xFFf09767), Color(0xFF78D6B8), Color(0xFF8B81E6)
     )
@@ -399,7 +406,7 @@ fun ShowRecipeInfo(recipe: Any) {
 
         val actualRecipe = recipe
         val savedRecipe = remember { mutableStateOf(
-            vm.recipesViewModel.userSavedRecipesIds.contains(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))) }
+            vm.recipesViewModel.recipesXAnnotations.contains(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))) }
 
 
         vm.recipesViewModel.getRecipesSaves(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
@@ -509,7 +516,7 @@ fun ShowRecipeInfo(recipe: Any) {
 
                                     savedRecipe.value = !savedRecipe.value
 
-                                    vm.recipesViewModel.addRecipeToSavedRecipes(actualRecipe)
+                                    vm.recipesViewModel.addRecipeToSavedRecipes(actualRecipe, originalText.value)
                                 } catch (e: Exception) {
                                     Log.d("savedRecipes error", e.message.toString())
                                 }
@@ -568,21 +575,8 @@ fun ShowRecipeInfo(recipe: Any) {
             TabScreenMeals(actualRecipe)
 
 
-            Box(Modifier
-                .padding(top = 100.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp))
-                .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
-
-                Box(Modifier
-                    .padding(25.dp)
-                    .clip(RoundedCornerShape(15.dp))
-                    .background(MaterialTheme.colorScheme.surface)) {
-
-                    Text("Hola serda")
-                }
-
-            }
+            RecipeAnotations(originalText, newText, savedRecipe.value,
+                actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
 
         }
     }
@@ -590,7 +584,19 @@ fun ShowRecipeInfo(recipe: Any) {
         val actualRecipe = recipe as RecipeCustom
 
         val savedRecipe = remember { mutableStateOf(
-            vm.recipesViewModel.userSavedRecipesIds.contains(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))) }
+            vm.recipesViewModel.recipesXAnnotations.contains(
+                actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))) }
+
+
+        originalText.value = vm.recipesViewModel.recipesXAnnotations[actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", "")]
+            .toString()
+
+        if(originalText.value == "null"){
+            originalText.value = ""
+        }
+
+
+        newText.value = originalText.value
 
 
         vm.recipesViewModel.getRecipesSaves(actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
@@ -679,7 +685,7 @@ fun ShowRecipeInfo(recipe: Any) {
 
                                     savedRecipe.value = !savedRecipe.value
 
-                                    vm.recipesViewModel.addRecipeToSavedRecipes(actualRecipe)
+                                    vm.recipesViewModel.addRecipeToSavedRecipes(actualRecipe, originalText.value)
                                 } catch (e: Exception) {
                                     Log.d("savedRecipes error", e.message.toString())
                                 }
@@ -737,30 +743,79 @@ fun ShowRecipeInfo(recipe: Any) {
 
             TabScreenMeals(actualRecipe)
 
-            Box(Modifier
-                .padding(top = 100.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp))
-                .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
-
-                Box(Modifier
-                    .padding(25.dp)
-                    .clip(RoundedCornerShape(15.dp))
-                    .background(MaterialTheme.colorScheme.surface)) {
-
-                    Text("Hola serda")
-                }
-
-            }
+            RecipeAnotations(originalText, newText, savedRecipe.value,
+                actualRecipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
 
         }
     }
 
 
 
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RecipeAnotations(originalText : MutableState<String>, newText : MutableState<String>, savedRecipe : Boolean,
+recipeUri : String){
+
+
+
+
+    Box(Modifier
+        .padding(top = 100.dp)
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp))
+        .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
+
+        Column(Modifier.fillMaxWidth()) {
+
+            Text("Your annotations", fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = Poppins
+            , modifier = Modifier.fillMaxWidth().padding(start = 25.dp, top = 25.dp))
+
+            Box(Modifier
+                .fillMaxWidth()
+                .heightIn(min = 200.dp)
+                .padding(25.dp)
+                .clip(RoundedCornerShape(15.dp))
+                .background(MaterialTheme.colorScheme.surface)) {
+
+                BasicTextField(value = newText.value, onValueChange = {newText.value = it},
+                    Modifier.fillMaxSize().padding(10.dp),
+                    textStyle = TextStyle(
+                        fontFamily = Poppins, color = MaterialTheme.colorScheme.onSurface))
+            }
+
+            Box(Modifier
+                .fillMaxWidth()
+                .padding(25.dp), contentAlignment = Alignment.CenterEnd) {
+                Button(onClick = {
+                    originalText.value = newText.value
+
+                    if(savedRecipe){
+                        FirebaseDatabase.getInstance().reference.root
+                            .child("Users")
+                            .child(vm.authenticator.currentUID.value)
+                            .child("savedRecipes")
+                            .child(recipeUri).setValue(originalText.value)
+                    }
+                    },
+
+                    colors = ButtonDefaults.textButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.outline,
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimary),
+
+                    enabled = originalText.value != newText.value
+
+                ) {
+                    Text(text = "SAVE", fontFamily = Poppins, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+        }
+    }
+}
 
 @Composable
 fun TabScreenMeals(recipeRaw : Any) {

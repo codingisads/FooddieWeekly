@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,8 +41,11 @@ class RecipesViewModel : ViewModel() {
     private var _llistaSavedRecipes : MutableState<MutableList<RecipeCustom>> =mutableStateOf(mutableListOf())
     val llistaSavedRecipes = _llistaSavedRecipes
 
+    private var _recipesXAnnotations : MutableMap<Any, Any> = mutableMapOf()
+    val recipesXAnnotations = _recipesXAnnotations
 
-    public var userSavedRecipesIds = arrayListOf<Any>()
+
+    //public var userSavedRecipesIds = arrayListOf<Any>()
 
     lateinit var selectedRecipe : Any
 
@@ -165,7 +169,7 @@ class RecipesViewModel : ViewModel() {
                 var result = it.result.value
 
                 if(result != null && result != ""){
-                    userSavedRecipesIds = result as ArrayList<Any>
+                    _recipesXAnnotations.putAll(result as HashMap<*, *>)
                 }
 
                 getRecipeInfoFromSavedRecipes()
@@ -186,15 +190,17 @@ class RecipesViewModel : ViewModel() {
 
         val firebaseInstance = FirebaseDatabase.getInstance().reference.root
 
+        val list = recipesXAnnotations.keys.toMutableStateList()
 
-        for (i in 0 until userSavedRecipesIds.size){
+        for (i in 0 until recipesXAnnotations.size){
 
             //Si la recepta es de Edamam (comença per recipe_)
-            if(userSavedRecipesIds[i].toString().startsWith("recipe_")){
+
+            if(list[i].toString().startsWith("recipe_")){
 
                 firebaseInstance
                     .child("EdamamRecipes")
-                    .child(userSavedRecipesIds[i].toString())
+                    .child(list[i].toString())
                     .get()
                     .addOnCompleteListener {
 
@@ -247,294 +253,307 @@ class RecipesViewModel : ViewModel() {
 
         //quitar de savedRecipes
 
+        try{
+            if(recipe is Recipe){
+                var actualRecipe = recipe
 
-        if(recipe is Recipe){
-            var actualRecipe = recipe
+                //Eliminar de llista userSavedRecipes
 
-            //Eliminar de llista userSavedRecipes
 
-            userSavedRecipesIds.remove(
-                actualRecipe.uri.replace(
+
+                recipesXAnnotations.remove(actualRecipe.uri.replace(
                     "http://www.edamam.com/ontologies/edamam.owl#",
                     ""
-                )
-            )
+                ))
 
-            llistaSavedRecipes.value.removeAt(getIndexOfRecipeCustomUri(actualRecipe.uri))
+                llistaSavedRecipes.value.removeAt(getIndexOfRecipeCustomUri(actualRecipe.uri))
 
-            //Actualitzar aquesta llista al firebase
+                //Actualitzar aquesta llista al firebase
 
-            firebase
-                .child("Users")
-                .child(vm.authenticator.currentUID.value.toString())
-                .child("savedRecipes")
-                .setValue(userSavedRecipesIds)
-
+                firebase
+                    .child("Users")
+                    .child(vm.authenticator.currentUID.value.toString())
+                    .child("savedRecipes")
+                    .setValue(recipesXAnnotations)
 
 
 
-            //Actualitzar saves numero
 
-            firebase
-                .child("EdamamRecipes")
-                .child(
-                    actualRecipe.uri.replace(
-                        "http://www.edamam.com/ontologies/edamam.owl#",
-                        ""
-                    )
-                )
-                .child("saves")
-                .get()
-                .addOnCompleteListener {
-                    val saved = it.result.value
-                        .toString()
-                        .toInt() - 1
-                    Log.d("savedRecipes", "into edamam")
-                    if (saved <= 0) {
+                //Actualitzar saves numero
 
-                        //Si ningú te guardada la recepta, l'eliminem
-                        firebase
-                            .child("EdamamRecipes")
-                            .child(
-                                actualRecipe.uri.replace(
-                                    "http://www.edamam.com/ontologies/edamam.owl#",
-                                    ""
-                                )
-                            )
-                            .removeValue()
-
-                        removeImageFromStorage(actualRecipe.uri.replace(
+                firebase
+                    .child("EdamamRecipes")
+                    .child(
+                        actualRecipe.uri.replace(
                             "http://www.edamam.com/ontologies/edamam.owl#",
                             ""
-                        ))
-                        Log.d(
-                            "savedRecipes",
-                            "quitado recipe de firebase"
                         )
-                    }
-                    else {
+                    )
+                    .child("saves")
+                    .get()
+                    .addOnCompleteListener {
 
-                        //Sinó, actualitzem el valor
-                        firebase
-                            .child("EdamamRecipes")
-                            .child(
-                                actualRecipe.uri.replace(
+                        if(it.result.value != null){
+                            val saved = it.result.value
+                                .toString()
+                                .toInt() - 1
+                            Log.d("savedRecipes", "into edamam")
+                            if (saved <= 0) {
+
+                                //Si ningú te guardada la recepta, l'eliminem
+                                firebase
+                                    .child("EdamamRecipes")
+                                    .child(
+                                        actualRecipe.uri.replace(
+                                            "http://www.edamam.com/ontologies/edamam.owl#",
+                                            ""
+                                        )
+                                    )
+                                    .removeValue()
+
+                                removeImageFromStorage(actualRecipe.uri.replace(
                                     "http://www.edamam.com/ontologies/edamam.owl#",
                                     ""
+                                ))
+                                Log.d(
+                                    "savedRecipes",
+                                    "quitado recipe de firebase"
                                 )
-                            )
-                            .child("saves")
-                            .setValue(saved)
+                            }
+                            else {
+
+                                //Sinó, actualitzem el valor
+                                firebase
+                                    .child("EdamamRecipes")
+                                    .child(
+                                        actualRecipe.uri.replace(
+                                            "http://www.edamam.com/ontologies/edamam.owl#",
+                                            ""
+                                        )
+                                    )
+                                    .child("saves")
+                                    .setValue(saved)
+
+
+                            }
+
+                            Log.d("savedRecipes", "final quitado")
+                        }
 
 
                     }
+            }
+            else{
+                var actualRecipe = recipe as RecipeCustom
 
-                    Log.d("savedRecipes", "final quitado")
+                //Eliminar de llista userSavedRecipes
 
-                }
-        }
-        else{
-            var actualRecipe = recipe as RecipeCustom
-
-            //Eliminar de llista userSavedRecipes
-
-            userSavedRecipesIds.remove(
-                actualRecipe.uri.replace(
+                recipesXAnnotations.remove(actualRecipe.uri.replace(
                     "http://www.edamam.com/ontologies/edamam.owl#",
                     ""
-                )
-            )
+                ))
 
-            llistaSavedRecipes.value.removeAt(getIndexOfRecipeCustomUri(actualRecipe.uri))
+                llistaSavedRecipes.value.removeAt(getIndexOfRecipeCustomUri(actualRecipe.uri))
 
-            //Actualitzar aquesta llista al firebase
+                //Actualitzar aquesta llista al firebase
 
-            firebase
-                .child("Users")
-                .child(vm.authenticator.currentUID.value.toString())
-                .child("savedRecipes")
-                .setValue(userSavedRecipesIds)
-
+                firebase
+                    .child("Users")
+                    .child(vm.authenticator.currentUID.value.toString())
+                    .child("savedRecipes")
+                    .setValue(recipesXAnnotations)
 
 
 
-            //Actualitzar saves numero
 
-            firebase
-                .child("EdamamRecipes")
-                .child(
-                    actualRecipe.uri.replace(
-                        "http://www.edamam.com/ontologies/edamam.owl#",
-                        ""
-                    )
-                )
-                .child("saves")
-                .get()
-                .addOnCompleteListener {
-                    val saved = it.result.value
-                        .toString()
-                        .toInt() - 1
-                    Log.d("savedRecipes", "into edamam")
-                    if (saved <= 0) {
+                //Actualitzar saves numero
 
-                        //Si ningú te guardada la recepta, l'eliminem
-                        firebase
-                            .child("EdamamRecipes")
-                            .child(
-                                actualRecipe.uri.replace(
-                                    "http://www.edamam.com/ontologies/edamam.owl#",
-                                    ""
-                                )
-                            )
-                            .removeValue()
-                        removeImageFromStorage(actualRecipe.uri.replace(
+                firebase
+                    .child("EdamamRecipes")
+                    .child(
+                        actualRecipe.uri.replace(
                             "http://www.edamam.com/ontologies/edamam.owl#",
                             ""
-                        ), actualRecipe.username == "Edamam")
-
-                        Log.d(
-                            "savedRecipes",
-                            "quitado recipe de firebase"
                         )
-                    }
-                    else {
+                    )
+                    .child("saves")
+                    .get()
+                    .addOnCompleteListener {
+                        val saved = it.result.value
+                            .toString()
+                            .toInt() - 1
+                        Log.d("savedRecipes", "into edamam")
+                        if (saved <= 0) {
 
-                        //Sinó, actualitzem el valor
-                        firebase
-                            .child("EdamamRecipes")
-                            .child(
-                                actualRecipe.uri.replace(
-                                    "http://www.edamam.com/ontologies/edamam.owl#",
-                                    ""
+                            //Si ningú te guardada la recepta, l'eliminem
+                            firebase
+                                .child("EdamamRecipes")
+                                .child(
+                                    actualRecipe.uri.replace(
+                                        "http://www.edamam.com/ontologies/edamam.owl#",
+                                        ""
+                                    )
                                 )
-                            )
-                            .child("saves")
-                            .setValue(saved)
+                                .removeValue()
+                            removeImageFromStorage(actualRecipe.uri.replace(
+                                "http://www.edamam.com/ontologies/edamam.owl#",
+                                ""
+                            ), actualRecipe.username == "Edamam")
 
+                            Log.d(
+                                "savedRecipes",
+                                "quitado recipe de firebase"
+                            )
+                        }
+                        else {
+
+                            //Sinó, actualitzem el valor
+                            firebase
+                                .child("EdamamRecipes")
+                                .child(
+                                    actualRecipe.uri.replace(
+                                        "http://www.edamam.com/ontologies/edamam.owl#",
+                                        ""
+                                    )
+                                )
+                                .child("saves")
+                                .setValue(saved)
+
+
+                        }
+
+                        Log.d("savedRecipes", "final quitado")
 
                     }
-
-                    Log.d("savedRecipes", "final quitado")
-
-                }
+            }
+        }
+        catch(e : Exception){
+            Log.d("removeRecipeFromSavedRecipes", e.message.toString())
         }
 
+    }
 
-
-        }
-
-    fun addRecipeToSavedRecipes(recipe: Any){
+    fun addRecipeToSavedRecipes(recipe: Any, annotation : String){
         Log.d("savedRecipes", "meterle savedRecipes")
 
 
-        if(recipe is Recipe){
-            val actualRecipe = recipe
+        try{
+            if(recipe is Recipe){
+                val actualRecipe = recipe
 
-            //Afegim uri a llista de receptes guardades
-            vm.recipesViewModel.userSavedRecipesIds.add(
-                actualRecipe.uri.replace(
-                    "http://www.edamam.com/ontologies/edamam.owl#",
-                    ""
-                )
-            )
-
-            addSavedRecipeCustom(recipe)
-
-            val firebase = FirebaseDatabase.getInstance().reference.root
-
-            //Guardem la nova llista
-            firebase
-                .child("Users")
-                .child(vm.authenticator.currentUID.value.toString())
-                .child("savedRecipes")
-                .setValue(vm.recipesViewModel.userSavedRecipesIds)
+                //Afegim uri a llista de receptes guardades
 
 
-
-
-            Log.d("savedRecipes", "recipe Parsed")
-
-            //Compovem si aquesta recepta ja esta guardada, sino la afegim
-            firebase
-                .child("EdamamRecipes")
-                .child(
+                recipesXAnnotations.put(
                     actualRecipe.uri.replace(
                         "http://www.edamam.com/ontologies/edamam.owl#",
-                        ""
-                    )
+                        ""),
+
+                    annotation
+
                 )
-                .get()
-                .addOnCompleteListener {
-                    if (!it.result.exists()) {
 
-                        val newRecipe = RecipeCustom()
-                        newRecipe.parseRecipe(actualRecipe)
+                addSavedRecipeCustom(recipe)
+
+                val firebase = FirebaseDatabase.getInstance().reference.root
+
+                //Guardem la nova llista
+                firebase
+                    .child("Users")
+                    .child(vm.authenticator.currentUID.value.toString())
+                    .child("savedRecipes")
+                    .setValue(recipesXAnnotations)
 
 
-                        addImageToStorage(actualRecipe, newRecipe)
 
-                    }
-                    else {
-                        firebase
-                            .child("EdamamRecipes")
-                            .child(
-                                actualRecipe.uri.replace(
-                                    "http://www.edamam.com/ontologies/edamam.owl#",
-                                    ""
+
+                Log.d("savedRecipes", "recipe Parsed")
+
+                //Compovem si aquesta recepta ja esta guardada, sino la afegim
+                firebase
+                    .child("EdamamRecipes")
+                    .child(
+                        actualRecipe.uri.replace(
+                            "http://www.edamam.com/ontologies/edamam.owl#",
+                            ""
+                        )
+                    )
+                    .get()
+                    .addOnCompleteListener {
+                        if (!it.result.exists()) {
+
+                            val newRecipe = RecipeCustom()
+                            newRecipe.parseRecipe(actualRecipe)
+
+
+                            addImageToStorage(actualRecipe, newRecipe)
+
+                        }
+                        else {
+                            firebase
+                                .child("EdamamRecipes")
+                                .child(
+                                    actualRecipe.uri.replace(
+                                        "http://www.edamam.com/ontologies/edamam.owl#",
+                                        ""
+                                    )
                                 )
-                            )
-                            .child("saves")
-                            .get()
-                            .addOnCompleteListener {
-                                if (it.result.value != null && it.result.value != "") {
-                                    val saves = it.result.value
-                                        .toString()
-                                        .toInt()
+                                .child("saves")
+                                .get()
+                                .addOnCompleteListener {
+                                    if (it.result.value != null && it.result.value != "") {
+                                        val saves = it.result.value
+                                            .toString()
+                                            .toInt()
 
-                                    firebase
-                                        .child("EdamamRecipes")
-                                        .child(
-                                            actualRecipe.uri.replace(
-                                                "http://www.edamam.com/ontologies/edamam.owl#",
-                                                ""
+                                        firebase
+                                            .child("EdamamRecipes")
+                                            .child(
+                                                actualRecipe.uri.replace(
+                                                    "http://www.edamam.com/ontologies/edamam.owl#",
+                                                    ""
+                                                )
                                             )
-                                        )
-                                        .child("saves")
-                                        .setValue(saves + 1)
+                                            .child("saves")
+                                            .setValue(saves + 1)
+                                    }
                                 }
-                            }
+                        }
                     }
-                }
-        }
-        else{
-            val actualRecipe = recipe as RecipeCustom
+            }
+            else{
+                val actualRecipe = recipe as RecipeCustom
 
-            //Afegim uri a llista de receptes guardades
-            vm.recipesViewModel.userSavedRecipesIds.add(
-                actualRecipe.uri.replace(
+                //Afegim uri a llista de receptes guardades
+                recipesXAnnotations.put(actualRecipe.uri.replace(
                     "http://www.edamam.com/ontologies/edamam.owl#",
                     ""
-                )
-            )
+                ), annotation)
 
-            addSavedRecipeCustom(actualRecipe)
+                addSavedRecipeCustom(actualRecipe)
 
-            val firebase = FirebaseDatabase.getInstance().reference.root
+                val firebase = FirebaseDatabase.getInstance().reference.root
 
-            //Guardem la nova llista
-            firebase
-                .child("Users")
-                .child(vm.authenticator.currentUID.value.toString())
-                .child("savedRecipes")
-                .setValue(vm.recipesViewModel.userSavedRecipesIds)
-
+                //Guardem la nova llista
+                firebase
+                    .child("Users")
+                    .child(vm.authenticator.currentUID.value.toString())
+                    .child("savedRecipes")
+                    .setValue(recipesXAnnotations)
 
 
 
-            Log.d("savedRecipes", "recipe Parsed")
+
+                Log.d("savedRecipes", "recipe Parsed")
 
 
+            }
         }
+        catch(e : Exception){
+            Log.d("addRecipeToSavedRecipes", e.message.toString())
+        }
+
+
 
     }
 
