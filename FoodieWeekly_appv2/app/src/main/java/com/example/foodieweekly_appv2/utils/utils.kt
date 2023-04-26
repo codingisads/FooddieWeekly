@@ -5,6 +5,8 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -133,7 +135,7 @@ fun OutlinedTextFieldCustomNumber(modifier : Modifier, label : String, placehold
 
     androidx.compose.material3.OutlinedTextField(
         value = inputTxt.value,
-        onValueChange = {inputTxt.value = it},
+        onValueChange = {inputTxt.value = it.toDouble().roundToInt().toString()},
         label = { Text(label) },
         placeholder = { Text(placeholder, textAlign = TextAlign.Center) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -183,7 +185,61 @@ fun ShowAlert(showDialog: MutableState<Boolean>, title: String, text: String, ic
     //}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowAlertToAddRecipe(showDialog: MutableState<Boolean>, servings : MutableState<String>){
 
+    var servingsTxt = remember { mutableStateOf(servings.value)}
+
+    AlertDialog(
+        onDismissRequest = { /*TODO*/ },
+        confirmButton = {
+            Button(onClick = {showDialog.value = false }) {
+                Text("Confirm", fontFamily = Poppins)
+            }
+
+
+        },
+        title = {
+            Text("Adding Recipe to Calendar", fontFamily = Poppins, softWrap = true)
+        },
+        text = {
+
+
+            //TextField(value = servings.value, onValueChange = {servings.value = it})
+
+            Column(Modifier.fillMaxWidth()) {
+                Text("Select the number of servings to add to your calendar", fontFamily = Poppins, softWrap = true, overflow = TextOverflow.Visible)
+
+                Row(){
+                    Text(text = servingsTxt.value)
+
+                    Button(onClick = { servingsTxt.value = (servingsTxt.value.toInt() + 1).toString() }) {
+                        Icon(imageVector = Icons.Filled.Add, contentDescription = "moreServings")
+                    }
+
+                    Button(onClick = {
+                        if(servingsTxt.value.toInt() - 1 >= 1){
+                            servingsTxt.value = (servingsTxt.value.toInt() - 1).toString()
+                        }
+
+                    }) {
+                        Icon(painterResource(id = R.drawable.remove), contentDescription = "moreServings")
+                    }
+                    TextField(value = servings.value,
+                        onValueChange = {
+                            servings.value = it.toDouble().roundToInt().toString()
+                        }
+                    )
+                }
+
+            }
+        },
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+
+
+    )
+}
 
 @Composable
 fun TabScreen(day: MutableList<MutableList<String>>) {
@@ -290,7 +346,10 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                 color = if (isSystemInDarkTheme()) Color(0xFFFBFCFE) else Color(0xFF191C1E)
             )
 
-            Box(Modifier.fillMaxWidth().fillMaxHeight(), contentAlignment = Alignment.CenterEnd){
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(), contentAlignment = Alignment.CenterEnd){
                 Image(painter = painterResource(R.drawable.add), contentDescription = "add_recipe",
                     modifier = Modifier
                         .clickable {

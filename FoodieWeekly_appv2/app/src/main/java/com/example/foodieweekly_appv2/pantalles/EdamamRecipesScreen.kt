@@ -35,6 +35,7 @@ import com.example.foodieweekly_appv2.model.recipesApi.Ingredient
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
+import com.example.foodieweekly_appv2.utils.ShowAlertToAddRecipe
 import com.example.foodieweekly_appv2.utils.retallaText
 import com.example.foodieweekly_appv2.vm
 import com.google.firebase.database.FirebaseDatabase
@@ -104,10 +105,12 @@ fun ShowSavedRecipes(llistaRecipes : MutableState<MutableList<Any>>) {
 fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
 
     val navController = vm.navController
+    val showDialog = remember { mutableStateOf(false)}
 
     if(edamamRecipe){
         if(vm.recipesViewModel.addMode.value){
 
+            val servingsToAdd = remember { mutableStateOf("1")}
             val recipe = recipeTo as Recipe
             Column(
                 modifier = Modifier
@@ -177,6 +180,8 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
                                     .fillMaxSize()
                                     .clickable {
                                         //Open Dialog
+
+                                        showDialog.value = true
                                         //Triar servings
                                         //Cancelar / Afirmar
 
@@ -185,6 +190,10 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
 
                         }
 
+
+                        if(showDialog.value){
+                            ShowAlertToAddRecipe(showDialog, servingsToAdd)
+                        }
 
 
 
