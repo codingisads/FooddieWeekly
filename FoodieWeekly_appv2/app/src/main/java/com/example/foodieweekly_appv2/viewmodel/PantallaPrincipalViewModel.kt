@@ -42,6 +42,7 @@ class PantallaPrincipalViewModel : ViewModel() {
             .child(weekId).child("days")
             .get().addOnCompleteListener {
                     days ->
+
                 Log.d("Completed", "yes")
                 val daysArr = days.result.value as ArrayList<Any>
 
@@ -53,7 +54,7 @@ class PantallaPrincipalViewModel : ViewModel() {
                     val meals = day as HashMap<Any, Any>
 
                     if(meals.get("meals") != null){
-                        val meal = meals.get("meals") as ArrayList<Any>
+                        val meal = meals.get("meals") as HashMap<Any, Any>
 
                         countMeals = 0
                         meal.forEach {

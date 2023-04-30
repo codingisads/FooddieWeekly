@@ -205,10 +205,14 @@ class RecipesViewModel : ViewModel() {
                     .addOnCompleteListener {
 
                         val recipe = RecipeCustom()
-                        recipe.parseRecipeCustom(it.result.value as HashMap<Any, Any>)
+                        if(it.result.value != null){
+                            recipe.parseRecipeCustom(it.result.value as HashMap<Any, Any>)
+                            llistaSavedRecipes.value.add(recipe)
+                        }
 
 
-                        llistaSavedRecipes.value.add(recipe)
+
+
 
                     }
 
@@ -647,7 +651,7 @@ class RecipesViewModel : ViewModel() {
 
                 }.addOnFailureListener { exception ->
                     // Handle any errors
-                    Log.d("successsssss", "TOMA YA PUTOS")
+                    Log.d("successsssss", exception.message.toString())
 
             }
             } catch (e: Exception) {

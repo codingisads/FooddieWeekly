@@ -192,7 +192,8 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
 
 
                         if(showDialog.value){
-                            ShowAlertToAddRecipe(showDialog, servingsToAdd)
+                            ShowAlertToAddRecipe(showDialog, servingsToAdd,
+                                recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
                         }
 
 
@@ -326,73 +327,167 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
         }
     }
     else{
-
         val recipe = recipeTo as RecipeCustom
+        if(vm.recipesViewModel.addMode.value){
+            val servingsToAdd = remember { mutableStateOf("1")}
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        vm.recipesViewModel.setActualRecipe(recipe)
+                        navController.navigate(Destinations.ShowRecipeInfo.ruta) {
+                            popUpTo(Destinations.ShowRecipeInfo.ruta)
+                            launchSingleTop = true
+                        }
+                    },
+                horizontalAlignment = Alignment.Start
+            ) {
 
-        Column(
-            modifier = Modifier
-                .padding(8.dp)
-                .clip(RoundedCornerShape(15.dp))
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    vm.recipesViewModel.setActualRecipe(recipe)
-                    navController.navigate(Destinations.ShowRecipeInfo.ruta) {
-                        popUpTo(Destinations.ShowRecipeInfo.ruta)
-                        launchSingleTop = true
+                Box(modifier = Modifier
+                    .heightIn(min = 260.dp)
+                    .background(MaterialTheme.colorScheme.surface), contentAlignment = Alignment.TopCenter){
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()){
+
+
+                        Log.d("RecipeElement", recipe.imageUrl)
+
+                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+                            AsyncImage(
+                                model = recipe.imageUrl,
+                                contentDescription = "recipeImage",
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(15.dp))
+                            )
+
+                            Image(painter = painterResource(id = com.example.foodieweekly_appv2.R.drawable.add_circle_outline_recipes),
+                                contentDescription = "addRecipeButton",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable {
+                                        //Open Dialog
+
+                                        showDialog.value = true
+                                        //Triar servings
+                                        //Cancelar / Afirmar
+
+                                        //afegir a calendari,
+                                    })
+                        }
+
+                        if(showDialog.value){
+                            ShowAlertToAddRecipe(showDialog,
+                                servingsToAdd,
+                                recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                        }
+
+
+                        Text(text = retallaText(recipe.label, 25),
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, top = 10.dp),
+                            fontFamily = Poppins,
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 16.sp
+                        )
+
+                        Text(text = recipe.kcalsPerServing.toString() + "cals/serving",
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp),
+                            fontFamily = Poppins,
+                            lineHeight = 16.sp
+                        )
+                        Text(text = recipe.time.toString() + " minutes",
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp),
+                            fontFamily = Poppins,
+                            lineHeight = 16.sp
+                        )
                     }
-                },
-            horizontalAlignment = Alignment.Start
-        ) {
-
-            Box(modifier = Modifier
-                .heightIn(min = 260.dp)
-                .background(MaterialTheme.colorScheme.surface), contentAlignment = Alignment.TopCenter){
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()){
-
-
-                    Log.d("RecipeElement", recipe.imageUrl)
-
-                    AsyncImage(
-                        model = recipe.imageUrl,
-                        contentDescription = "recipeImage",
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(15.dp))
-                    )
-
-                    Text(text = retallaText(recipe.label, 25),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp, top = 10.dp),
-                        fontFamily = Poppins,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 16.sp
-                    )
-
-                    Text(text = recipe.kcalsPerServing.toString() + "cals/serving",
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp),
-                        fontFamily = Poppins,
-                        lineHeight = 16.sp
-                    )
-                    Text(text = recipe.time.toString() + " minutes",
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp),
-                        fontFamily = Poppins,
-                        lineHeight = 16.sp
-                    )
                 }
-            }
 
+            }
         }
+        else{
+
+
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        vm.recipesViewModel.setActualRecipe(recipe)
+                        navController.navigate(Destinations.ShowRecipeInfo.ruta) {
+                            popUpTo(Destinations.ShowRecipeInfo.ruta)
+                            launchSingleTop = true
+                        }
+                    },
+                horizontalAlignment = Alignment.Start
+            ) {
+
+                Box(modifier = Modifier
+                    .heightIn(min = 260.dp)
+                    .background(MaterialTheme.colorScheme.surface), contentAlignment = Alignment.TopCenter){
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()){
+
+
+                        Log.d("RecipeElement", recipe.imageUrl)
+
+                        AsyncImage(
+                            model = recipe.imageUrl,
+                            contentDescription = "recipeImage",
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(15.dp))
+                        )
+
+                        Text(text = retallaText(recipe.label, 25),
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, top = 10.dp),
+                            fontFamily = Poppins,
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 16.sp
+                        )
+
+                        Text(text = recipe.kcalsPerServing.toString() + "cals/serving",
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp),
+                            fontFamily = Poppins,
+                            lineHeight = 16.sp
+                        )
+                        Text(text = recipe.time.toString() + " minutes",
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp),
+                            fontFamily = Poppins,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+
+            }
+        }
+
+
     }
 
 
@@ -803,6 +898,7 @@ recipeUri : String){
                 .padding(25.dp), contentAlignment = Alignment.CenterEnd) {
                 Button(onClick = {
                     originalText.value = newText.value
+                    vm.recipesViewModel.recipesXAnnotations[recipeUri] = originalText.value
 
                     if(savedRecipe){
                         FirebaseDatabase.getInstance().reference.root

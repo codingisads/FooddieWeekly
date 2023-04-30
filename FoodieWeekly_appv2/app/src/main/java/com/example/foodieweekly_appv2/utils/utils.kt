@@ -23,16 +23,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
-import com.example.foodieweekly_appv2.model.recipesApi.Ingredient
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.vm
+import com.google.firebase.database.FirebaseDatabase
 import kotlin.math.roundToInt
 
 
@@ -187,14 +186,33 @@ fun ShowAlert(showDialog: MutableState<Boolean>, title: String, text: String, ic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowAlertToAddRecipe(showDialog: MutableState<Boolean>, servings : MutableState<String>){
+fun ShowAlertToAddRecipe(
+    showDialog: MutableState<Boolean>,
+    servings: MutableState<String>,
+    recipeUri: String
+){
 
-    var servingsTxt = remember { mutableStateOf(servings.value)}
+    //var servingsTxt = remember { mutableStateOf(servings.value)}
+
+    var firebase = FirebaseDatabase.getInstance().reference.root
 
     AlertDialog(
-        onDismissRequest = { /*TODO*/ },
+        onDismissRequest = { showDialog.value = false; },
         confirmButton = {
-            Button(onClick = {showDialog.value = false }) {
+            Button(onClick = {
+                Log.d("ShowAlertToAddRecipe adding ", "added recipe with -> " + servings.value)
+
+                firebase
+                    .child("Weeks")
+                    .child(vm.pantallaPrincipalViewModel.weekId.toString())
+                    .child("")
+
+
+
+                showDialog.value = false
+                vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
+                    popUpTo(Destinations.RecipesScreen.ruta)
+                }}) {
                 Text("Confirm", fontFamily = Poppins)
             }
 
@@ -211,26 +229,51 @@ fun ShowAlertToAddRecipe(showDialog: MutableState<Boolean>, servings : MutableSt
             Column(Modifier.fillMaxWidth()) {
                 Text("Select the number of servings to add to your calendar", fontFamily = Poppins, softWrap = true, overflow = TextOverflow.Visible)
 
-                Row(){
-                    Text(text = servingsTxt.value)
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
 
-                    Button(onClick = { servingsTxt.value = (servingsTxt.value.toInt() + 1).toString() }) {
-                        Icon(imageVector = Icons.Filled.Add, contentDescription = "moreServings")
-                    }
-
-                    Button(onClick = {
-                        if(servingsTxt.value.toInt() - 1 >= 1){
-                            servingsTxt.value = (servingsTxt.value.toInt() - 1).toString()
-                        }
-
-                    }) {
-                        Icon(painterResource(id = R.drawable.remove), contentDescription = "moreServings")
-                    }
                     TextField(value = servings.value,
                         onValueChange = {
-                            servings.value = it.toDouble().roundToInt().toString()
-                        }
+                            servings.value = if(!servings.value.isNullOrEmpty()){
+                                servings.value.toDouble().roundToInt().toString()
+                            }
+                            else{
+                                ""
+                            }
+
+                        },
+                        Modifier.weight(3F)
                     )
+
+                    Column(Modifier.weight(1F)){
+                        Button(onClick = { servings.value =
+                            if(!servings.value.isNullOrEmpty()){
+                                (servings.value.toInt() + 1).toString()
+                            }
+                            else{
+                                ""
+                            }
+                        }
+
+                        ) {
+                            Icon(imageVector = Icons.Filled.Add, contentDescription = "moreServings"
+                            , Modifier.fillMaxWidth())
+                        }
+
+                        Button(onClick = {
+
+                            if(!servings.value.isNullOrEmpty() && servings.value.toInt() - 1 >= 1){
+                                servings.value = (servings.value.toInt() - 1).toString()
+                            }
+                            else{
+                                ""
+                            }
+
+                        }) {
+                            Icon(painterResource(id = R.drawable.remove), contentDescription = "moreServings"
+                                , Modifier.fillMaxWidth())
+                        }
+                    }
+
                 }
 
             }
@@ -354,6 +397,7 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                     modifier = Modifier
                         .clickable {
                             vm.recipesViewModel.addMode.value = true;
+                            vm.recipesViewModel.getUserSavedRecipesIds()
                             vm.navController.navigate(Destinations.RecipesScreen.ruta)
                         }
 
