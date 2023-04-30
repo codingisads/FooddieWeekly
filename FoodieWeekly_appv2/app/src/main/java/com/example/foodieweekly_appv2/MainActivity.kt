@@ -161,10 +161,12 @@ fun Main(vm: MainViewModel, activity: MainActivity,
     Log.d("navigating ifs", alreadyInDb.value.toString())
     if (alreadyInDb.value){
         Log.d("navigating", "alreadyInDb")
-        vm.navController.navigate(Destinations.PantallaPrincipal.ruta)
-        {
-
+        vm.pantallaPrincipalViewModel.settingUp()
+        if(vm.pantallaPrincipalViewModel.completed.value){
+            vm.navController.navigate(Destinations.PantallaPrincipal.ruta)
         }
+
+
     }
     else if(showSignupConfig.value){
         Log.d("navigating", "showSignupConfig")

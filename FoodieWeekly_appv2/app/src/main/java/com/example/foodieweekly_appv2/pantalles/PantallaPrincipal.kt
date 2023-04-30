@@ -31,17 +31,9 @@ fun PantallaPrincipal(){
     val vmRecipes = com.example.foodieweekly_appv2.vm.recipesViewModel
     val vm = com.example.foodieweekly_appv2.vm.pantallaPrincipalViewModel
 
-    var daysAndMeals = remember {MutableList(7){
-        MutableList(4){
-            mutableListOf<String>()
-        }
-    }}
-
-    vm.settingUp(daysAndMeals)
-
-    if(vm.completed.value)
-    {
-
+    vm.settingUp()
+    var mealsFromDay = remember { vm.mealsFromDay }
+    vm.getMealsFromDay( vm.weekId.value, vm.selectedIndex.value)
 
         Log.d("PantallaPrincipal", vm.dies.size.toString())
         Column (
@@ -123,6 +115,7 @@ fun PantallaPrincipal(){
                                             .clickable {
 
                                                 vm.selectedIndex.value = i
+                                                vm.getMealsFromDay(vm.weekId.value, i)
 
 
                                             }, Alignment.Center){
@@ -193,17 +186,11 @@ fun PantallaPrincipal(){
             }
 
 
-            TabScreen(daysAndMeals[vm.selectedIndex.value])
+            TabScreen(mealsFromDay)
 
-        }
+
 
     }
-
-
-
-
-
-
 
 
 }

@@ -233,15 +233,18 @@ fun ShowAlertToAddRecipe(
 
                     TextField(value = servings.value,
                         onValueChange = {
-                            servings.value = if(!servings.value.isNullOrEmpty()){
-                                servings.value.toDouble().roundToInt().toString()
+                            servings.value = it
+
+                            if(!servings.value.isNullOrEmpty()){
+                                servings.value = servings.value.toDouble().roundToInt().toString()
                             }
                             else{
-                                ""
+                                servings.value = "1"
                             }
 
                         },
-                        Modifier.weight(3F)
+                        Modifier.weight(3F),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
 
                     Column(Modifier.weight(1F)){

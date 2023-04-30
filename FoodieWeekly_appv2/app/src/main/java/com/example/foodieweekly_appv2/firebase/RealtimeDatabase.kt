@@ -25,12 +25,6 @@ class RealtimeDatabase {
     public val usernameExists = _usernameExists
 
 
-    public val checkIfUsernameExists = fun(username : String, checked : MutableState<Boolean>){
-
-
-    }
-
-
     public val createUserOnDB = fun (auth : Authenticator, user : User) : Unit {
         try {
             // Write a message to the database

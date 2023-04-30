@@ -7,11 +7,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.navigation.NavHostController
 import com.example.foodieweekly_appv2.R
-import com.example.foodieweekly_appv2.alreadyInDb
 import com.example.foodieweekly_appv2.model.User
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
 import com.example.foodieweekly_appv2.navigation.Destinations
-import com.example.foodieweekly_appv2.showSignupConfig
 import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
 import com.example.foodieweekly_appv2.vm
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -225,7 +223,14 @@ class Authenticator {
 
 
                             if(currentUID.value != ""){
-                                db.checkIfUserUIDIsRegistered(currentUID.value, alreadyInDb , showSignupConfig)
+                                FirebaseDatabase.getInstance().reference.root.child("Users")
+                                    .child(currentUID.value).get()
+                                    .addOnSuccessListener {
+
+                                        goToMainActivity(vm.navController);
+
+
+                                    }
                             }
 
 
@@ -266,7 +271,9 @@ class Authenticator {
 
 
         if(uid != null){
+
             navController.navigate(Destinations.PantallaPrincipal.ruta)
+
 
         }
     }
