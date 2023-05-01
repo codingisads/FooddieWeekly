@@ -28,6 +28,7 @@ import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
+import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.vm
@@ -189,106 +190,154 @@ fun ShowAlert(showDialog: MutableState<Boolean>, title: String, text: String, ic
 fun ShowAlertToAddRecipe(
     showDialog: MutableState<Boolean>,
     servings: MutableState<String>,
-    recipeUri: String
+    recipe: Any
 ){
 
     //var servingsTxt = remember { mutableStateOf(servings.value)}
 
-    var firebase = FirebaseDatabase.getInstance().reference.root
+    if(recipe is Recipe){
+        var firebase = FirebaseDatabase.getInstance().reference.root
 
-    AlertDialog(
-        onDismissRequest = { showDialog.value = false; },
-        confirmButton = {
-            Button(onClick = {
-                Log.d("ShowAlertToAddRecipe adding ", "added recipe with -> " + servings.value)
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false; },
+            confirmButton = {
+                Button(onClick = {
+                    Log.d("ShowAlertToAddRecipe adding ", "added recipe with -> " + servings.value)
 
-                firebase
-                    .child("Weeks")
-                    .child(vm.pantallaPrincipalViewModel.weekId.toString())
-                    .child("")
-
-
-
-                showDialog.value = false
-                vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
-                    popUpTo(Destinations.RecipesScreen.ruta)
-                }}) {
-                Text("Confirm", fontFamily = Poppins)
-            }
-
-
-        },
-        title = {
-            Text("Adding Recipe to Calendar", fontFamily = Poppins, softWrap = true)
-        },
-        text = {
+                    firebase
+                        .child("Weeks")
+                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                        .child("days")
+                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                        .child("meals")
+                        .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                        .get()
+                        .addOnCompleteListener {
+                            if(it.result.exists()) {
+                                Log.d("ShowAlertToAddRecipe", "it exists")
+                                Log.d("ShowAlertToAddRecipe", vm.recipesViewModel.selectedMeal.name.lowercase())
 
 
-            //TextField(value = servings.value, onValueChange = {servings.value = it})
+                                var recipesFromMeal = it.result.value as HashMap<Any, Any>
+                                recipesFromMeal.put(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value )
 
-            Column(Modifier.fillMaxWidth()) {
-                Text("Select the number of servings to add to your calendar", fontFamily = Poppins, softWrap = true, overflow = TextOverflow.Visible)
-
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
-
-                    TextField(value = servings.value,
-                        onValueChange = {
-                            servings.value = it
-
-                            if(!servings.value.isNullOrEmpty()){
-                                servings.value = servings.value.toDouble().roundToInt().toString()
+                                firebase
+                                    .child("Weeks")
+                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                    .child("days")
+                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                    .child("meals")
+                                    .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                    .setValue(recipesFromMeal)
+                                    .addOnCompleteListener {
+                                        Log.d("ShowAlertToAddRecipe", "done adding")
+                                    }
                             }
                             else{
-                                servings.value = "1"
-                            }
+                                Log.d("ShowAlertToAddRecipe", "meals doesnt exist")
 
-                        },
-                        Modifier.weight(3F),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                    )
-
-                    Column(Modifier.weight(1F)){
-                        Button(onClick = { servings.value =
-                            if(!servings.value.isNullOrEmpty()){
-                                (servings.value.toInt() + 1).toString()
-                            }
-                            else{
-                                ""
+                                var recipesFromMeal = hashMapOf<String, Int>()
+                                recipesFromMeal.put(
+                                    recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),
+                                    servings.value.toInt())
+                                firebase
+                                    .child("Weeks")
+                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                    .child("days")
+                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                    .child("meals")
+                                    .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                    .setValue(recipesFromMeal)
                             }
                         }
 
-                        ) {
-                            Icon(imageVector = Icons.Filled.Add, contentDescription = "moreServings"
-                            , Modifier.fillMaxWidth())
+
+
+                    showDialog.value = false
+                    vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
+                        popUpTo(Destinations.RecipesScreen.ruta)
+                    }}) {
+                    Text("Confirm", fontFamily = Poppins)
+                }
+
+
+            },
+            title = {
+                Text("Adding Recipe to Calendar", fontFamily = Poppins, softWrap = true)
+            },
+            text = {
+
+
+                //TextField(value = servings.value, onValueChange = {servings.value = it})
+
+                Column(Modifier.fillMaxWidth()) {
+                    Text("Select the number of servings to add to your calendar", fontFamily = Poppins, softWrap = true, overflow = TextOverflow.Visible)
+
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+
+                        TextField(value = servings.value,
+                            onValueChange = {
+                                servings.value = it
+
+                                if(!servings.value.isNullOrEmpty()){
+                                    servings.value = servings.value.toDouble().roundToInt().toString()
+                                }
+                                else{
+                                    servings.value = "1"
+                                }
+
+                            },
+                            Modifier.weight(3F),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+
+                        Column(Modifier.weight(1F)){
+                            Button(onClick = { servings.value =
+                                if(!servings.value.isNullOrEmpty()){
+                                    (servings.value.toInt() + 1).toString()
+                                }
+                                else{
+                                    ""
+                                }
+                            }
+
+                            ) {
+                                Icon(imageVector = Icons.Filled.Add, contentDescription = "moreServings"
+                                    , Modifier.fillMaxWidth())
+                            }
+
+                            Button(onClick = {
+
+                                if(!servings.value.isNullOrEmpty() && servings.value.toInt() - 1 >= 1){
+                                    servings.value = (servings.value.toInt() - 1).toString()
+                                }
+                                else{
+                                    ""
+                                }
+
+                            }) {
+                                Icon(painterResource(id = R.drawable.remove), contentDescription = "moreServings"
+                                    , Modifier.fillMaxWidth())
+                            }
                         }
 
-                        Button(onClick = {
-
-                            if(!servings.value.isNullOrEmpty() && servings.value.toInt() - 1 >= 1){
-                                servings.value = (servings.value.toInt() - 1).toString()
-                            }
-                            else{
-                                ""
-                            }
-
-                        }) {
-                            Icon(painterResource(id = R.drawable.remove), contentDescription = "moreServings"
-                                , Modifier.fillMaxWidth())
-                        }
                     }
 
                 }
-
-            }
-        },
-        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+            },
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
 
 
-    )
+        )
+    }
+    else{
+        Log.d("ShowAlertToAddRecipe", "i am recipeCustom!")
+    }
+
 }
 
 @Composable
-fun TabScreen(day: MutableList<MutableList<String>>) {
+fun TabScreen(dayList: MutableList<MutableList<String>>) {
     var tabIndex = remember { mutableStateOf(0) }
 
     val showMeals = remember { mutableStateOf(false)}
@@ -316,7 +365,7 @@ fun TabScreen(day: MutableList<MutableList<String>>) {
     if(showMeals.value){
 
         Column() {
-            Meals(day)
+            Meals(dayList)
         }
 
     }
@@ -400,7 +449,9 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                     modifier = Modifier
                         .clickable {
                             vm.recipesViewModel.addMode.value = true;
-                            vm.recipesViewModel.getUserSavedRecipesIds()
+                            vm.recipesViewModel.getUserSavedRecipesIds();
+                            vm.recipesViewModel.selectedMeal = mealType;
+
                             vm.navController.navigate(Destinations.RecipesScreen.ruta)
                         }
 

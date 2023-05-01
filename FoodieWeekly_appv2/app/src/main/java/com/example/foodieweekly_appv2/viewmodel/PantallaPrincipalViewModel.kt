@@ -56,10 +56,10 @@ class PantallaPrincipalViewModel : ViewModel() {
                     mealsInDay.forEach { meal ->
                         mealsFromDay[count].clear()
 
-                        val mealsArr = meal.value as ArrayList<Any>
+                        val mealsArr = meal.value as HashMap<Any, Any>
 
                         for (i in 0 until mealsArr.size) {
-                            mealsFromDay[count].add(mealsArr[i] as String)
+                            mealsFromDay[count].add(mealsArr.keys.toList()[i] as String)
                         }
 
                         count++;

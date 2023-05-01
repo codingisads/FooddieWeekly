@@ -193,7 +193,7 @@ fun RecipeElement(recipeTo: Any, edamamRecipe : Boolean = true) {
 
                         if(showDialog.value){
                             ShowAlertToAddRecipe(showDialog, servingsToAdd,
-                                recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                                recipe)
                         }
 
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.example.foodieweekly_appv2.model.RecipeCustom
+import com.example.foodieweekly_appv2.model.enums.MealType
 import com.example.foodieweekly_appv2.model.recipesApi.LinksX
 import com.example.foodieweekly_appv2.model.recipesApi.Next
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
@@ -55,6 +56,8 @@ class RecipesViewModel : ViewModel() {
 
     private var _addMode = mutableStateOf(false)
     public val addMode = _addMode
+
+    public var selectedMeal = MealType.Breakfast
 
 
     fun get() {
