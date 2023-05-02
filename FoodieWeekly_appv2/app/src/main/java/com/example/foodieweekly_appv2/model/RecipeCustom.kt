@@ -14,6 +14,8 @@ class RecipeCustom {
     var username : String = "Edamam"
     var servings : Int = 0
 
+    var steps : MutableList<String> = mutableListOf()
+
 
     var healthLabels : List<String> = listOf()
 

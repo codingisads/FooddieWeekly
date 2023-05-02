@@ -26,13 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.R
+import com.example.foodieweekly_appv2.model.RecipeCustom
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
-import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.vm
-import com.google.firebase.database.FirebaseDatabase
 import kotlin.math.roundToInt
 
 
@@ -195,68 +194,15 @@ fun ShowAlertToAddRecipe(
 
     //var servingsTxt = remember { mutableStateOf(servings.value)}
 
-    if(recipe is Recipe){
-        var firebase = FirebaseDatabase.getInstance().reference.root
+
 
         AlertDialog(
             onDismissRequest = { showDialog.value = false; },
             confirmButton = {
                 Button(onClick = {
-                    Log.d("ShowAlertToAddRecipe adding ", "added recipe with -> " + servings.value)
+                    vm.recipesViewModel.addRecipeToCalendar(servings, recipe, showDialog)
 
-                    firebase
-                        .child("Weeks")
-                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
-                        .child("days")
-                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
-                        .child("meals")
-                        .child(vm.recipesViewModel.selectedMeal.name.lowercase())
-                        .get()
-                        .addOnCompleteListener {
-                            if(it.result.exists()) {
-                                Log.d("ShowAlertToAddRecipe", "it exists")
-                                Log.d("ShowAlertToAddRecipe", vm.recipesViewModel.selectedMeal.name.lowercase())
-
-
-                                var recipesFromMeal = it.result.value as HashMap<Any, Any>
-                                recipesFromMeal.put(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value )
-
-                                firebase
-                                    .child("Weeks")
-                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
-                                    .child("days")
-                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
-                                    .child("meals")
-                                    .child(vm.recipesViewModel.selectedMeal.name.lowercase())
-                                    .setValue(recipesFromMeal)
-                                    .addOnCompleteListener {
-                                        Log.d("ShowAlertToAddRecipe", "done adding")
-                                    }
-                            }
-                            else{
-                                Log.d("ShowAlertToAddRecipe", "meals doesnt exist")
-
-                                var recipesFromMeal = hashMapOf<String, Int>()
-                                recipesFromMeal.put(
-                                    recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),
-                                    servings.value.toInt())
-                                firebase
-                                    .child("Weeks")
-                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
-                                    .child("days")
-                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
-                                    .child("meals")
-                                    .child(vm.recipesViewModel.selectedMeal.name.lowercase())
-                                    .setValue(recipesFromMeal)
-                            }
-                        }
-
-
-
-                    showDialog.value = false
-                    vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
-                        popUpTo(Destinations.RecipesScreen.ruta)
-                    }}) {
+                }) {
                     Text("Confirm", fontFamily = Poppins)
                 }
 
@@ -329,15 +275,12 @@ fun ShowAlertToAddRecipe(
 
 
         )
-    }
-    else{
-        Log.d("ShowAlertToAddRecipe", "i am recipeCustom!")
-    }
+
 
 }
 
 @Composable
-fun TabScreen(dayList: MutableList<MutableList<String>>) {
+fun TabScreen(dayList: MutableList<HashMap<RecipeCustom, Int>>) {
     var tabIndex = remember { mutableStateOf(0) }
 
     val showMeals = remember { mutableStateOf(false)}
@@ -379,7 +322,7 @@ fun retallaText(text: String, mida: Int) = if (text.length <= mida) text else {
 }
 
 @Composable
-fun Meals(day: MutableList<MutableList<String>>) {
+fun Meals(day: MutableList<HashMap<RecipeCustom, Int>>) {
     //isSystemInDarkTheme()
     Column(
         Modifier
@@ -401,11 +344,13 @@ fun Meals(day: MutableList<MutableList<String>>) {
             ) {
 
                 val mealType = (MealType.values()).toList()
+                val keys = day[i].keys.toList()
                 Column() {
+
                     val recipes = day[i]
                     Log.d("recipes", "recipes " + recipes.size.toString())
                     Log.d("recipes", "i " + i.toString())
-                    Meal(mealType[i], recipes)
+                    Meal(mealType[i], day[i])
 
 
                 }
@@ -417,7 +362,7 @@ fun Meals(day: MutableList<MutableList<String>>) {
 
 
 @Composable
-fun Meal(mealType: MealType, recipes: MutableList<String>) {
+fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
     val displayAll = remember { mutableStateOf(false)}
     Log.d("recipes", "in Meal " + recipes.size.toString())
     Column(
@@ -463,6 +408,8 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
         }
 
 
+        val keys = recipes.keys.toList()
+        val servings = recipes.values.toList()
         if(recipes.size > 0){
             if(displayAll.value){
                 for (i in 0 until recipes.size) {
@@ -482,7 +429,7 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                                 ))*/
 
                         AsyncImage(
-                            model = "https://i.pinimg.com/736x/47/cd/a8/47cda8eca5f5f013d14ce7dd6b408bfd.jpg",
+                            model = keys[i].imageUrl,
                             contentDescription = "Translated description of what the image contains",
                             modifier = Modifier
                                 .weight(1F)
@@ -505,12 +452,12 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                                         .padding(start = 10.dp)
                                 ) {
                                     Text(
-                                        "Oat chia pudding with walnuts and pistachio",
+                                        keys[i].label,
                                         fontFamily = Poppins, style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                     Text(
-                                        recipes[i],
+                                        "Servings: " + servings[i].toString(),
                                         fontFamily = Poppins, style = MaterialTheme.typography.bodySmall
                                     )
                                 }
@@ -538,7 +485,7 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                             ))*/
 
                     AsyncImage(
-                        model = "https://i.pinimg.com/736x/47/cd/a8/47cda8eca5f5f013d14ce7dd6b408bfd.jpg",
+                        model = keys[0].imageUrl,
                         contentDescription = "Translated description of what the image contains",
                         modifier = Modifier
                             .weight(1F)
@@ -561,12 +508,12 @@ fun Meal(mealType: MealType, recipes: MutableList<String>) {
                                     .padding(start = 10.dp)
                             ) {
                                 Text(
-                                    "Oat chia pudding with walnuts and pistachio",
+                                    keys[0].label,
                                     fontFamily = Poppins, style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
-                                    recipes[0],
+                                    "Servings: " + servings[0].toString(),
                                     fontFamily = Poppins, style = MaterialTheme.typography.bodySmall
                                 )
                             }

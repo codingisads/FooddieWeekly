@@ -16,6 +16,7 @@ import com.example.foodieweekly_appv2.model.recipesApi.LinksX
 import com.example.foodieweekly_appv2.model.recipesApi.Next
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 import com.example.foodieweekly_appv2.model.recipesApi.Recipes
+import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.vm
 import com.example.foodieweekly_appv2.xarxa.RecipesClient
 import com.google.firebase.database.FirebaseDatabase
@@ -676,5 +677,222 @@ class RecipesViewModel : ViewModel() {
 
 
 
+    }
+
+    fun addRecipeToCalendar(servings : MutableState<String>, recipe : Any, showDialog : MutableState<Boolean>) {
+        Log.d("ShowAlertToAddRecipe adding ", "added recipe with -> " + servings.value)
+        var firebase = FirebaseDatabase.getInstance().reference.root
+        firebase
+            .child("Weeks")
+            .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+            .child("days")
+            .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+            .child("meals")
+            .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+            .get()
+            .addOnCompleteListener {
+
+                if(recipe is Recipe){
+                    if(it.result.exists()) {
+                        Log.d("ShowAlertToAddRecipe", "it exists")
+                        Log.d("ShowAlertToAddRecipe", vm.recipesViewModel.selectedMeal.name.lowercase())
+
+
+                        var recipesFromMeal = it.result.value as HashMap<Any, Any>
+                        recipesFromMeal.put(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value)
+
+                        //Check if recipe is already on savedRecipes
+
+                        //Check if recipe is already on savedRecipes
+
+                        firebase
+                            .child("EdamamRecipes")
+                            .child(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                            .get()
+                            .addOnCompleteListener {
+                                //If recipe already added on EdamamRecipes, no need to add it. If not, add to it
+                                if(!it.result.exists()){
+                                    val newRecipe = RecipeCustom()
+                                    newRecipe.parseRecipe(recipe)
+
+
+                                    addImageToStorage(recipe, newRecipe)
+
+                                    firebase
+                                        .child("Weeks")
+                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child("days")
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child("meals")
+                                        .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                        .setValue(recipesFromMeal)
+                                        .addOnCompleteListener {
+                                            Log.d("ShowAlertToAddRecipe", "done adding")
+
+
+                                            addRecipeToMealsInDay(newRecipe, servings.value.toInt())
+
+
+                                        }
+                                }
+                                else{
+
+                                    val newRep = RecipeCustom()
+                                    newRep.parseRecipeCustom(it.result.value as HashMap<Any, Any>)
+                                    addRecipeToMealsInDay(newRep, servings.value.toInt())
+                                    firebase
+                                        .child("Weeks")
+                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child("days")
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child("meals")
+                                        .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                        .setValue(recipesFromMeal)
+                                        .addOnCompleteListener {
+                                            Log.d("ShowAlertToAddRecipe", "done adding")
+                                        }
+                                }
+                            }
+
+                    }
+                    else{
+                        Log.d("ShowAlertToAddRecipe", "meals doesnt exist")
+
+                        var recipesFromMeal = hashMapOf<String, String>()
+                        recipesFromMeal.put(
+                            recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),
+                            servings.value)
+
+
+                        //Check if recipe is already on savedRecipes
+
+                        firebase
+                            .child("EdamamRecipes")
+                            .child(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                            .get()
+                            .addOnCompleteListener {
+                                //If recipe already added on EdamamRecipes, no need to add it. If not, add to it
+                                if(!it.result.exists()){
+                                    val newRecipe = RecipeCustom()
+                                    newRecipe.parseRecipe(recipe)
+
+
+                                    addImageToStorage(recipe, newRecipe)
+
+                                    firebase
+                                        .child("Weeks")
+                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child("days")
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child("meals")
+                                        .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                        .setValue(recipesFromMeal)
+                                        .addOnCompleteListener {
+                                            Log.d("ShowAlertToAddRecipe", "done adding")
+
+
+                                            addRecipeToMealsInDay(newRecipe, servings.value.toInt())
+
+
+                                        }
+                                }
+                                else{
+
+                                    val newRep = RecipeCustom()
+                                    newRep.parseRecipeCustom(it.result.value as HashMap<Any, Any>)
+                                    addRecipeToMealsInDay(newRep, servings.value.toInt())
+                                    firebase
+                                        .child("Weeks")
+                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child("days")
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child("meals")
+                                        .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                        .setValue(recipesFromMeal)
+                                        .addOnCompleteListener {
+                                            Log.d("ShowAlertToAddRecipe", "done adding")
+                                        }
+                                }
+                            }
+                    }
+                }
+                else if(recipe is RecipeCustom){
+                    Log.d("ShowAlertToAddRecipe", "i am custom recipe")
+                    if(it.result.exists()) {
+                        Log.d("ShowAlertToAddRecipe", "it exists")
+                        Log.d("ShowAlertToAddRecipe", vm.recipesViewModel.selectedMeal.name.lowercase())
+
+                        //Add to day recipes map
+                        var recipesFromMeal = it.result.value as HashMap<Any, Any>
+                        recipesFromMeal.put(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value )
+
+
+                        firebase
+                            .child("Weeks")
+                            .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                            .child("days")
+                            .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                            .child("meals")
+                            .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                            .setValue(recipesFromMeal)
+                            .addOnCompleteListener {
+                                Log.d("ShowAlertToAddRecipe", "done adding")
+
+                                addRecipeToMealsInDay(recipe, servings.value.toInt())
+                            }
+
+
+                    }
+                    else{
+                        Log.d("ShowAlertToAddRecipe", "meals doesnt exist")
+
+                        var recipesFromMeal = hashMapOf<String, String>()
+                        recipesFromMeal.put(
+                            recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),
+                            servings.value)
+
+
+                        firebase
+                            .child("Weeks")
+                            .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                            .child("days")
+                            .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                            .child("meals")
+                            .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                            .setValue(recipesFromMeal).addOnCompleteListener {
+
+                                addRecipeToMealsInDay(recipe, servings.value.toInt())
+                            }
+                    }
+                }
+                else{
+                    Log.d("ShowAlertToAddRecipe", "idk what i am")
+                    Log.d("ShowAlertToAddRecipe", recipe.toString())
+                }
+            }
+
+
+
+
+        showDialog.value = false
+        vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
+            popUpTo(Destinations.RecipesScreen.ruta)
+        }
+        vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.weekId.value,
+            vm.pantallaPrincipalViewModel.selectedIndex.value)
+    }
+
+
+    fun addRecipeToMealsInDay(recipe : RecipeCustom, servings : Int){
+        var i = -1
+        when(vm.recipesViewModel.selectedMeal.name.lowercase()){
+            "breakfast" -> i = 0
+            "lunch" -> i = 1
+            "dinner" -> i = 2
+            "snack" -> i = 3
+        }
+
+        Log.d("addRecipeToMealsInDay", "added "+ recipe.label)
+        vm.pantallaPrincipalViewModel.mealsFromDay[i].put(recipe, servings)
     }
 }

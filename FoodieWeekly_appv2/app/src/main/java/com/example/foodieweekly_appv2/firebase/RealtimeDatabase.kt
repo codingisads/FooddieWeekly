@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import com.example.foodieweekly_appv2.model.Calendar
 import com.example.foodieweekly_appv2.model.User
 import com.example.foodieweekly_appv2.model.Week
+import com.example.foodieweekly_appv2.navigation.Destinations
+import com.example.foodieweekly_appv2.vm
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -242,19 +244,23 @@ class RealtimeDatabase {
                 FirebaseDatabase.getInstance().reference.root.child("Weeks")
                     .child(currentWeekId.result.value.toString()).child("days").get().addOnCompleteListener {
                         days ->
-                        dies.clear()
-                        diesNum.clear()
 
-                        for (i in 0 until 7){
-                            val child = days.result.child(i.toString()).child("dateInDate").value
-                            Log.d("getWeekDateInDatefun", "child: " + child.toString())
+                        if(days.result.value != null){
+                            dies.clear()
+                            diesNum.clear()
 
-                            val childSeparated = child.toString().split('/')
-                            dies.add(childSeparated[0])
-                            Log.d("getWeekDateInDatefun", childSeparated[0])
-                            diesNum.add(childSeparated[1])
-                            Log.d("getWeekDateInDatefun", childSeparated[1])
+                            for (i in 0 until 7){
+                                val child = days.result.child(i.toString()).child("dateInDate").value
+                                Log.d("getWeekDateInDatefun", "child: " + child.toString())
+
+                                val childSeparated = child.toString().split('/')
+                                dies.add(childSeparated[0])
+                                Log.d("getWeekDateInDatefun", childSeparated[0])
+                                diesNum.add(childSeparated[1])
+                                Log.d("getWeekDateInDatefun", childSeparated[1])
+                            }
                         }
+
 
                     }
 
@@ -316,6 +322,41 @@ class RealtimeDatabase {
         } catch(e : Exception){
             userExists.value = false
             showSignupConfig.value = false
+            Log.d("checkIfUserUIDIsRegistered", "Something went wrong here")
+        }
+    }
+
+    public var checkIfUserUIDIsRegistered2 = fun(uid : String?, toDo : () -> Unit) : Unit {
+        var database: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+
+        try {
+            if (uid != null) {
+                database.root.child("Users").child(uid).get()
+                    .addOnSuccessListener {
+                        var userExists = it.exists()
+                        var showSignupConfig = !userExists
+
+                        Log.d("checkIfUserUIDIsRegistered", "userExists " + userExists.toString())
+                        Log.d("checkIfUserUIDIsRegistered", "showSignupConfig " + showSignupConfig.toString())
+                        Log.d("checkIfUserUIDIsRegistered", it.key.toString())
+
+                        if(userExists){
+                            toDo
+                        }
+                        else{
+                            Log.d("navigating", "showSignupConfig")
+                            vm.navController.navigate(Destinations.SignupConfig.ruta){
+                                popUpTo(Destinations.Signup.ruta)
+                                {
+                                    inclusive = false
+                                }
+                            }
+                        }
+
+                    }
+            }
+        } catch(e : Exception){
             Log.d("checkIfUserUIDIsRegistered", "Something went wrong here")
         }
     }

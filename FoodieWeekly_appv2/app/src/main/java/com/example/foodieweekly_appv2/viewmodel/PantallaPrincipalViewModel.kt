@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
+import com.example.foodieweekly_appv2.model.RecipeCustom
 import com.example.foodieweekly_appv2.vm
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.runBlocking
@@ -31,7 +32,7 @@ class PantallaPrincipalViewModel : ViewModel() {
     val gettingAPIValues = mutableStateOf(false)
 
     val mealsFromDay = MutableList(4){
-        mutableListOf<String>()
+        hashMapOf<RecipeCustom, Int>()
     }
 
     fun getMealsFromDay(
@@ -48,21 +49,64 @@ class PantallaPrincipalViewModel : ViewModel() {
             .get()
             .addOnCompleteListener { meals ->
 
+                for (i in 0 until mealsFromDay.size){
+                    mealsFromDay[i].clear()
+                }
+
                 if (meals.result.exists()) {
 
                     val mealsInDay = meals.result.value as HashMap<Any, Any>
 
-                    var count = 0;
+
+
                     mealsInDay.forEach { meal ->
-                        mealsFromDay[count].clear()
+                        var count = 0
 
-                        val mealsArr = meal.value as HashMap<Any, Any>
+                        when(meal.key){
 
-                        for (i in 0 until mealsArr.size) {
-                            mealsFromDay[count].add(mealsArr.keys.toList()[i] as String)
+                            "breakfast" ->count =  0
+                            "lunch" -> count = 1
+                            "dinner" -> count = 2
+                            "snack" -> count = 3
                         }
 
-                        count++;
+
+
+                        val mealsArr = meal.value as HashMap<Any, Any>
+                        val mealsKeyList = mealsArr.keys.toList()
+                        val mealsServingsList = mealsArr.values.toList()
+                        for (i in 0 until mealsKeyList.size) {
+
+                            Log.d("getMealsFromDay mealKey", mealsKeyList[i].toString())
+
+                            FirebaseDatabase.getInstance().reference.root
+                                .child("EdamamRecipes")
+                                .child(mealsKeyList[i].toString())
+                                .get()
+                                .addOnCompleteListener {
+                                    when(meal.key){
+
+                                        "breakfast" ->count =  0
+                                        "lunch" -> count = 1
+                                        "dinner" -> count = 2
+                                        "snack" -> count = 3
+                                    }
+                                    Log.d("getMealsFromDay inside", "count -> " + count.toString())
+                                    var customRecipe = RecipeCustom()
+
+                                    if(it.result.value != null){
+                                        customRecipe.parseRecipeCustom(it.result.value as HashMap<Any, Any>)
+                                        if(mealsServingsList[i] != null){
+                                            mealsFromDay[count].put(customRecipe, (mealsServingsList[i] as String).toInt())
+                                        }
+
+                                    }
+
+                                }
+
+
+                        }
+
                     }
                 }
                 else{

@@ -227,8 +227,11 @@ class Authenticator {
                                     .child(currentUID.value).get()
                                     .addOnSuccessListener {
 
-                                        goToMainActivity(vm.navController);
 
+                                        //goToMainActivity(vm.navController);
+                                        db.checkIfUserUIDIsRegistered2(currentUID.value, {
+                                            goToMainActivity(vm.navController);
+                                        })
 
                                     }
                             }
@@ -271,6 +274,7 @@ class Authenticator {
 
 
         if(uid != null){
+            vm.pantallaPrincipalViewModel.settingUp();
 
             navController.navigate(Destinations.PantallaPrincipal.ruta)
 

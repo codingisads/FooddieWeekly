@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.TabScreen
@@ -32,8 +33,11 @@ fun PantallaPrincipal(){
     val vm = com.example.foodieweekly_appv2.vm.pantallaPrincipalViewModel
 
     vm.settingUp()
+    val db = RealtimeDatabase()
+
+
     var mealsFromDay = remember { vm.mealsFromDay }
-    vm.getMealsFromDay( vm.weekId.value, vm.selectedIndex.value)
+    //vm.getMealsFromDay( vm.weekId.value, vm.selectedIndex.value)
 
         Log.d("PantallaPrincipal", vm.dies.size.toString())
         Column (
@@ -115,6 +119,7 @@ fun PantallaPrincipal(){
                                             .clickable {
 
                                                 vm.selectedIndex.value = i
+                                                Log.d("Actualizando la pntalla", "aqui")
                                                 vm.getMealsFromDay(vm.weekId.value, i)
 
 
