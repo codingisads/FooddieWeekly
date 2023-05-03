@@ -326,7 +326,7 @@ class RealtimeDatabase {
         }
     }
 
-    public var checkIfUserUIDIsRegistered2 = fun(uid : String?, toDo : () -> Unit) : Unit {
+    public var checkIfUserUIDIsRegistered2 = fun(uid : String?) : Unit {
         var database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
 
@@ -342,7 +342,7 @@ class RealtimeDatabase {
                         Log.d("checkIfUserUIDIsRegistered", it.key.toString())
 
                         if(userExists){
-                            toDo
+                            vm.authenticator.goToMainActivity(vm.navController);
                         }
                         else{
                             Log.d("navigating", "showSignupConfig")
@@ -361,5 +361,23 @@ class RealtimeDatabase {
         }
     }
 
+    fun getUsersCalorieGoal() {
+        var db = FirebaseDatabase.getInstance().reference.root
+        var goal = 0;
 
+        db
+            .child("Users")
+            .child(vm.authenticator.currentUID.value)
+            .child("caloricGoal")
+            .get()
+            .addOnCompleteListener {
+                if(it.result.exists()){
+                    if(it.result.value != null){
+                        vm.pantallaPrincipalViewModel.userCaloricGoal.value = (it.result.value as Long).toInt()
+                    }
+                }
+            }
+
+
+    }
 }

@@ -18,7 +18,12 @@ class PantallaPrincipalViewModel : ViewModel() {
     var completed = mutableStateOf(false)
 
     var username =   mutableStateOf("stranger")
+
     val selectedIndex =  mutableStateOf(0)
+    val selectedDayCalories = mutableStateOf(0)
+
+    val userCaloricGoal = mutableStateOf(0)
+    val calorieDayPercentage = mutableStateOf(0)
 
     var formatter = DateTimeFormatter.ofPattern("EEEE d'th of' MMMM 'of' yyyy ", Locale.ENGLISH)
     var currentDate : String = ""
@@ -107,13 +112,19 @@ class PantallaPrincipalViewModel : ViewModel() {
 
                         }
 
+
                     }
+
                 }
                 else{
                     for (i in 0 until mealsFromDay.size){
                         mealsFromDay[i].clear()
                     }
+
                 }
+
+
+
             }
 
 
@@ -145,14 +156,18 @@ class PantallaPrincipalViewModel : ViewModel() {
                         db.changeDay(authenticator.currentUID.value, calId.value)
                         Log.d("PantallaPrincipal", "getWeekDateInDate")
                         db.getWeekDateInDate(calId.value, dies, diesNum)
-
+                        db.getUsersCalorieGoal()
                         //getMealsFromDay( weekId.value, 0)
-
                         if(!gettingAPIValues.value){
                             Log.d("PantallaPrincipal", "gettingRecipes")
                             vmRecipes.get()
                             gettingAPIValues.value = true
                         }
+
+                        //Update day calories
+                        getDayCalories()
+                        //Update percentage
+                        getCaloriePercentage()
 
 
                     }
@@ -165,5 +180,54 @@ class PantallaPrincipalViewModel : ViewModel() {
         }
 
 
+    }
+
+    fun calcMealCalories(recipes: HashMap<RecipeCustom, Int>) : Int {
+        var totalCalories = 0;
+
+        val recipeList = recipes.keys.toList()
+        val servingsList = recipes.values.toList()
+
+        for (i in 0 until recipeList.size){
+            totalCalories += (recipeList[i].kcalsPerServing * servingsList[i])
+        }
+
+        return totalCalories
+    }
+
+    fun getDayCalories(){
+
+        var cals = 0
+
+        for (i in 0 until mealsFromDay.size){
+            val recipesList = mealsFromDay[i].keys.toList()
+            val servingList = mealsFromDay[i].values.toList()
+            for (j in 0 until mealsFromDay[i].size){
+                cals += (recipesList[j].kcalsPerServing*servingList[j])
+            }
+        }
+        Log.d("getDayCalories", cals.toString())
+        selectedDayCalories.value = cals
+
+        Log.d("getDayCalories", selectedDayCalories.value.toString())
+
+    }
+
+    fun getCaloriePercentage() {
+
+        if(userCaloricGoal.value > 0){
+            Log.d("getCaloriePercentage", "mayor a 0")
+            Log.d("getCaloriePercentage", selectedDayCalories.value.toString())
+            Log.d("getCaloriePercentage", userCaloricGoal.value.toString())
+            calorieDayPercentage.value = ((selectedDayCalories.value.toDouble() / userCaloricGoal.value) * 100).toInt()
+
+            Log.d("getCaloriePercentage", (selectedDayCalories.value.toDouble() / userCaloricGoal.value).toString())
+        }
+        else{
+            calorieDayPercentage.value = 0
+        }
+
+
+        Log.d("getCaloriePercentage", calorieDayPercentage.value.toString())
     }
 }

@@ -2,6 +2,7 @@ package com.example.foodieweekly_appv2.utils
 
 import android.util.Log
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -381,7 +382,7 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                 fontFamily = Poppins, style = MaterialTheme.typography.labelMedium
             )
             Text(
-                "368kcal",
+                vm.pantallaPrincipalViewModel.calcMealCalories(recipes).toString()+"kcal",
                 fontFamily = Poppins, style = MaterialTheme.typography.labelSmall,
                 color = if (isSystemInDarkTheme()) Color(0xFFFBFCFE) else Color(0xFF191C1E)
             )
@@ -417,7 +418,17 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                         Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
-                            .padding(bottom = 20.dp),
+                            .padding(bottom = 20.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                vm.recipesViewModel.setActualRecipe(keys[i])
+                                vm.navController.navigate(Destinations.ShowRecipeInfo.ruta) {
+                                    popUpTo(Destinations.ShowRecipeInfo.ruta)
+                                    launchSingleTop = true
+                                }
+                            },
                         verticalAlignment = Alignment.CenterVertically) {
                         /*Image(painter = painterResource(id = R.drawable.ic_launcher_background),
                             contentDescription = "",
@@ -473,7 +484,17 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                     Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(bottom = 20.dp),
+                        .padding(bottom = 20.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            vm.recipesViewModel.setActualRecipe(keys[0])
+                            vm.navController.navigate(Destinations.ShowRecipeInfo.ruta) {
+                                popUpTo(Destinations.ShowRecipeInfo.ruta)
+                                launchSingleTop = true
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically) {
                     /*Image(painter = painterResource(id = R.drawable.ic_launcher_background),
                         contentDescription = "",

@@ -229,9 +229,7 @@ class Authenticator {
 
 
                                         //goToMainActivity(vm.navController);
-                                        db.checkIfUserUIDIsRegistered2(currentUID.value, {
-                                            goToMainActivity(vm.navController);
-                                        })
+                                        db.checkIfUserUIDIsRegistered2(currentUID.value)
 
                                     }
                             }
@@ -274,11 +272,9 @@ class Authenticator {
 
 
         if(uid != null){
+            vm.recipesViewModel.getUserSavedRecipesIds()
             vm.pantallaPrincipalViewModel.settingUp();
-
             navController.navigate(Destinations.PantallaPrincipal.ruta)
-
-
         }
     }
 

@@ -33,10 +33,14 @@ fun PantallaPrincipal(){
     val vm = com.example.foodieweekly_appv2.vm.pantallaPrincipalViewModel
 
     vm.settingUp()
+
     val db = RealtimeDatabase()
 
 
     var mealsFromDay = remember { vm.mealsFromDay }
+    var calorieGoal = remember { vm.userCaloricGoal}
+    val dayCalories = remember { vm.selectedDayCalories }
+    val percentage = remember { vm.calorieDayPercentage}
     //vm.getMealsFromDay( vm.weekId.value, vm.selectedIndex.value)
 
         Log.d("PantallaPrincipal", vm.dies.size.toString())
@@ -123,6 +127,7 @@ fun PantallaPrincipal(){
                                                 vm.getMealsFromDay(vm.weekId.value, i)
 
 
+
                                             }, Alignment.Center){
                                         Column(Modifier.padding(5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Text(
@@ -166,13 +171,14 @@ fun PantallaPrincipal(){
                                     .wrapContentHeight(), contentAlignment = Alignment.Center){
 
                                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                                    Text(text = "1000/2000 kcals",
+                                    Text(text = dayCalories.value.toString() +"/"+
+                                            calorieGoal.value + " kcals",
                                         style = MaterialTheme.typography.labelMedium,
                                         fontFamily = Poppins,
                                         modifier = Modifier.padding(bottom = 10.dp)
                                     )
                                     CircularProgressIndicator(progress = 0.5f, modifier = Modifier.size(50.dp), color = MaterialTheme.colorScheme.primary)
-                                    Text(text = "50% of your daily goal!",
+                                    Text(text = percentage.value.toString() + "% of your daily goal!",
                                         style = MaterialTheme.typography.bodySmall,
                                         fontFamily = Poppins, fontWeight = FontWeight.Light,
                                         modifier = Modifier.padding(top = 10.dp)

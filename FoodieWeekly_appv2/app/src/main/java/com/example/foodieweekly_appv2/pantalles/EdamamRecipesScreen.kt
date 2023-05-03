@@ -1273,7 +1273,7 @@ fun ShowRecipeNutrition(recipeRaw : Any) {
                 Box(Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp, bottom = 40.dp), contentAlignment = Alignment.Center){
                     Column(horizontalAlignment = Alignment.CenterHorizontally){
                         Text(recipe.servings.toString()+" servings", fontFamily = Poppins, textAlign = TextAlign.Center)
-                        Text((recipe.kcalsPerServing/recipe.servings).toString()+" kcal/serving", fontFamily = Poppins,
+                        Text(recipe.kcalsPerServing.toString()+" kcal/serving", fontFamily = Poppins,
                             textAlign = TextAlign.Center, fontSize = 18.sp, fontWeight = FontWeight.Bold
                         )
 
