@@ -104,5 +104,25 @@ class RecipeCustom {
 
     }
 
+    fun parseMapToNutritionTotal(recipes : MutableList<HashMap<RecipeCustom, Int>>){
+
+        nutritionLabels = recipes[0].keys.toList()[0].nutritionLabels
+        nutritionUnits = recipes[0].keys.toList()[0].nutritionUnits
+        for (i in 0 until recipes.size){
+            val recipesList = recipes[i].keys.toList()
+            val servingsList = recipes[i].values.toList()
+
+            for (j in 0 until recipesList.size){
+
+                for (k in 0 until recipesList[j].nutritionQuantity.size){
+                    nutritionQuantity.add(0)
+                    nutritionQuantity[k] += (recipesList[j].nutritionQuantity[k].toDouble() / servingsList[j]).toInt()
+                }
+
+                totalKcals += (recipesList[j].kcalsPerServing * servingsList[j])
+            }
+        }
+    }
+
 
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.R
@@ -313,6 +314,11 @@ fun TabScreen(dayList: MutableList<HashMap<RecipeCustom, Int>>) {
         }
 
     }
+    else if(showNutrition.value){
+        Column(){
+            Nutrition(dayList)
+        }
+    }
 }
 
 
@@ -320,6 +326,104 @@ fun TabScreen(dayList: MutableList<HashMap<RecipeCustom, Int>>) {
 fun retallaText(text: String, mida: Int) = if (text.length <= mida) text else {
     val textAmbEllipsis = text.removeRange(startIndex = mida, endIndex = text.length)
     "$textAmbEllipsis..."
+}
+
+@Composable
+fun Nutrition(recipes : MutableList<HashMap<RecipeCustom, Int>>){
+    val colorsLight = listOf(Color(0xFF6AA73F), Color(0xFFD87F22), Color(0xFFE03535))
+    val colorsDark = listOf(Color(0xFF33971D), Color(0xFFE76016), Color(0xFFB81F3E))
+
+    val recipe = RecipeCustom()
+    recipe.parseMapToNutritionTotal(recipes)
+
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(bottomStart = 25.dp, bottomEnd = 25.dp))
+                .background(if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA))) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp)
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center){
+
+                Box(Modifier.padding(start = 20.dp, end = 20.dp, top = 40.dp, bottom = 40.dp), contentAlignment = Alignment.Center){
+                    Column(horizontalAlignment = Alignment.CenterHorizontally){
+                        Text(recipe.totalKcals.toString()+" total calories", fontFamily = Poppins,
+                            textAlign = TextAlign.Center, fontSize = 18.sp, fontWeight = FontWeight.Bold
+                        )
+
+
+
+
+                        Divider(Modifier.border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline)))
+
+                        for (i in 0 until recipe.nutritionLabels.size){
+
+                            if(recipe.nutritionLabels[i] == "Protein" ||
+                                recipe.nutritionLabels[i] == "Carbs" ||
+                                recipe.nutritionLabels[i] == "Fat"){
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+                                    Box(
+                                        Modifier
+                                            .width(15.dp)
+                                            .height(15.dp)
+                                            .clip(RoundedCornerShape(55.dp))
+                                            .background(
+                                                if (isSystemInDarkTheme()) {
+                                                    colorsDark[i % 3]
+                                                } else {
+                                                    colorsLight[i % 3]
+                                                }
+                                            )) {
+
+                                    }
+
+                                    Text(recipe.nutritionLabels[i].uppercase(), Modifier.padding(start = 5.dp), fontFamily = Poppins )
+
+                                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
+                                        Text(recipe.nutritionQuantity[i].toString()+recipe.nutritionUnits[i],
+                                            fontFamily = Poppins, textAlign = TextAlign.End, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+
+                                if(i == 2)
+                                    Divider(Modifier
+                                        .padding(top = 15.dp, bottom = 15.dp)
+                                        .border(
+                                            BorderStroke(1.dp, MaterialTheme.colorScheme.outline)))
+                            }
+                            else{
+
+                                Row(
+
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically){
+
+
+                                    Text(recipe.nutritionLabels[i], Modifier.padding(start = 5.dp), fontFamily = Poppins , fontSize = 10.sp)
+
+                                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
+                                        Text(recipe.nutritionQuantity[i].toString()+recipe.nutritionUnits[i],
+                                            fontFamily = Poppins, textAlign = TextAlign.End, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+
+            }
+        }
+
 }
 
 @Composable

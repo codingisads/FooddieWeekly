@@ -177,7 +177,7 @@ fun PantallaPrincipal(){
                                         fontFamily = Poppins,
                                         modifier = Modifier.padding(bottom = 10.dp)
                                     )
-                                    CircularProgressIndicator(progress = 0.5f, modifier = Modifier.size(50.dp), color = MaterialTheme.colorScheme.primary)
+                                    CircularProgressIndicator(progress = (percentage.value.toDouble()/100).toFloat(), modifier = Modifier.size(50.dp), color = MaterialTheme.colorScheme.primary)
                                     Text(text = percentage.value.toString() + "% of your daily goal!",
                                         style = MaterialTheme.typography.bodySmall,
                                         fontFamily = Poppins, fontWeight = FontWeight.Light,
