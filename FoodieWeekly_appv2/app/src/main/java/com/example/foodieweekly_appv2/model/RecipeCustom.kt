@@ -1,5 +1,6 @@
 package com.example.foodieweekly_appv2.model
 
+import android.util.Log
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
 
 class RecipeCustom {
@@ -106,22 +107,36 @@ class RecipeCustom {
 
     fun parseMapToNutritionTotal(recipes : MutableList<HashMap<RecipeCustom, Int>>){
 
-        nutritionLabels = recipes[0].keys.toList()[0].nutritionLabels
-        nutritionUnits = recipes[0].keys.toList()[0].nutritionUnits
-        for (i in 0 until recipes.size){
-            val recipesList = recipes[i].keys.toList()
-            val servingsList = recipes[i].values.toList()
+        try{
+            if(recipes.size > 0){
 
-            for (j in 0 until recipesList.size){
+                var firstRecipe = recipes[0].keys.toList()
+                if(firstRecipe.size > 0){
+                    nutritionLabels = recipes[0].keys.toList()[0].nutritionLabels
+                    nutritionUnits = recipes[0].keys.toList()[0].nutritionUnits
+                    for (i in 0 until recipes.size){
+                        val recipesList = recipes[i].keys.toList()
+                        val servingsList = recipes[i].values.toList()
 
-                for (k in 0 until recipesList[j].nutritionQuantity.size){
-                    nutritionQuantity.add(0)
-                    nutritionQuantity[k] += (recipesList[j].nutritionQuantity[k].toDouble() / servingsList[j]).toInt()
+                        for (j in 0 until recipesList.size){
+
+                            for (k in 0 until recipesList[j].nutritionQuantity.size){
+                                nutritionQuantity.add(0)
+                                nutritionQuantity[k] += (recipesList[j].nutritionQuantity[k].toDouble() / servingsList[j]).toInt()
+                            }
+
+                            totalKcals += (recipesList[j].kcalsPerServing * servingsList[j])
+                        }
+                    }
                 }
 
-                totalKcals += (recipesList[j].kcalsPerServing * servingsList[j])
             }
         }
+        catch(e : Exception){
+            Log.d("parseMapToNutritionTotal", e.message.toString())
+        }
+
+
     }
 
 

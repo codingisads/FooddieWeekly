@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.TabScreen
@@ -34,7 +33,6 @@ fun PantallaPrincipal(){
 
     vm.settingUp()
 
-    val db = RealtimeDatabase()
 
 
     var mealsFromDay = remember { vm.mealsFromDay }

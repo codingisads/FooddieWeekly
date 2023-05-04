@@ -61,14 +61,20 @@ fun ShowRecipes(llistaRecipes : MutableState<MutableList<Any>>) {
         {element ->
 
             val hit = element as Hit
-            RecipeElement(element.recipe)
+            RecipeElement(hit.recipe)
 
 
         }
 
         if(listState.firstVisibleItemIndex == llistaRecipes.value.size - 8){
             Log.d("recipesList", "getMore")
-            vm.getNextPage()
+            try{
+                vm.getNextPage()
+            }
+            catch(e : Exception){
+
+            }
+
         }
     }
 }

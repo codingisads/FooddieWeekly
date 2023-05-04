@@ -103,19 +103,23 @@ class RecipesViewModel : ViewModel() {
 
                 respostaRecipes.value = resultat
 
-                nextPageLink.value = respostaRecipes.value.links.next.href
+                if(respostaRecipes != null){
+                    nextPageLink.value = respostaRecipes.value.links.next.href
+                    llistaRecipes.value.clear()
+                    llistaRecipes.value.addAll(respostaRecipes.value.hits)
+                }
 
-                Log.d("getRecipes recipes page", nextPageLink.value)
+
+                Log.d("getRecipes recipes page lol", nextPageLink.value)
 
 
-                llistaRecipes.value.clear()
-                llistaRecipes.value.addAll(respostaRecipes.value.hits)
+
 
 
                 //llistaRecipes.value = respostaRecipes.value.results
             }
             catch(e : Exception){
-                Log.d("getRecipes", e.message.toString())
+                Log.d("getRecipes lol", e.message.toString())
             }
 
         }
@@ -137,15 +141,15 @@ class RecipesViewModel : ViewModel() {
 
                 nextPageLink.value = respostaRecipes.value.links.next.href
 
-                Log.d("getRecipes recipes page", nextPageLink.value)
+                Log.d("getRecipes recipes page nene", nextPageLink.value)
 
                 llistaRecipes.value.addAll(respostaRecipes.value.hits)
 
-                Log.d("getRecipes page", "done")
+                Log.d("getRecipes page nene", "done")
                 //llistaRecipes.value = respostaRecipes.value.results
             }
             catch(e : Exception){
-                Log.d("getRecipes page", e.message.toString())
+                Log.d("getRecipes page nene", e.message.toString())
             }
 
         }
@@ -694,12 +698,13 @@ class RecipesViewModel : ViewModel() {
 
                 if(recipe is Recipe){
                     if(it.result.exists()) {
+
                         Log.d("ShowAlertToAddRecipe", "it exists")
                         Log.d("ShowAlertToAddRecipe", vm.recipesViewModel.selectedMeal.name.lowercase())
 
 
                         var recipesFromMeal = it.result.value as HashMap<Any, Any>
-                        recipesFromMeal.put(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value)
+
 
                         //Check if recipe is already on savedRecipes
 
@@ -714,7 +719,7 @@ class RecipesViewModel : ViewModel() {
                                 if(!it.result.exists()){
                                     val newRecipe = RecipeCustom()
                                     newRecipe.parseRecipe(recipe)
-
+                                    recipesFromMeal.put(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value)
 
                                     addImageToStorage(recipe, newRecipe)
 
@@ -739,7 +744,6 @@ class RecipesViewModel : ViewModel() {
 
                                     val newRep = RecipeCustom()
                                     newRep.parseRecipeCustom(it.result.value as HashMap<Any, Any>)
-                                    addRecipeToMealsInDay(newRep, servings.value.toInt())
                                     firebase
                                         .child("Weeks")
                                         .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
@@ -747,9 +751,25 @@ class RecipesViewModel : ViewModel() {
                                         .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
                                         .child("meals")
                                         .child(vm.recipesViewModel.selectedMeal.name.lowercase())
-                                        .setValue(recipesFromMeal)
+                                        .child(newRep.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
+                                        .get()
                                         .addOnCompleteListener {
-                                            Log.d("ShowAlertToAddRecipe", "done adding")
+                                            if(!it.result.exists()){
+                                                recipesFromMeal.put(newRep.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value)
+
+                                                addRecipeToMealsInDay(newRep, servings.value.toInt())
+                                                firebase
+                                                    .child("Weeks")
+                                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                                    .child("days")
+                                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                                    .child("meals")
+                                                    .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                                    .setValue(recipesFromMeal).addOnCompleteListener {
+
+                                                        Log.d("ShowAlertToAddRecipe", "done adding")
+                                                    }
+                                            }
                                         }
                                 }
                             }
@@ -838,7 +858,21 @@ class RecipesViewModel : ViewModel() {
                             .addOnCompleteListener {
                                 Log.d("ShowAlertToAddRecipe", "done adding")
 
-                                addRecipeToMealsInDay(recipe, servings.value.toInt())
+                                firebase
+                                    .child("Weeks")
+                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                    .child("days")
+                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                    .child("meals")
+                                    .child(vm.recipesViewModel.selectedMeal.name.lowercase())
+                                    .child(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl", ""))
+                                    .get()
+                                    .addOnCompleteListener{
+                                        if(it.result.exists()){
+                                            addRecipeToMealsInDay(recipe, servings.value.toInt())
+                                        }
+                                    }
+
                             }
 
 
@@ -893,6 +927,7 @@ class RecipesViewModel : ViewModel() {
         }
 
         Log.d("addRecipeToMealsInDay", "added "+ recipe.label)
+        if(vm.pantallaPrincipalViewModel.mealsFromDay[i].contains(recipe))
         vm.pantallaPrincipalViewModel.mealsFromDay[i].put(recipe, servings)
     }
 }

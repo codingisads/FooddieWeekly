@@ -136,7 +136,11 @@ fun OutlinedTextFieldCustomNumber(modifier : Modifier, label : String, placehold
 
     androidx.compose.material3.OutlinedTextField(
         value = inputTxt.value,
-        onValueChange = {inputTxt.value = it.toDouble().roundToInt().toString()},
+        onValueChange = {
+            if(!it.isNullOrEmpty()) {
+                inputTxt.value = it.toDouble().roundToInt().toString()
+            }
+        },
         label = { Text(label) },
         placeholder = { Text(placeholder, textAlign = TextAlign.Center) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -335,7 +339,8 @@ fun Nutrition(recipes : MutableList<HashMap<RecipeCustom, Int>>){
 
     val recipe = RecipeCustom()
     recipe.parseMapToNutritionTotal(recipes)
-
+    
+    if(recipe.nutritionLabels.size > 0){
         Column(
             Modifier
                 .fillMaxHeight()
@@ -423,6 +428,16 @@ fun Nutrition(recipes : MutableList<HashMap<RecipeCustom, Int>>){
 
             }
         }
+    }
+    else{
+        Box(Modifier.fillMaxWidth().padding(top=40.dp), contentAlignment = Alignment.Center){
+            Text(text = "No information available!", fontFamily = Poppins,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold)
+        }
+    }
+
+        
 
 }
 
