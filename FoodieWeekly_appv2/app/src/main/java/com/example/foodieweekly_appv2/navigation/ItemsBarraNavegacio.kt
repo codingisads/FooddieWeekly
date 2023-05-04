@@ -3,19 +3,18 @@ package com.example.foodieweekly_appv2.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
 
 object ItemsBarraNavegacio {
     val Items = listOf(
-        ItemBarraNavegacio("Login",
+        ItemBarraNavegacio("Calendar",
             Icons.Filled.Home,
-            Destinations.Login.ruta),
-        ItemBarraNavegacio("Signup",
+            Destinations.PantallaPrincipal.ruta),
+        ItemBarraNavegacio("Recipes",
             Icons.Filled.CheckCircle,
-            Destinations.Signup.ruta),
-        ItemBarraNavegacio("Main",
+            Destinations.RecipesScreen.ruta),
+        ItemBarraNavegacio("Shop List",
             Icons.Filled.PlayArrow,
-            Destinations.PantallaPrincipal.ruta)
+            Destinations.ShoppingList.ruta)
     )
 }

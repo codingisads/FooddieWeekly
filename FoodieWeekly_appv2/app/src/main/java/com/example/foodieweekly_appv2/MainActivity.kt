@@ -24,6 +24,7 @@ import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.navigation.ItemsBarraNavegacio
+import com.example.foodieweekly_appv2.navigation.PrincipalBarraDeNavegacio
 import com.example.foodieweekly_appv2.pantalles.*
 import com.example.foodieweekly_appv2.ui.theme.FoodieWeekly_appv2Theme
 import com.example.foodieweekly_appv2.viewmodel.MainViewModel
@@ -84,10 +85,11 @@ class MainActivity : ComponentActivity() {
 
 
 
-
+                    vm.activity = activity
 
                     //ShowRecipeInfo()
-                    Main(vm, activity)
+                    //Main(vm)
+                    PrincipalBarraDeNavegacio(vm, vm.navController)
                     //RecipeElement()
                     //Total()
                     //PrincipalBarraDeNavegacio(navController)
@@ -117,7 +119,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Main(vm: MainViewModel, activity: MainActivity,
+fun Main(vm: MainViewModel,
          paddingValues: PaddingValues = PaddingValues(0.dp)) {
 
     NavHost(
@@ -127,10 +129,10 @@ fun Main(vm: MainViewModel, activity: MainActivity,
     ) {
         composable(Destinations.Login.ruta)
         {
-            Login(activity)
+            Login(vm.activity)
         }
         composable(Destinations.Signup.ruta) {
-            Signup(activity)
+            Signup(vm.activity)
         }
         composable(Destinations.SignupConfig.ruta) {
             SignupConfig()
@@ -156,10 +158,13 @@ fun Main(vm: MainViewModel, activity: MainActivity,
         composable(Destinations.ShowRecipeInfo.ruta) {
             ShowRecipeInfo(vm.recipesViewModel.selectedRecipe)
         }
+        composable(Destinations.ShoppingList.ruta) {
+            ShoppingList()
+        }
     }
 
     Log.d("navigating ifs", alreadyInDb.value.toString())
-    if (alreadyInDb.value){
+    /*if (alreadyInDb.value){
         Log.d("navigating", "alreadyInDb")
         vm.pantallaPrincipalViewModel.settingUp()
         if(vm.pantallaPrincipalViewModel.completed.value){
@@ -176,7 +181,7 @@ fun Main(vm: MainViewModel, activity: MainActivity,
                 inclusive = false
             }
         }
-    }
+    }*/
 
 }
 

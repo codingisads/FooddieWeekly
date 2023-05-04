@@ -11,6 +11,7 @@ sealed class Destinations (val ruta:String){
     object PantallaPrincipal: Destinations("PantallaPrincipal")
     object RecipesScreen: Destinations("RecipesScreen")
     object ShowRecipeInfo: Destinations("ShowRecipeInfo")
+    object ShoppingList: Destinations("ShoppingList")
 
 
 }

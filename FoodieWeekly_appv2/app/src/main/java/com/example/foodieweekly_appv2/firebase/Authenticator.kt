@@ -274,6 +274,8 @@ class Authenticator {
         if(uid != null){
             vm.recipesViewModel.getUserSavedRecipesIds()
             vm.pantallaPrincipalViewModel.settingUp();
+            vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.weekId.value,
+                vm.pantallaPrincipalViewModel.selectedIndex.value)
             navController.navigate(Destinations.PantallaPrincipal.ruta)
         }
     }

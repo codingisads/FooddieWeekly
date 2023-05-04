@@ -1,6 +1,7 @@
 package com.example.foodieweekly_appv2.pantalles
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.foodieweekly_appv2.R
+import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.vm
 
@@ -26,11 +28,22 @@ import com.example.foodieweekly_appv2.vm
 @Composable
 fun RecipesScreen() {
     val llistaRecipes = remember {com.example.foodieweekly_appv2.vm.recipesViewModel.llistaRecipes}
-    val vm = com.example.foodieweekly_appv2.vm.recipesViewModel
+    val vmR = com.example.foodieweekly_appv2.vm.recipesViewModel
     Log.d("recipesList", llistaRecipes.value.size.toString())
 
     val vs = remember { mutableStateOf("")}
 
+
+    BackHandler(enabled = true) {
+        vmR.addMode.value = false
+        vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
+            popUpTo(vm.navController.graph.startDestinationId){
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
     Column(Modifier.fillMaxWidth()) {
 
         Box(
@@ -71,11 +84,11 @@ fun RecipesScreen() {
 
                         try {
                             if(!vs.value.isNullOrEmpty()){
-                                vm.getRecipesOf(vs.value)
+                                vmR.getRecipesOf(vs.value)
                                 Log.d("RecipesScreen", "with ingredient")
                             }
                             else{
-                                vm.get()
+                                vmR.get()
                                 Log.d("RecipesScreen", "without ingredient")
                             }
                         }

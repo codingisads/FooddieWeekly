@@ -1,6 +1,7 @@
 package com.example.foodieweekly_appv2.pantalles
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.TabScreen
 
@@ -32,6 +32,10 @@ fun PantallaPrincipal(){
     val vm = com.example.foodieweekly_appv2.vm.pantallaPrincipalViewModel
 
     vm.settingUp()
+
+    BackHandler(enabled = true){
+
+    }
 
 
 
@@ -49,17 +53,6 @@ fun PantallaPrincipal(){
 
             Box(Modifier.padding(10.dp)){
                 Column(){
-                    Button(onClick = {
-
-                            vmRecipes.getUserSavedRecipesIds()
-
-                            vmRecipes.addMode.value = false;
-                            Log.d("getRecipes recipesList", vmRecipes.llistaRecipes.value.size.toString())
-                            navController.navigate(Destinations.RecipesScreen.ruta)
-
-                    }) {
-                        Text("Recipes")
-                    }
 
                     Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.fillMaxWidth()) {
                         Icon(

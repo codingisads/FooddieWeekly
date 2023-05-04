@@ -865,7 +865,7 @@ class RecipesViewModel : ViewModel() {
                                     .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
                                     .child("meals")
                                     .child(vm.recipesViewModel.selectedMeal.name.lowercase())
-                                    .child(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl", ""))
+                                    .child(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
                                     .get()
                                     .addOnCompleteListener{
                                         if(it.result.exists()){

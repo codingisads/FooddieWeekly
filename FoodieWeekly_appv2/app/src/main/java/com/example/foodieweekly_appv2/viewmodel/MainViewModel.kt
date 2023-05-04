@@ -1,5 +1,6 @@
 package com.example.foodieweekly_appv2.viewmodel
 
+import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
@@ -17,6 +18,8 @@ class MainViewModel : ViewModel() {
     lateinit var authenticator: Authenticator
 
     lateinit var context : Context
+
+    lateinit var activity : Activity
 
 
 

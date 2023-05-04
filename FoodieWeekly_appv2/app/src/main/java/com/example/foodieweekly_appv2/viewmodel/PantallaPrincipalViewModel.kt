@@ -140,9 +140,8 @@ class PantallaPrincipalViewModel : ViewModel() {
         try {
             runBlocking {
                 authenticator.getUserUsername(username)
-
+                //vm.recipesViewModel.addMode.value = false
                 val db = RealtimeDatabase()
-
                 db.getCalendarId(authenticator.currentUID.value, calId)
 
                 if (calId.value != "") {

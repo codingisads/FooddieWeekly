@@ -513,11 +513,19 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                 Image(painter = painterResource(R.drawable.add), contentDescription = "add_recipe",
                     modifier = Modifier
                         .clickable {
-                            vm.recipesViewModel.addMode.value = true;
+
                             vm.recipesViewModel.getUserSavedRecipesIds();
                             vm.recipesViewModel.selectedMeal = mealType;
 
-                            vm.navController.navigate(Destinations.RecipesScreen.ruta)
+                            vm.navController.navigate(Destinations.RecipesScreen.ruta){
+                                popUpTo(vm.navController.graph.startDestinationId){
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                            vm.recipesViewModel.addMode.value = true;
+
                         }
 
                 )
@@ -809,4 +817,22 @@ fun LabelledCheckbox(
             fontFamily = Poppins,
             fontWeight = FontWeight.Light)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldDemo() {
+    val materialBlue700= Color(0xFF1976D2)
+    val snackbarHostState = remember { SnackbarHostState() }
+    Scaffold(
+        bottomBar = {
+
+        },
+        content = {
+            padding ->
+            Column(Modifier.padding(padding)){
+
+            }
+        }
+    )
 }
