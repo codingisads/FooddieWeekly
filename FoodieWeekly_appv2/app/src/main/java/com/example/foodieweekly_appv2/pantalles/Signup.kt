@@ -19,21 +19,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.foodieweekly_appv2.R
-import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldCustomPassword
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldEmail
 import com.example.foodieweekly_appv2.utils.ShowAlert
-import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
 import com.example.foodieweekly_appv2.vm
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.logging.Handler
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,7 +92,16 @@ fun Signup(activity : Activity){
                     Button(
                         onClick = {
 
-                            authenticator.checkIfEmailIsNotRegistered(vm.email.value)
+
+                            if(vm.validEmail.value && vm.validPassword.value){
+                                authenticator.checkIfEmailIsNotRegistered(vm.email.value)
+                            }
+                            else{
+                                authenticator.registered.value = "Incorrect credentials! Email must be valid and password must be 6 characters minimum."
+                                vm.showDialog.value = true;
+                            }
+
+
 
                             Log.d("FIREBASE ON signup", vm.goToUserPreferences.value.toString())
 
@@ -124,7 +125,7 @@ fun Signup(activity : Activity){
                             .wrapContentHeight(Alignment.CenterVertically)
                             .shadow(0.dp),
                         contentPadding = PaddingValues(15.dp),
-                        enabled = vm.email.value.isNotEmpty() && vm.validEmail.value && vm.validPassword.value
+                        enabled = true//vm.email.value.isNotEmpty() && vm.validEmail.value && vm.validPassword.value
                     ) {
 
                         Box(contentAlignment = Alignment.Center)
@@ -191,7 +192,15 @@ fun Signup(activity : Activity){
             .weight(1F), horizontalArrangement = Arrangement.Center){
 
 
-            TextButton(onClick = { navController.navigate(Destinations.Login.ruta) }, modifier = Modifier.padding(0.dp)) {
+            TextButton(onClick = {
+                navController.navigate(Destinations.Login.ruta) {
+                    popUpTo(com.example.foodieweekly_appv2.vm.navController.graph.startDestinationId){
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                                 }, modifier = Modifier.padding(0.dp)) {
                 Text("Already have an account? ", fontFamily = Poppins,
                     fontWeight = FontWeight.Medium,
                     style = MaterialTheme.typography.labelSmall,

@@ -8,8 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -66,17 +64,24 @@ fun Login(activity : Activity) {
                 OutlinedTextFieldEmail(Modifier.fillMaxWidth().weight(2F), "Email", "Enter here yor email", vm.email, vm.validEmail)
 
 
-                OutlinedTextFieldCustomPassword(Modifier.fillMaxWidth().weight(2F), "Password", "Enter here your password", vm.password)
+                OutlinedTextFieldCustomPassword(Modifier.fillMaxWidth().weight(2F),
+                    "Password", "Enter here your password", vm.password)
 
 
                 Box(Modifier.fillMaxWidth().weight(1.5F), contentAlignment = Alignment.CenterEnd){
                     Button(
                         onClick = {
 
-                            authenticator.login(vm.email.value, vm.password.value)
+                            if(vm.validEmail.value && vm.validPassword.value ){
+                                authenticator.login(vm.email.value, vm.password.value)
+                            }
+                            else{
+                                vm.showDialog.value = true
+                            }
+
 
                         },
-                        enabled = vm.email.value.isNotEmpty() && vm.validEmail.value && vm.validPassword.value,
+                        enabled = true,//vm.email.value.isNotEmpty() && vm.validEmail.value && vm.validPassword.value,
                         shape = RoundedCornerShape(28.dp),
                         modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
                             .shadow(0.dp),
@@ -113,7 +118,8 @@ fun Login(activity : Activity) {
 
         if(vm.showDialog.value){
 
-            ShowAlert(showDialog = vm.showDialog, "Log In Failed", "Incorrect credentials!", Icons.Filled.AccountCircle)
+            ShowAlert(showDialog = vm.showDialog, "Log In Failed",
+                "This user does not exists or incorrect credentials!", Icons.Filled.AccountCircle)
         }
 
 
@@ -126,8 +132,6 @@ fun Login(activity : Activity) {
         )
 
 
-        val alreadyDB = remember { mutableStateOf(false) }
-        val toSignupConfig = remember { mutableStateOf(false) }
 
         IconButton(onClick = {
 
@@ -141,7 +145,15 @@ fun Login(activity : Activity) {
         Row(modifier = Modifier.padding(start = 20.dp, end = 20.dp).weight(1F), horizontalArrangement = Arrangement.Center){
 
 
-            TextButton(onClick = { navController.navigate(Destinations.Signup.ruta) }, modifier = Modifier.padding(0.dp)) {
+            TextButton(onClick = {
+                navController.navigate(Destinations.Signup.ruta)
+                {
+                    popUpTo(com.example.foodieweekly_appv2.vm.navController.graph.startDestinationId){
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }}, modifier = Modifier.padding(0.dp)) {
                 Text("Don't have an account yet? ", fontFamily = Poppins,
                     fontWeight = FontWeight.Medium,
                     style = MaterialTheme.typography.labelSmall,

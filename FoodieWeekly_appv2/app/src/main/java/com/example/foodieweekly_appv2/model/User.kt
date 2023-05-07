@@ -10,8 +10,8 @@ class User () {
     var preferences = mutableListOf<String>("")
     var recipes : String = ""
     var savedRecipes : String = ""
-    var shoppingList : List<String> = mutableListOf("")
-    var calendarIdList : List<String> = mutableListOf<String>()
+    var shoppingList : MutableList<HashMap<String, Int>> = mutableStateListOf(hashMapOf())
+    var calendarIdList : MutableList<String> = mutableStateListOf<String>()
 
     init {
 

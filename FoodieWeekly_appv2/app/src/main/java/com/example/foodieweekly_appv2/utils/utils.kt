@@ -137,7 +137,8 @@ fun OutlinedTextFieldCustomNumber(modifier : Modifier, label : String, placehold
     androidx.compose.material3.OutlinedTextField(
         value = inputTxt.value,
         onValueChange = {
-            if(!it.isNullOrEmpty()) {
+            inputTxt.value = it
+            if(!inputTxt.value.isNullOrEmpty()) {
                 inputTxt.value = it.toDouble().roundToInt().toString()
             }
         },
@@ -286,7 +287,7 @@ fun ShowAlertToAddRecipe(
 }
 
 @Composable
-fun TabScreen(dayList: MutableList<HashMap<RecipeCustom, Int>>) {
+fun TabScreen(dayList: MutableList<MutableList<HashMap<RecipeCustom, Int>>>) {
     var tabIndex = remember { mutableStateOf(0) }
 
     val showMeals = remember { mutableStateOf(false)}
@@ -314,13 +315,13 @@ fun TabScreen(dayList: MutableList<HashMap<RecipeCustom, Int>>) {
     if(showMeals.value){
 
         Column() {
-            Meals(dayList)
+            Meals(dayList[vm.pantallaPrincipalViewModel.selectedDayIndex.value])
         }
 
     }
     else if(showNutrition.value){
         Column(){
-            Nutrition(dayList)
+            Nutrition(dayList[vm.pantallaPrincipalViewModel.selectedDayIndex.value])
         }
     }
 }

@@ -150,6 +150,7 @@ class RealtimeDatabase {
 
     }
 
+
     public fun changeDay(uid : String, calendarId : String) : Unit {
         FirebaseDatabase.getInstance().reference.root.child("Users").child(uid)
             .child("calendarIdList").get().addOnCompleteListener {
@@ -299,33 +300,6 @@ class RealtimeDatabase {
         }
     }
 
-    public var checkIfUserUIDIsRegistered = fun(uid : String?, userExists : MutableState<Boolean>,
-                                                showSignupConfig: MutableState<Boolean>) : Unit {
-        var database: DatabaseReference = FirebaseDatabase.getInstance().reference
-
-
-        try {
-            if (uid != null) {
-                database.root.child("Users").child(uid).get()
-                    .addOnSuccessListener {
-                        userExists.value = it.exists()
-                        showSignupConfig.value = !userExists.value
-
-                        Log.d("checkIfUserUIDIsRegistered", "userExists " + userExists.value.toString())
-                        Log.d("checkIfUserUIDIsRegistered", "showSignupConfig " + showSignupConfig.value.toString())
-                        Log.d("checkIfUserUIDIsRegistered", it.key.toString())
-
-
-
-                    }
-            }
-        } catch(e : Exception){
-            userExists.value = false
-            showSignupConfig.value = false
-            Log.d("checkIfUserUIDIsRegistered", "Something went wrong here")
-        }
-    }
-
     public var checkIfUserUIDIsRegistered2 = fun(uid : String?) : Unit {
         var database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
@@ -361,9 +335,8 @@ class RealtimeDatabase {
         }
     }
 
-    fun getUsersCalorieGoal() {
+    /*fun getUsersCalorieGoal() {
         var db = FirebaseDatabase.getInstance().reference.root
-        var goal = 0;
 
         db
             .child("Users")
@@ -379,5 +352,5 @@ class RealtimeDatabase {
             }
 
 
-    }
+    }*/
 }

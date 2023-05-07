@@ -688,9 +688,9 @@ class RecipesViewModel : ViewModel() {
         var firebase = FirebaseDatabase.getInstance().reference.root
         firebase
             .child("Weeks")
-            .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+            .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
             .child("days")
-            .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+            .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
             .child("meals")
             .child(vm.recipesViewModel.selectedMeal.name.lowercase())
             .get()
@@ -704,9 +704,6 @@ class RecipesViewModel : ViewModel() {
 
 
                         var recipesFromMeal = it.result.value as HashMap<Any, Any>
-
-
-                        //Check if recipe is already on savedRecipes
 
                         //Check if recipe is already on savedRecipes
 
@@ -725,9 +722,9 @@ class RecipesViewModel : ViewModel() {
 
                                     firebase
                                         .child("Weeks")
-                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
                                         .child("days")
-                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
                                         .child("meals")
                                         .child(vm.recipesViewModel.selectedMeal.name.lowercase())
                                         .setValue(recipesFromMeal)
@@ -744,32 +741,19 @@ class RecipesViewModel : ViewModel() {
 
                                     val newRep = RecipeCustom()
                                     newRep.parseRecipeCustom(it.result.value as HashMap<Any, Any>)
+                                    recipesFromMeal.put(newRep.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value)
+
+                                    addRecipeToMealsInDay(newRep, servings.value.toInt())
                                     firebase
                                         .child("Weeks")
-                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
                                         .child("days")
-                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
                                         .child("meals")
                                         .child(vm.recipesViewModel.selectedMeal.name.lowercase())
-                                        .child(newRep.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
-                                        .get()
-                                        .addOnCompleteListener {
-                                            if(!it.result.exists()){
-                                                recipesFromMeal.put(newRep.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""),servings.value)
+                                        .setValue(recipesFromMeal).addOnCompleteListener {
 
-                                                addRecipeToMealsInDay(newRep, servings.value.toInt())
-                                                firebase
-                                                    .child("Weeks")
-                                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
-                                                    .child("days")
-                                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
-                                                    .child("meals")
-                                                    .child(vm.recipesViewModel.selectedMeal.name.lowercase())
-                                                    .setValue(recipesFromMeal).addOnCompleteListener {
-
-                                                        Log.d("ShowAlertToAddRecipe", "done adding")
-                                                    }
-                                            }
+                                            Log.d("ShowAlertToAddRecipe", "done adding")
                                         }
                                 }
                             }
@@ -801,9 +785,9 @@ class RecipesViewModel : ViewModel() {
 
                                     firebase
                                         .child("Weeks")
-                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
                                         .child("days")
-                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
                                         .child("meals")
                                         .child(vm.recipesViewModel.selectedMeal.name.lowercase())
                                         .setValue(recipesFromMeal)
@@ -823,9 +807,9 @@ class RecipesViewModel : ViewModel() {
                                     addRecipeToMealsInDay(newRep, servings.value.toInt())
                                     firebase
                                         .child("Weeks")
-                                        .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
                                         .child("days")
-                                        .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                        .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
                                         .child("meals")
                                         .child(vm.recipesViewModel.selectedMeal.name.lowercase())
                                         .setValue(recipesFromMeal)
@@ -849,9 +833,9 @@ class RecipesViewModel : ViewModel() {
 
                         firebase
                             .child("Weeks")
-                            .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                            .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
                             .child("days")
-                            .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                            .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
                             .child("meals")
                             .child(vm.recipesViewModel.selectedMeal.name.lowercase())
                             .setValue(recipesFromMeal)
@@ -860,9 +844,9 @@ class RecipesViewModel : ViewModel() {
 
                                 firebase
                                     .child("Weeks")
-                                    .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                                    .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
                                     .child("days")
-                                    .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                                    .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
                                     .child("meals")
                                     .child(vm.recipesViewModel.selectedMeal.name.lowercase())
                                     .child(recipe.uri.replace("http://www.edamam.com/ontologies/edamam.owl#", ""))
@@ -888,9 +872,9 @@ class RecipesViewModel : ViewModel() {
 
                         firebase
                             .child("Weeks")
-                            .child(vm.pantallaPrincipalViewModel.weekId.value.toString())
+                            .child(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value.toString())
                             .child("days")
-                            .child(vm.pantallaPrincipalViewModel.selectedIndex.value.toString())
+                            .child(vm.pantallaPrincipalViewModel.selectedDayIndex.value.toString())
                             .child("meals")
                             .child(vm.recipesViewModel.selectedMeal.name.lowercase())
                             .setValue(recipesFromMeal).addOnCompleteListener {
@@ -899,21 +883,21 @@ class RecipesViewModel : ViewModel() {
                             }
                     }
                 }
-                else{
-                    Log.d("ShowAlertToAddRecipe", "idk what i am")
-                    Log.d("ShowAlertToAddRecipe", recipe.toString())
+
+
+                showDialog.value = false
+                /*vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value,
+                    vm.pantallaPrincipalViewModel.selectedDayIndex.value)*/
+                vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
+                    popUpTo(Destinations.RecipesScreen.ruta)
                 }
             }
 
 
 
 
-        showDialog.value = false
-        vm.navController.navigate(Destinations.PantallaPrincipal.ruta){
-            popUpTo(Destinations.RecipesScreen.ruta)
-        }
-        vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.weekId.value,
-            vm.pantallaPrincipalViewModel.selectedIndex.value)
+
+
     }
 
 
@@ -927,7 +911,12 @@ class RecipesViewModel : ViewModel() {
         }
 
         Log.d("addRecipeToMealsInDay", "added "+ recipe.label)
-        if(vm.pantallaPrincipalViewModel.mealsFromDay[i].contains(recipe))
-        vm.pantallaPrincipalViewModel.mealsFromDay[i].put(recipe, servings)
+        if(!vm.pantallaPrincipalViewModel.weekMealsList.value[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].contains(recipe)){
+            vm.pantallaPrincipalViewModel.weekMealsList.value[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].put(recipe, servings)
+        }
+        else{
+            vm.pantallaPrincipalViewModel.weekMealsList.value[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i][recipe] = servings
+        }
+
     }
 }

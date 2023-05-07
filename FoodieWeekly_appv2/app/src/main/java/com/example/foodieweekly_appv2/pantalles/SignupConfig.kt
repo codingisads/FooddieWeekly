@@ -26,16 +26,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.foodieweekly_appv2.R
-import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.utils.*
-import com.example.foodieweekly_appv2.viewmodel.LoginViewModel
-import com.example.foodieweekly_appv2.viewmodel.SignupViewModel
 import com.example.foodieweekly_appv2.vm
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
@@ -266,8 +262,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             isMale.value = true
-                        }
-                        ) {
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(isMale.value) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
+                                contentColor = if(isMale.value) MaterialTheme.colorScheme.onPrimary
+                                else Color.Unspecified
+                        )) {
                             Text("Male",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontFamily = Poppins)
@@ -276,7 +277,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             isMale.value = false
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(!isMale.value) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
+                                contentColor = if(!isMale.value) MaterialTheme.colorScheme.onPrimary
+                                else Color.Unspecified
+                            )
                         ) {
                             Text("Female",
                                 style = MaterialTheme.typography.titleSmall,
@@ -357,7 +364,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 0;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
+                                contentColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.onPrimary
+                                else Color.Unspecified
+                            )
                         ) {
                             Text("Not very active",
                                 style = MaterialTheme.typography.titleSmall,
@@ -367,7 +380,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 1;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 1) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
+                                contentColor = if(activeLevel.value == 1) MaterialTheme.colorScheme.onPrimary
+                                else Color.Unspecified
+                            )
                         ) {
                             Text(
                                 "Kind of active",
@@ -391,7 +410,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 2;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 2) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
+                                contentColor = if(activeLevel.value == 2) MaterialTheme.colorScheme.onPrimary
+                                else Color.Unspecified
+                            )
                         ) {
                             Text("Active",
                                 style = MaterialTheme.typography.titleSmall,
@@ -401,7 +426,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 3;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 3) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
+                                contentColor = if(activeLevel.value == 3) MaterialTheme.colorScheme.onPrimary
+                                else Color.Unspecified
+                            )
                         ) {
                             Text(
                                 "Very active",
@@ -672,7 +703,14 @@ fun SignupUserDiet() { //DONE!
                     dietIndex.value = 0;
                 },
                     border = BorderStroke(1.5.dp, color =
-                    MaterialTheme.colorScheme.primary)
+                    MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = if(dietIndex.value == 0) MaterialTheme.colorScheme.primary
+                        else Color.Unspecified,
+                        contentColor = if(dietIndex.value == 0) MaterialTheme.colorScheme.onPrimary
+                        else Color.Unspecified
+                    )
+
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally){
                         Text(
@@ -692,7 +730,13 @@ fun SignupUserDiet() { //DONE!
                     dietIndex.value = 1;
                 },
                     border = BorderStroke(1.5.dp, color =
-                    MaterialTheme.colorScheme.primary)
+                    MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = if(dietIndex.value == 1) MaterialTheme.colorScheme.primary
+                        else Color.Unspecified,
+                        contentColor = if(dietIndex.value == 1) MaterialTheme.colorScheme.onPrimary
+                        else Color.Unspecified
+                    )
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally){
                         Text(
@@ -722,7 +766,13 @@ fun SignupUserDiet() { //DONE!
                     dietIndex.value = 2;
                 },
                     border = BorderStroke(1.5.dp, color =
-                    MaterialTheme.colorScheme.primary)
+                    MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = if(dietIndex.value == 2) MaterialTheme.colorScheme.primary
+                        else Color.Unspecified,
+                        contentColor = if(dietIndex.value == 2) MaterialTheme.colorScheme.onPrimary
+                        else Color.Unspecified
+                    )
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally){
                         Text(
@@ -742,7 +792,13 @@ fun SignupUserDiet() { //DONE!
                     dietIndex.value = 3;
                 },
                     border = BorderStroke(1.5.dp, color =
-                    MaterialTheme.colorScheme.primary)
+                    MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = if(dietIndex.value == 3) MaterialTheme.colorScheme.primary
+                        else Color.Unspecified,
+                        contentColor = if(dietIndex.value == 3) MaterialTheme.colorScheme.onPrimary
+                        else Color.Unspecified
+                    )
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally){
                         Text(
@@ -1063,13 +1119,14 @@ fun SignupLastScreen() {
                 else{
                     vm.user.caloricGoal = calories.value.toInt()
                     vm.user.preferences = vm.userHealth.userPreferencesStr
+                    //Calculate calories based on health
+
+                    Log.d("signup", vm.user.username)
+                    authenticator.signup(vm.email.value, vm.password.value, vm.user, navController, vm)
                 }
 
 
-                //Calculate calories based on health
 
-                Log.d("signup", vm.user.username)
-                authenticator.signup(vm.email.value, vm.password.value, vm.user, navController, vm)
 
 
 

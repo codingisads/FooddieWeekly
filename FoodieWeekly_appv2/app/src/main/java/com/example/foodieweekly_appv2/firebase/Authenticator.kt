@@ -35,10 +35,6 @@ class Authenticator {
         fire = FirebaseAuth.getInstance()
 
     }
-
-
-
-
     var _registered = mutableStateOf("")
     public val registered = _registered
 
@@ -51,9 +47,6 @@ class Authenticator {
     var _alreadyRegisteredEmail = mutableStateOf(false)
     public val alreadyRegisteredEmail = _alreadyRegisteredEmail
 
-
-    var _currentUsername = mutableStateOf("")
-    public val currentUsername = _currentUsername
 
     var _currentUID = mutableStateOf("");
     public val currentUID = _currentUID;
@@ -262,10 +255,6 @@ class Authenticator {
     }
 
 
-
-
-
-
     public val goToMainActivity = fun (navController : NavHostController) : Unit {
 
         var uid = getUserUID()
@@ -274,9 +263,9 @@ class Authenticator {
         if(uid != null){
             vm.recipesViewModel.getUserSavedRecipesIds()
             vm.pantallaPrincipalViewModel.settingUp();
-            vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.weekId.value,
-                vm.pantallaPrincipalViewModel.selectedIndex.value)
-            navController.navigate(Destinations.PantallaPrincipal.ruta)
+            /*vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.weekId.value,
+                vm.pantallaPrincipalViewModel.selectedIndex.value)*/
+
         }
     }
 

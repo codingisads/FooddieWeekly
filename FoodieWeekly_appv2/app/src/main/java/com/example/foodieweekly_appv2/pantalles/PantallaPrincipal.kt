@@ -31,15 +31,18 @@ fun PantallaPrincipal(){
     val vmRecipes = com.example.foodieweekly_appv2.vm.recipesViewModel
     val vm = com.example.foodieweekly_appv2.vm.pantallaPrincipalViewModel
 
-    vm.settingUp()
+    //vm.settingUp()
 
     BackHandler(enabled = true){
 
     }
 
+    vm.getDayCalories()
+    vm.getCaloriePercentage()
 
 
-    var mealsFromDay = remember { vm.mealsFromDay }
+
+    var mealsFromWeek = remember { vm.weekMealsList }
     var calorieGoal = remember { vm.userCaloricGoal}
     val dayCalories = remember { vm.selectedDayCalories }
     val percentage = remember { vm.calorieDayPercentage}
@@ -105,7 +108,7 @@ fun PantallaPrincipal(){
                                             .width(40.dp)
                                             .height(50.dp)
                                             .background(/*if(isSystemInDarkTheme()) Color(0xFF464646)
-                                    else Color(0xFFEAEAEA)*/ if (vm.selectedIndex.value == i)
+                                    else Color(0xFFEAEAEA)*/ if (vm.selectedDayIndex.value == i)
                                                 MaterialTheme.colorScheme.primary
                                             else  {
                                                 if (isSystemInDarkTheme()) Color(0xFF464646) else Color(0xFFEAEAEA)
@@ -113,9 +116,13 @@ fun PantallaPrincipal(){
                                             )
                                             .clickable {
 
-                                                vm.selectedIndex.value = i
+                                                vm.selectedDayIndex.value = i
                                                 Log.d("Actualizando la pntalla", "aqui")
-                                                vm.getMealsFromDay(vm.weekId.value, i)
+                                                //vm.getMealsFromDay(vm.weekId.value, i)
+
+
+                                                /*vm.getDayCalories()
+                                                vm.getCaloriePercentage()*/
 
 
 
@@ -188,7 +195,7 @@ fun PantallaPrincipal(){
             }
 
 
-            TabScreen(mealsFromDay)
+            TabScreen(vm.weekMealsList.value)
 
 
 
