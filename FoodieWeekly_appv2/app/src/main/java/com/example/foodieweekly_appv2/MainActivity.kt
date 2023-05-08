@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -47,8 +48,6 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val navController : NavHostController = rememberNavController()
-
-
             val authenticator : Authenticator = Authenticator();
 
             FoodieWeekly_appv2Theme {
@@ -207,7 +206,7 @@ fun BarraDeNavegacio(navController: NavHostController) {
         ItemsBarraNavegacio.Items.forEach{
             NavigationBarItem(selected = it.ruta == backStateEntry?.destination?.route,
                 onClick = {navController.navigate(it.ruta)},
-                icon = {Icon(it.imatge, "Navegacio")},
+                icon = {Icon(painterResource(it.imatge), "Navegacio")},
                 label = { Text(it.titol)}
             )
         }

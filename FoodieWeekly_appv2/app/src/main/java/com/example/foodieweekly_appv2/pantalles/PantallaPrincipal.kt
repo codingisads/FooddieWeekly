@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -57,18 +58,36 @@ fun PantallaPrincipal(){
             Box(Modifier.padding(10.dp)){
                 Column(){
 
-                    Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.fillMaxWidth()) {
-                        Icon(
-                            Icons.Outlined.AccountCircle,
-                            modifier = Modifier
-                                .size(40.dp),
-                            contentDescription = "drawable icons"
-                        )
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
+                            Icon(
+                                Icons.Outlined.Menu,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clickable {
+                                        /*TODO: mostrar llista de calendaris.*/
+                                    },
+                                contentDescription = "drawable icons"
+                            )
+
+                            Icon(
+                                Icons.Outlined.AccountCircle,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clickable {
+                                        /*TODO: mostrar configuració d'usuari (?*/
+                                    },
+                                contentDescription = "drawable icons"
+
+                            )
+                        }
+
                     }
 
                     Box {
-                        Column(verticalArrangement = Arrangement.Center) {
-                            Text(text = "Good morning, " + vm.username.value + "!",
+                        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(top = 30.dp)) {
+
+                            Text(text = "Hi there, " + vm.username.value + "!",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontFamily = Poppins
                             )
@@ -87,7 +106,10 @@ fun PantallaPrincipal(){
                                     Icon(
                                         Icons.Rounded.Share,
                                         modifier = Modifier
-                                            .size(30.dp),
+                                            .size(30.dp)
+                                            .clickable {
+                                                       /*TODO: COMPARTIR CALENDARIS*/
+                                            },
                                         contentDescription = "drawable icons"
                                     )
                                 }
@@ -195,7 +217,7 @@ fun PantallaPrincipal(){
             }
 
 
-            TabScreen(vm.weekMealsList.value)
+            TabScreen(mealsFromWeek.value)
 
 
 

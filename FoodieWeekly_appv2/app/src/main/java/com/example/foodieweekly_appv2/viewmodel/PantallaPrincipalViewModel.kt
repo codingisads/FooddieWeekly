@@ -48,6 +48,7 @@ class PantallaPrincipalViewModel : ViewModel() {
 
 
 
+
     fun settingUp(){
         val authenticator = vm.authenticator
         val vmRecipes = vm.recipesViewModel
@@ -260,6 +261,20 @@ class PantallaPrincipalViewModel : ViewModel() {
                                                             vm.pantallaPrincipalViewModel.userCaloricGoal.value =
                                                                 (it.result.value as Long).toInt()
                                                         }
+                                                    }
+                                                }
+
+                                            //getting shoppingList
+                                            firebase
+                                                .child("Users")
+                                                .child(vm.authenticator.currentUID.value)
+                                                .child("shoppingList")
+                                                .get()
+                                                .addOnCompleteListener {
+                                                    list ->
+
+                                                    if(list.result.value != null){
+                                                        vm.shoppingViewModel.parseShoppingListFromFirebase(list.result.value as HashMap<String, String>)
                                                     }
                                                 }
 

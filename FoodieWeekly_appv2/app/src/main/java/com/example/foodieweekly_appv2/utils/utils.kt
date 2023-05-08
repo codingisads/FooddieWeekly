@@ -679,7 +679,21 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(bottom = 20.dp),
+                    .padding(bottom = 20.dp)
+                    .clickable {
+
+                        vm.recipesViewModel.getUserSavedRecipesIds();
+                        vm.recipesViewModel.selectedMeal = mealType;
+
+                        vm.navController.navigate(Destinations.RecipesScreen.ruta){
+                            popUpTo(vm.navController.graph.startDestinationId){
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                        vm.recipesViewModel.addMode.value = true;
+                    },
                 verticalAlignment = Alignment.CenterVertically) {
                 /*Image(painter = painterResource(id = R.drawable.ic_launcher_background),
                     contentDescription = "",

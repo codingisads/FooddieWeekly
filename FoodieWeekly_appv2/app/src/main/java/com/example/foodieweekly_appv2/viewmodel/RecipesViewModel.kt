@@ -32,10 +32,10 @@ class RecipesViewModel : ViewModel() {
     val respostaRecipes = _respostaRecipes;*/
 
     private var _respostaRecipes = mutableStateOf(Recipes(0, 0, emptyList(), LinksX(Next("", "")), 0))
-    val respostaRecipes = _respostaRecipes;
+    val respostaRecipes = _respostaRecipes
 
     private var _nextPageLink = mutableStateOf("")
-    public val nextPageLink = _nextPageLink
+    val nextPageLink = _nextPageLink
 
     private var _llistaRecipes : MutableState<MutableList<Any>> =mutableStateOf(mutableListOf())
     val llistaRecipes = _llistaRecipes
@@ -884,6 +884,8 @@ class RecipesViewModel : ViewModel() {
                     }
                 }
 
+                vm.shoppingViewModel.addIngredientsToShoppingList(recipe, servings.value.toInt())
+
 
                 showDialog.value = false
                 /*vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.selectedIndexCalendarWeekId.value,
@@ -899,6 +901,9 @@ class RecipesViewModel : ViewModel() {
 
 
     }
+
+
+
 
 
     fun addRecipeToMealsInDay(recipe : RecipeCustom, servings : Int){

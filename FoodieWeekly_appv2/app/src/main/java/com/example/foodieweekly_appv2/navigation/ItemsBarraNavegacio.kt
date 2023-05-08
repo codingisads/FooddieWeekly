@@ -1,20 +1,17 @@
 package com.example.foodieweekly_appv2.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PlayArrow
+import com.example.foodieweekly_appv2.R
 
 object ItemsBarraNavegacio {
     val Items = listOf(
         ItemBarraNavegacio("Calendar",
-            Icons.Filled.Home,
+            R.drawable.calendar_logo,
             Destinations.PantallaPrincipal.ruta),
         ItemBarraNavegacio("Recipes",
-            Icons.Filled.CheckCircle,
+            R.drawable.recipes_logo,
             Destinations.RecipesScreen.ruta),
         ItemBarraNavegacio("Shop List",
-            Icons.Filled.PlayArrow,
+            R.drawable.shopping_logo,
             Destinations.ShoppingList.ruta)
     )
 }

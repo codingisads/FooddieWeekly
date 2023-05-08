@@ -12,10 +12,13 @@ class MainViewModel : ViewModel() {
     var signupViewModel = SignupViewModel();
     var pantallaPrincipalViewModel = PantallaPrincipalViewModel();
     var recipesViewModel = RecipesViewModel()
+    var shoppingViewModel = ShoppingViewModel()
 
     lateinit var navController : NavHostController
 
     lateinit var authenticator: Authenticator
+
+
 
     lateinit var context : Context
 

@@ -71,7 +71,11 @@ fun RecipesScreen() {
                     unfocusedLabelColor = MaterialTheme.colorScheme.outline
                 ),
                 leadingIcon = { Icon(painterResource(R.drawable.filter_alt), "",
-                    modifier = Modifier.wrapContentWidth())},
+                    modifier = Modifier.wrapContentWidth().
+                clickable {
+                    /*TODO: modificar filtros, aplicar filtros (REVISAR DOC API)*/
+                    /*TODO: arreglar lazyload de recetas*/
+                })},
                 trailingIcon = { Icon(Icons.Rounded.Search, "")},
                 shape = RoundedCornerShape(25.dp),
                 modifier = Modifier

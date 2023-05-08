@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.foodieweekly_appv2.Main
@@ -79,8 +81,8 @@ fun BarraDeNavegacio(navController: NavHostController) {
                         restoreState = true
                     }
                     },
-                icon = {Icon(it.imatge, "Navegacio")},
-                label = { Text(it.titol, fontFamily = Poppins)}
+                icon = {Icon(painterResource(it.imatge), "Navegacio")},
+                label = { Text(it.titol, fontFamily = Poppins, fontSize = 12.sp)}
             )
         }
     }
