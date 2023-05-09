@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.foodieweekly_appv2.R
-import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
@@ -37,12 +36,10 @@ import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupConfig(){ //DONE!
 
     val navController = vm.navController
-    val authenticator = vm.authenticator
     val vm = vm.signupViewModel
     val username = remember { mutableStateOf("") }
     val firstName = remember {
@@ -97,7 +94,6 @@ fun SignupConfig(){ //DONE!
                         .padding(30.dp), contentAlignment = Alignment.CenterEnd) {
                     Button(onClick =
                     {
-                        val db = RealtimeDatabase()
 
                         var database = FirebaseDatabase.getInstance().reference
 
@@ -182,7 +178,6 @@ fun SignupConfig(){ //DONE!
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupUserBodyConfig(){ //DONE!
 
@@ -644,7 +639,6 @@ fun SignupUserBodyConfig(){ //DONE!
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupUserDiet() { //DONE!
 
@@ -900,7 +894,6 @@ fun SignupUserDiet() { //DONE!
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupUserPreferences() { //DONE!
     val navController = com.example.foodieweekly_appv2.vm.navController
@@ -1003,16 +996,15 @@ fun SignupUserPreferences() { //DONE!
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupLastScreen() {
-    val navController = com.example.foodieweekly_appv2.vm.navController
-    val authenticator = com.example.foodieweekly_appv2.vm.authenticator
+    val navController = vm.navController
+    val authenticator = vm.authenticator
     val vm = com.example.foodieweekly_appv2.vm.signupViewModel
     val calories = remember { mutableStateOf(vm.calculateCalories().toString()) }
 
-    var isError = remember {mutableStateOf(false)}
-    var msgError = remember { mutableStateOf("")}
+    val isError = remember {mutableStateOf(false)}
+    val msgError = remember { mutableStateOf("")}
 
     Column(
         Modifier
@@ -1060,6 +1052,8 @@ fun SignupLastScreen() {
                 .padding(top = 40.dp)
         )
 
+        CircularIndeterminatedProgressBar(vm.loading.value)
+
 
         Row(
             Modifier
@@ -1083,7 +1077,7 @@ fun SignupLastScreen() {
             OutlinedTextFieldCustomNumber(
                 Modifier
                     .fillMaxWidth()
-                    .weight(1.5F), "Calories", calories.value.toString(), calories)
+                    .weight(1.5F), "Calories", calories.value, calories)
 
             Text(text = "KCALS",
                 style = MaterialTheme.typography.titleMedium,
@@ -1117,6 +1111,7 @@ fun SignupLastScreen() {
                     msgError.value = "Calories can't be empty or under 1300."
                 }
                 else{
+                    vm.loading.value = true
                     vm.user.caloricGoal = calories.value.toInt()
                     vm.user.preferences = vm.userHealth.userPreferencesStr
                     //Calculate calories based on health
@@ -1169,6 +1164,8 @@ fun SignupLastScreen() {
 
             ShowAlert(showDialog = isError, "Something went wrong", msgError.value, Icons.Filled.AccountCircle)
         }
+
+
 
     }
 

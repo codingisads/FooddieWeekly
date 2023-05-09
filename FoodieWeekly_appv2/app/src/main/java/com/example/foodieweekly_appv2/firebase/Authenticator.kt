@@ -129,6 +129,7 @@ class Authenticator {
         try{
 
             runBlocking {
+                com.example.foodieweekly_appv2.vm.loginViewModel.loading.value = true
                 fire.signInWithEmailAndPassword(email, passw).addOnCompleteListener {
                     if(it.isSuccessful){
 
@@ -184,70 +185,74 @@ class Authenticator {
 
         Log.d("autenticacion google credential", "finishLogin")
         try {
+            runBlocking{
+                vm.loginViewModel.loading.value = true
 
-            Log.d("autenticacion google credential", "finishLogin")
-            val account : GoogleSignInAccount? = task.getResult(ApiException::class.java)
-
-
-            Log.d("autenticacion google credential", account.toString())
-
-            account?.idToken?.let {
-                    token ->
-                val auth = FirebaseAuth.getInstance()
-                val credencial = GoogleAuthProvider.getCredential(token, null)
-
-                Log.d("autenticacion google credential", credencial.toString())
-
-                auth.signInWithCredential(credencial).addOnCompleteListener {
-                        tarea ->
-                    if(tarea.isSuccessful){
-                        var user = auth.currentUser
-                        Log.d("autenticacion google", "Obteniendo user")
-                        if (user != null) {
-
-                            Log.d("autenticacion google", user.uid.toString())
-                            user.displayName?.let { Log.d("autenticacion google", it) }
-
-                            loggedIn.value = true
-
-                            var db = RealtimeDatabase()
-
-                            currentUID.value = getUserUID().toString()
+                Log.d("autenticacion google credential", "finishLogin")
+                val account : GoogleSignInAccount? = task.getResult(ApiException::class.java)
 
 
-                            if(currentUID.value != ""){
-                                FirebaseDatabase.getInstance().reference.root.child("Users")
-                                    .child(currentUID.value).get()
-                                    .addOnSuccessListener {
+                Log.d("autenticacion google credential", account.toString())
+
+                account?.idToken?.let {
+                        token ->
+                    val auth = FirebaseAuth.getInstance()
+                    val credencial = GoogleAuthProvider.getCredential(token, null)
+
+                    Log.d("autenticacion google credential", credencial.toString())
+
+                    auth.signInWithCredential(credencial).addOnCompleteListener {
+                            tarea ->
+                        if(tarea.isSuccessful){
+                            var user = auth.currentUser
+                            Log.d("autenticacion google", "Obteniendo user")
+                            if (user != null) {
+
+                                Log.d("autenticacion google", user.uid.toString())
+                                user.displayName?.let { Log.d("autenticacion google", it) }
+
+                                loggedIn.value = true
+
+                                var db = RealtimeDatabase()
+
+                                currentUID.value = getUserUID().toString()
 
 
-                                        //goToMainActivity(vm.navController);
-                                        db.checkIfUserUIDIsRegistered2(currentUID.value)
+                                if(currentUID.value != ""){
+                                    FirebaseDatabase.getInstance().reference.root.child("Users")
+                                        .child(currentUID.value).get()
+                                        .addOnSuccessListener {
 
-                                    }
+                                            //goToMainActivity(vm.navController);
+                                            db.checkIfUserUIDIsRegistered2(currentUID.value)
+
+                                        }
+                                }
+
+
+
+                                //db.createCalendarOnDB(currentUID.value, "Main Calendar")
+
+
+                                //Prova()
+                                Log.d("checkIfUserUIDIsRegistered", "Autenticando")
                             }
+                            else{
 
-
-
-                            //db.createCalendarOnDB(currentUID.value, "Main Calendar")
-
-
-                            //Prova()
-                            Log.d("checkIfUserUIDIsRegistered", "Autenticando")
+                                loggedIn.value = false
+                                Log.d("autenticacion google", "User nulo")
+                            }
                         }
                         else{
-
-                            loggedIn.value = false
-                            Log.d("autenticacion google", "User nulo")
+                            Log.d("autenticacion google", "ALGO MAL")
                         }
                     }
-                    else{
-                        Log.d("autenticacion google", "ALGO MAL")
-                    }
                 }
+
+                Log.d("autenticacion google", "TODO OK")
             }
 
-            Log.d("autenticacion google", "TODO OK")
+
         }
         catch(e : ApiException){
             Log.d("autenticacion google error", e.stackTraceToString())
@@ -262,7 +267,10 @@ class Authenticator {
 
         if(uid != null){
             vm.recipesViewModel.getUserSavedRecipesIds()
+
             vm.pantallaPrincipalViewModel.settingUp();
+
+
             /*vm.pantallaPrincipalViewModel.getMealsFromDay(vm.pantallaPrincipalViewModel.weekId.value,
                 vm.pantallaPrincipalViewModel.selectedIndex.value)*/
 

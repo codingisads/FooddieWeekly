@@ -71,7 +71,6 @@ fun ShoppingList(){
                         contentAlignment = Alignment.BottomEnd){
 
                         Button(onClick = {
-                                /*TODO: set nueva lista como default, cambiar firebase*/
                                 vm.shoppingViewModel.usersShoppingList.value = tmpList
                                 vm.shoppingViewModel.addShoppingListToFirebase()
                              },

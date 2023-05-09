@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.example.foodieweekly_appv2.R
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
+import com.example.foodieweekly_appv2.utils.CircularIndeterminatedProgressBar
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldCustomPassword
 import com.example.foodieweekly_appv2.utils.OutlinedTextFieldEmail
 import com.example.foodieweekly_appv2.utils.ShowAlert
@@ -121,6 +122,10 @@ fun Login(activity : Activity) {
             ShowAlert(showDialog = vm.showDialog, "Log In Failed",
                 "This user does not exists or incorrect credentials!", Icons.Filled.AccountCircle)
         }
+
+
+        CircularIndeterminatedProgressBar(vm.loading.value)
+
 
 
         vm.validEmail.value = android.util.Patterns.EMAIL_ADDRESS.matcher(vm.email.value).matches()

@@ -6,8 +6,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -58,31 +56,7 @@ fun PantallaPrincipal(){
             Box(Modifier.padding(10.dp)){
                 Column(){
 
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
-                            Icon(
-                                Icons.Outlined.Menu,
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clickable {
-                                        /*TODO: mostrar llista de calendaris.*/
-                                    },
-                                contentDescription = "drawable icons"
-                            )
 
-                            Icon(
-                                Icons.Outlined.AccountCircle,
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clickable {
-                                        /*TODO: mostrar configuració d'usuari (?*/
-                                    },
-                                contentDescription = "drawable icons"
-
-                            )
-                        }
-
-                    }
 
                     Box {
                         Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(top = 30.dp)) {

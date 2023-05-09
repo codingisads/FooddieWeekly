@@ -431,7 +431,9 @@ fun Nutrition(recipes : MutableList<HashMap<RecipeCustom, Int>>){
         }
     }
     else{
-        Box(Modifier.fillMaxWidth().padding(top=40.dp), contentAlignment = Alignment.Center){
+        Box(Modifier
+            .fillMaxWidth()
+            .padding(top = 40.dp), contentAlignment = Alignment.Center){
             Text(text = "No information available!", fontFamily = Poppins,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold)
@@ -685,8 +687,8 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                         vm.recipesViewModel.getUserSavedRecipesIds();
                         vm.recipesViewModel.selectedMeal = mealType;
 
-                        vm.navController.navigate(Destinations.RecipesScreen.ruta){
-                            popUpTo(vm.navController.graph.startDestinationId){
+                        vm.navController.navigate(Destinations.RecipesScreen.ruta) {
+                            popUpTo(vm.navController.graph.startDestinationId) {
                                 saveState = true
                             }
                             launchSingleTop = true
@@ -834,20 +836,17 @@ fun LabelledCheckbox(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun ScaffoldDemo() {
-    val materialBlue700= Color(0xFF1976D2)
-    val snackbarHostState = remember { SnackbarHostState() }
-    Scaffold(
-        bottomBar = {
+fun CircularIndeterminatedProgressBar(isActive : Boolean){
+    if(isActive){
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
 
-        },
-        content = {
-            padding ->
-            Column(Modifier.padding(padding)){
-
-            }
         }
-    )
+    }
 }

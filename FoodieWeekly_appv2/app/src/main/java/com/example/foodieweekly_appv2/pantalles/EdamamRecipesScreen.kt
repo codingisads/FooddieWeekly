@@ -874,7 +874,6 @@ recipeUri : String){
 
 
 
-
     Box(Modifier
         .padding(top = 100.dp)
         .fillMaxWidth()

@@ -25,7 +25,7 @@ import com.example.foodieweekly_appv2.firebase.Authenticator
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.navigation.ItemsBarraNavegacio
-import com.example.foodieweekly_appv2.navigation.PrincipalBarraDeNavegacio
+import com.example.foodieweekly_appv2.navigation.PrincipalCalaixDeNavegacio
 import com.example.foodieweekly_appv2.pantalles.*
 import com.example.foodieweekly_appv2.ui.theme.FoodieWeekly_appv2Theme
 import com.example.foodieweekly_appv2.viewmodel.MainViewModel
@@ -65,30 +65,13 @@ class MainActivity : ComponentActivity() {
                     val context = LocalContext.current
 
                     vm.context = context
-
-
-                    Log.d("si", "si")
-                    /*FirebaseDatabase.getInstance().reference.root
-                        .child("EdamamRecipes")
-                        .child("recipe_20022d91be0968092a8eab1aceee81be")
-                        .get().addOnCompleteListener {
-                            val res = it.result.value as HashMap<Any, Any>
-
-                            val recipe = RecipeCustom()
-                            recipe.parseRecipeCustom(res)
-
-                            Log.d("si", "si")
-                        }*/
-
-
-
-
-
                     vm.activity = activity
 
                     //ShowRecipeInfo()
                     //Main(vm)
-                    PrincipalBarraDeNavegacio(vm, vm.navController)
+                    //PrincipalBarraDeNavegacio(vm, vm.navController)
+
+                    PrincipalCalaixDeNavegacio(vm.navController)
                     //RecipeElement()
                     //Total()
                     //PrincipalBarraDeNavegacio(navController)

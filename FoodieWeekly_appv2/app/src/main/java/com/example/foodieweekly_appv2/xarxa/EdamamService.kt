@@ -2,7 +2,6 @@ package com.example.foodieweekly_appv2.xarxa
 
 import com.example.foodieweekly_appv2.model.recipesApi.Recipes
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Url
 
@@ -23,4 +22,6 @@ interface EdamamService {
     suspend fun getNextPage(
         @Url() path : String
     ): Recipes
+
+    /*TODO: Query amb els filtres de les preferencies d'usuari*/
 }

@@ -1,16 +1,11 @@
 package com.example.foodieweekly_appv2.viewmodel
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.foodieweekly_appv2.model.User
 import com.example.foodieweekly_appv2.model.UserHealthCondition
 import com.example.foodieweekly_appv2.model.enums.TypeOfSingup
-import java.text.SimpleDateFormat
-import java.time.LocalDate;
-import java.time.Period
 import java.util.*
 
 class SignupViewModel : ViewModel() {
@@ -42,6 +37,9 @@ class SignupViewModel : ViewModel() {
 
     var _goToUserPreferences = mutableStateOf(false)
     public val goToUserPreferences = _goToUserPreferences
+
+    private var _loading = mutableStateOf(false)
+    val loading = _loading
 
     val signupType = mutableStateOf(TypeOfSingup.BASIC)
 

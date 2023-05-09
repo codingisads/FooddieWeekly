@@ -94,6 +94,7 @@ fun Signup(activity : Activity){
 
 
                             if(vm.validEmail.value && vm.validPassword.value){
+
                                 authenticator.checkIfEmailIsNotRegistered(vm.email.value)
                             }
                             else{
@@ -163,6 +164,8 @@ fun Signup(activity : Activity){
 
             ShowAlert(showDialog = vm.showDialog, "Sign Up Failed", authenticator.registered.value, Icons.Filled.Email)
         }
+
+
 
 
         vm.validEmail.value = android.util.Patterns.EMAIL_ADDRESS.matcher(vm.email.value).matches()
