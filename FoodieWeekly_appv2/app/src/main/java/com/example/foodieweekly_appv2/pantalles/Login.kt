@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -35,6 +37,7 @@ fun Login(activity : Activity) {
     val authenticator = vm.authenticator
     val navController = vm.navController
     val vm = vm.loginViewModel
+    val errorMsg = remember { mutableStateOf("")}
 
     Log.d("autenticacion google", "Login")
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(20.dp)) {
@@ -73,12 +76,20 @@ fun Login(activity : Activity) {
                     Button(
                         onClick = {
 
-                            if(vm.validEmail.value && vm.validPassword.value ){
-                                authenticator.login(vm.email.value, vm.password.value)
+                            if(!vm.email.value.isNullOrEmpty()){
+                                if(vm.validEmail.value && vm.validPassword.value ){
+                                    authenticator.login(vm.email.value, vm.password.value)
+                                }
+                                else{
+                                    errorMsg.value="This user does not exists or incorrect credentials!"
+                                    vm.showDialog.value = true
+                                }
                             }
                             else{
+                                errorMsg.value="Email can't be empty!"
                                 vm.showDialog.value = true
                             }
+
 
 
                         },
@@ -120,7 +131,7 @@ fun Login(activity : Activity) {
         if(vm.showDialog.value){
 
             ShowAlert(showDialog = vm.showDialog, "Log In Failed",
-                "This user does not exists or incorrect credentials!", Icons.Filled.AccountCircle)
+                errorMsg.value, Icons.Filled.AccountCircle)
         }
 
 
@@ -128,7 +139,10 @@ fun Login(activity : Activity) {
 
 
 
-        vm.validEmail.value = android.util.Patterns.EMAIL_ADDRESS.matcher(vm.email.value).matches()
+        if(!vm.email.value.isNullOrEmpty())
+            vm.validEmail.value = android.util.Patterns.EMAIL_ADDRESS.matcher(vm.email.value).matches()
+        else
+            vm.validEmail.value = true
         vm.validPassword.value = vm.password.value.toString().length > 5
 
         Text("or with",

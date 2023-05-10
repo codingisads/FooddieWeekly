@@ -106,9 +106,13 @@ fun Main(vm: MainViewModel,
 
     NavHost(
         navController = vm.navController,
-        startDestination = Destinations.Login.ruta,
+        startDestination = Destinations.SplashScreen.ruta,
         modifier = Modifier.padding(paddingValues)
     ) {
+        composable(Destinations.SplashScreen.ruta)
+        {
+            SplashScreen()
+        }
         composable(Destinations.Login.ruta)
         {
             Login(vm.activity)

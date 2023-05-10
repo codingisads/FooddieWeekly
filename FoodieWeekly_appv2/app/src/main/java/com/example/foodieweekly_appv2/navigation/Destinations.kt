@@ -1,6 +1,7 @@
 package com.example.foodieweekly_appv2.navigation
 
 sealed class Destinations (val ruta:String){
+    object SplashScreen: Destinations("SplashScreen")
     object Login: Destinations("Login")
     object Signup: Destinations("Signup")
     object SignupConfig: Destinations("SignupConfig")

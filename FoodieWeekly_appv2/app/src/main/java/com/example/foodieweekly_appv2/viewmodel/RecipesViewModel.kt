@@ -129,6 +129,42 @@ class RecipesViewModel : ViewModel() {
 
     }
 
+    fun getAllRecipesWithFilters(ingredients: String = "") {
+        viewModelScope.launch(Dispatchers.IO){
+
+            try{
+                val resultat = RecipesClient.servei
+                    .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                        RecipesClient.APP_ID,q = ingredients, h1 = "alcohol-free")
+
+                respostaRecipes.value = resultat
+
+                if(respostaRecipes != null){
+                    nextPageLink.value = respostaRecipes.value.links.next.href
+                    llistaRecipes.value.clear()
+                    llistaRecipes.value.addAll(respostaRecipes.value.hits)
+                }
+
+
+                Log.d("getRecipes recipes page lol", nextPageLink.value)
+
+
+
+
+
+                //llistaRecipes.value = respostaRecipes.value.results
+            }
+            catch(e : Exception){
+                Log.d("getRecipes lol", e.message.toString())
+            }
+
+        }
+
+
+        Log.d("getRecipes returning", llistaRecipes.value.size.toString())
+
+    }
+
     fun getNextPage() {
         viewModelScope.launch(Dispatchers.IO){
 
@@ -915,13 +951,19 @@ class RecipesViewModel : ViewModel() {
             "snack" -> i = 3
         }
 
+        var data = vm.pantallaPrincipalViewModel.weekMealsList.value
+
         Log.d("addRecipeToMealsInDay", "added "+ recipe.label)
-        if(!vm.pantallaPrincipalViewModel.weekMealsList.value[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].contains(recipe)){
-            vm.pantallaPrincipalViewModel.weekMealsList.value[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].put(recipe, servings)
+        if(!data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].contains(recipe)){
+            data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].put(recipe, servings)
+            data.numMealsAdded++
         }
         else{
-            vm.pantallaPrincipalViewModel.weekMealsList.value[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i][recipe] = servings
+            data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i][recipe] = servings
         }
+
+        vm.pantallaPrincipalViewModel.getDayCalories()
+        vm.pantallaPrincipalViewModel.getCaloriePercentage()
 
     }
 }

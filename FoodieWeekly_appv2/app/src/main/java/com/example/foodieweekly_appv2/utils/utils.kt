@@ -706,7 +706,7 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                             RoundedCornerShape(15.dp, 0.dp, 0.dp, 15.dp)
                         ))*/
 
-                Image(
+                /*Image(
                     imageVector = ImageVector.vectorResource(
                         id = R.drawable.add_circle_outline),
                     contentDescription = "",
@@ -714,7 +714,7 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                     modifier = Modifier
                         .weight(1F)
                         .fillMaxSize()
-                )
+                )*/
 
 
                 Box(
@@ -722,21 +722,15 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
                         .weight(2F)
                         .fillMaxHeight(), contentAlignment = Alignment.Center
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column(
-                            Modifier
-                                .weight(5F)
-                                .padding(start = 10.dp)
-                        ) {
-                            Text(
-                                "No recipes found!",
-                                fontFamily = Poppins, style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-
-
-                    }
+                    Text(
+                        "No recipes found!",
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp),
+                        fontFamily = Poppins, style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
+                    )
 
                 }
             }
@@ -745,16 +739,19 @@ fun Meal(mealType: MealType, recipes: HashMap<RecipeCustom, Int>) {
 
 
 
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.more_horiz),
-            contentDescription = "",
-            alignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    displayAll.value = !displayAll.value
-                }
-        )
+        if(recipes.size > 1){
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.more_horiz),
+                contentDescription = "",
+                alignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        displayAll.value = !displayAll.value
+                    }
+            )
+        }
+
 
 
         //Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

@@ -88,8 +88,10 @@ fun RecipesScreen() {
 
                         try {
                             if(!vs.value.isNullOrEmpty()){
-                                vmR.getRecipesOf(vs.value)
-                                Log.d("RecipesScreen", "with ingredient")
+                                /*vmR.getRecipesOf(vs.value)
+                                Log.d("RecipesScreen", "with ingredient")*/
+
+                                vmR.getAllRecipesWithFilters("")
                             }
                             else{
                                 vmR.get()

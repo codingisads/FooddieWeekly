@@ -92,15 +92,22 @@ fun Signup(activity : Activity){
                     Button(
                         onClick = {
 
+                            if(!vm.email.value.isNullOrEmpty()){
+                                if(vm.validEmail.value && vm.validPassword.value){
 
-                            if(vm.validEmail.value && vm.validPassword.value){
-
-                                authenticator.checkIfEmailIsNotRegistered(vm.email.value)
+                                    authenticator.checkIfEmailIsNotRegistered(vm.email.value)
+                                }
+                                else{
+                                    authenticator.registered.value = "Incorrect credentials! Email must be valid and password must be 6 characters minimum."
+                                    vm.showDialog.value = true;
+                                }
                             }
                             else{
-                                authenticator.registered.value = "Incorrect credentials! Email must be valid and password must be 6 characters minimum."
+                                authenticator.registered.value = "Email can't be empty!"
                                 vm.showDialog.value = true;
                             }
+
+
 
 
 
@@ -168,7 +175,10 @@ fun Signup(activity : Activity){
 
 
 
-        vm.validEmail.value = android.util.Patterns.EMAIL_ADDRESS.matcher(vm.email.value).matches()
+        if(!vm.email.value.isNullOrEmpty())
+            vm.validEmail.value = android.util.Patterns.EMAIL_ADDRESS.matcher(vm.email.value).matches()
+        else
+            vm.validEmail.value = true
         vm.validPassword.value = vm.password.value.toString().length > 5
 
         /*if(vm.email.value.toString().length > 0){

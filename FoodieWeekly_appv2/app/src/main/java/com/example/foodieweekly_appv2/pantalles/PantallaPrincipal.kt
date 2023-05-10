@@ -25,12 +25,8 @@ import com.example.foodieweekly_appv2.utils.TabScreen
 @Composable
 fun PantallaPrincipal(){
 
-    val navController = com.example.foodieweekly_appv2.vm.navController
-    val authenticator = com.example.foodieweekly_appv2.vm.authenticator
-    val vmRecipes = com.example.foodieweekly_appv2.vm.recipesViewModel
     val vm = com.example.foodieweekly_appv2.vm.pantallaPrincipalViewModel
 
-    //vm.settingUp()
 
     BackHandler(enabled = true){
 
@@ -42,6 +38,7 @@ fun PantallaPrincipal(){
 
 
     var mealsFromWeek = remember { vm.weekMealsList }
+
     var calorieGoal = remember { vm.userCaloricGoal}
     val dayCalories = remember { vm.selectedDayCalories }
     val percentage = remember { vm.calorieDayPercentage}
@@ -115,7 +112,8 @@ fun PantallaPrincipal(){
                                                 vm.selectedDayIndex.value = i
                                                 Log.d("Actualizando la pntalla", "aqui")
                                                 //vm.getMealsFromDay(vm.weekId.value, i)
-
+                                                vm.getDayCalories()
+                                                vm.getCaloriePercentage()
 
                                                 /*vm.getDayCalories()
                                                 vm.getCaloriePercentage()*/
@@ -191,7 +189,7 @@ fun PantallaPrincipal(){
             }
 
 
-            TabScreen(mealsFromWeek.value)
+            TabScreen(mealsFromWeek.value.weekMealsList)
 
 
 
