@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodieweekly_appv2.model.CalendarsObject
 import com.example.foodieweekly_appv2.model.MealsInWeek
 import com.example.foodieweekly_appv2.model.RecipeCustom
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.vm
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
@@ -37,11 +37,14 @@ class PantallaPrincipalViewModel : ViewModel() {
     var dies = mutableStateListOf<String>()
     var diesNum = mutableStateListOf<String>()
 
+    val selectedIndexCalendar = mutableStateOf(0)
     val selectedIndexCalendarId = mutableStateOf("")
     val selectedIndexCalendarWeekId = mutableStateOf("")
 
     val gettingAPIValues = mutableStateOf(false)
 
+    var calendarsListIds = mutableStateListOf<String>()
+    var calendarList : MutableState<CalendarsObject> = mutableStateOf(CalendarsObject())
 
     var weekMealsList : MutableState<MealsInWeek> = mutableStateOf(MealsInWeek())
 
@@ -61,11 +64,13 @@ class PantallaPrincipalViewModel : ViewModel() {
                 Log.d("StartingAppMain", "getting calendarId")
                 firebase.child("Users").child(authenticator.currentUID.value)
                     .child("calendarIdList").get().addOnCompleteListener {
-                        val calendarList = it.result.children
+                        val calendarList = it.result.value as ArrayList<String>
 
                         if (it.result.childrenCount >= 1) {
 
-                            getCalendarId(calendarList)
+                            getCalendars(calendarList)
+
+
 
                             /*TODO: Get calendarList*/
 
@@ -83,14 +88,45 @@ class PantallaPrincipalViewModel : ViewModel() {
 
     }
 
+    fun changingCalendar(){
+        selectedIndexCalendarId.value = calendarsListIds[selectedIndexCalendar.value]
+        calendarList.value.selectedCalendarIndex = selectedCalendarIndex.value
+        getWeekId()
+    }
+
     /*TODO: Crear setting up para signup*/
 
-    fun getCalendarId(calendar: MutableIterable<DataSnapshot>) {
-        val selectedCalendarId =
-            calendar.elementAt(selectedCalendarIndex.value).value
-        Log.d("getFirstCalendarId", selectedCalendarId.toString())
+    fun getCalendars(calendar: ArrayList<String>) {
 
-        selectedIndexCalendarId.value = selectedCalendarId.toString()
+        val firebase = FirebaseDatabase.getInstance().reference.root
+
+        calendarList.value.calendarList.value.clear()
+        calendarList.value.selectedCalendarIndex = 0
+        for(i in 0 until calendar.size){
+            val ca = calendar[i]
+
+            firebase
+                .child("Calendars")
+                .child(calendar[i])
+                .get()
+                .addOnCompleteListener {
+                    if(it.result.value != null){
+                        val calendar = com.example.foodieweekly_appv2.model.Calendar()
+                        calendar.parseCalendar(it.result.value as HashMap<Any, Any>)
+                        calendarList.value.calendarList.value.add(calendar)
+                    }
+
+
+                }
+
+            calendarsListIds.add(ca)
+
+
+        }
+
+        calendarList.value.selectedCalendarIndex = selectedCalendarIndex.value
+
+        selectedIndexCalendarId.value = calendarsListIds[selectedCalendarIndex.value]
 
         currentDate = LocalDate.now().format(formatter)
     }
@@ -107,6 +143,8 @@ class PantallaPrincipalViewModel : ViewModel() {
 
 
                 dayChanging()
+
+                vm.navController.navigate(Destinations.PantallaPrincipal.ruta)
 
             }
     }
@@ -138,7 +176,7 @@ class PantallaPrincipalViewModel : ViewModel() {
                     vm.loginViewModel.loading.value = false
                     vm.signupViewModel.loading.value = false
 
-                    vm.navController.navigate(Destinations.PantallaPrincipal.ruta)
+
 
 
                 }
@@ -348,8 +386,11 @@ class PantallaPrincipalViewModel : ViewModel() {
     fun getAPIValues(){
         //getting api values
 
-        vm.recipesViewModel.get()
-        gettingAPIValues.value = true
+        if(!gettingAPIValues.value){
+            vm.recipesViewModel.get()
+            gettingAPIValues.value = true
+        }
+
     }
 
 

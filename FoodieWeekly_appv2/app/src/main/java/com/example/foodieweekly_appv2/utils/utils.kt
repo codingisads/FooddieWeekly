@@ -28,12 +28,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.foodieweekly_appv2.R
+import com.example.foodieweekly_appv2.firebase.RealtimeDatabase
 import com.example.foodieweekly_appv2.model.RecipeCustom
 import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.model.enums.MealType
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.vm
+import com.google.firebase.database.FirebaseDatabase
 import kotlin.math.roundToInt
 
 
@@ -285,6 +287,55 @@ fun ShowAlertToAddRecipe(
 
 
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowAlertAddCalendar(
+    showDialog : MutableState<Boolean>
+){
+
+    val calendarName = remember { mutableStateOf("")}
+    AlertDialog(
+        onDismissRequest = { showDialog.value = false; },
+        confirmButton = {
+            Button(onClick = {
+                val db = RealtimeDatabase()
+                val firebase = FirebaseDatabase.getInstance().reference.root
+
+                db.createCalendarOnDB(
+                    vm.authenticator.currentUID.value,
+                    calendarName.value,
+                    vm.navController,
+                    vm.authenticator, false)
+
+
+
+                showDialog.value = false;
+
+            }) {
+                Text("Confirm", fontFamily = Poppins)
+            }
+
+
+        },
+        title = {
+            Text("Adding New Calendar", fontFamily = Poppins, softWrap = true)
+        },
+        text = {
+
+               Column(){
+                   Text("Name your new calendar:", fontFamily = Poppins)
+                   OutlinedTextField(value = calendarName.value, onValueChange = {calendarName.value = it})
+               }
+
+        },
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+
+
+    )
+}
+
 
 @Composable
 fun TabScreen(dayList: MutableList<MutableList<HashMap<RecipeCustom, Int>>>) {

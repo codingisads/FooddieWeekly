@@ -71,6 +71,8 @@ fun PantallaPrincipal(){
                                     fontFamily = Poppins,
                                     fontWeight = FontWeight.Light,
                                     color = MaterialTheme.colorScheme.outline)
+
+
                                 Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(end = 15.dp)) {

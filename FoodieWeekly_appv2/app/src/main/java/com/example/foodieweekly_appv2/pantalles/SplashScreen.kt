@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen() {
 
     LaunchedEffect(key1 = true){
-        delay(5000)
+        delay(2000)
         vm.navController.navigate(Destinations.Login.ruta)
     }
 

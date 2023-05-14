@@ -76,7 +76,7 @@ class Authenticator {
 
                                 currentUID.value = getUserUID().toString()
 
-                                db.createCalendarOnDB(currentUID.value, "Main Calendar", navController, this)
+                                db.createCalendarOnDB(currentUID.value, "Main Calendar", navController, this, true)
 
                             }
                             else{
@@ -107,7 +107,7 @@ class Authenticator {
 
                 db.createUserOnDB(this,user)
 
-                db.createCalendarOnDB(currentUID.value, "Main Calendar", navController, this)
+                db.createCalendarOnDB(currentUID.value, "Main Calendar", navController, this, true)
 
                 loggedIn.value = true
                 vm.showDialog.value = false

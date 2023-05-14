@@ -69,7 +69,8 @@ class RealtimeDatabase {
         }
     }
 
-    public val createCalendarOnDB = fun(uid : String, name : String, navController : NavHostController , auth : Authenticator) : Unit {
+    public val createCalendarOnDB = fun(uid : String, name : String, navController : NavHostController ,
+                                        auth : Authenticator, addingNewUser : Boolean) : Unit {
 
         try{
 
@@ -94,7 +95,7 @@ class RealtimeDatabase {
                     child(key.toString()).setValue(newCalendar)
                     Log.d("createCalendarOnDB", "done")
 
-                    addCalendarToUser(key.toString(), uid, navController, auth)
+                    addCalendarToUser(key.toString(), uid, navController, auth, addingNewUser)
                 }
 
 
@@ -111,7 +112,9 @@ class RealtimeDatabase {
     }
 
 
-    public val addCalendarToUser = fun(calendarId : String, uid : String, navController: NavHostController, auth : Authenticator) : Unit {
+    public val addCalendarToUser = fun(calendarId : String, uid : String,
+                                       navController: NavHostController, auth : Authenticator,
+    addingNewUser : Boolean) : Unit {
 
         Log.d("addCalendarToUser", "Calendar ID " + calendarId)
         try{
@@ -136,9 +139,28 @@ class RealtimeDatabase {
                         .child("calendarIdList").setValue(calendarIdList).addOnCompleteListener {
 
                             Log.d("addCalendarToUser", "done")
-                            auth.goToMainActivity(navController)
+
+                            FirebaseDatabase.getInstance().reference.root.child("Users").child(vm.authenticator.currentUID.value)
+                                .child("calendarIdList").get().addOnCompleteListener {
+                                    val calendarList = it.result.value as ArrayList<String>
+
+                                    if (it.result.childrenCount >= 1) {
+
+                                        vm.pantallaPrincipalViewModel.getCalendars(calendarList)
+
+
+                                    }
+                                }
+
+                            if(addingNewUser){
+                                auth.goToMainActivity(navController)
+                            }
+
+
 
                         }
+
+
 
 
             }
