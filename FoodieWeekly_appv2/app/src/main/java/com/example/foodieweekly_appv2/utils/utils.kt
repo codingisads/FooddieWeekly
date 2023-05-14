@@ -296,24 +296,57 @@ fun ShowAlertAddCalendar(
 ){
 
     val calendarName = remember { mutableStateOf("")}
+    val error = remember { mutableStateOf(false)}
+    val errorMessage = remember { mutableStateOf("")}
+    val count = remember { mutableStateOf(0)}
     AlertDialog(
         onDismissRequest = { showDialog.value = false; },
         confirmButton = {
             Button(onClick = {
-                val db = RealtimeDatabase()
-                val firebase = FirebaseDatabase.getInstance().reference.root
 
-                db.createCalendarOnDB(
-                    vm.authenticator.currentUID.value,
-                    calendarName.value,
-                    vm.navController,
-                    vm.authenticator, false)
+                if(!calendarName.value.isNullOrEmpty()) {
+
+                    var goOn = true
+
+                    while (!error.value && count.value < vm.pantallaPrincipalViewModel.calendarList.value.calendarList.value.size) {
+                        if (vm.pantallaPrincipalViewModel.calendarList.value.calendarList.value[count.value].calendarName == calendarName.value) {
+                            error.value = true
+                            goOn = false
+                        }
+                        else{
+                            count.value++;
+                            error.value = false
+                        }
+                    }
+
+                    if(goOn) {
+                        val db = RealtimeDatabase()
+                        val firebase = FirebaseDatabase.getInstance().reference.root
+
+                        db.createCalendarOnDB(
+                            vm.authenticator.currentUID.value,
+                            calendarName.value,
+                            vm.navController,
+                            vm.authenticator, false)
 
 
 
-                showDialog.value = false;
+                        showDialog.value = false;
 
-            }) {
+                    }
+                    else
+                    {
+                        errorMessage.value = "Already used name!"
+                    }
+
+                }
+                else{
+                    error.value = true
+                    errorMessage.value = "Calendar name can't be empty!"
+                }
+            }
+
+            ) {
                 Text("Confirm", fontFamily = Poppins)
             }
 
@@ -326,7 +359,8 @@ fun ShowAlertAddCalendar(
 
                Column(){
                    Text("Name your new calendar:", fontFamily = Poppins)
-                   OutlinedTextField(value = calendarName.value, onValueChange = {calendarName.value = it})
+                   OutlinedTextField(value = calendarName.value, onValueChange = {calendarName.value = it},
+                   isError = error.value, supportingText = {Text(errorMessage.value, fontFamily = Poppins)})
                }
 
         },
@@ -336,6 +370,87 @@ fun ShowAlertAddCalendar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowAlertShareCalendar(
+    showDialog : MutableState<Boolean>,
+    calId : String
+){
+
+    val username = remember { mutableStateOf("")}
+    val error = remember { mutableStateOf(false)}
+    val errorMessage = remember { mutableStateOf("")}
+    val database = FirebaseDatabase.getInstance().reference.root
+    AlertDialog(
+        onDismissRequest = { showDialog.value = false; },
+        confirmButton = {
+            Button(onClick = {
+
+                if(!username.value.isNullOrEmpty()){
+                    //Check if username exists, then share
+
+                    database.root.child("UsersUsernames").child(username.value).get()
+                        .addOnSuccessListener {
+
+                            if(it.exists()){
+                                Log.d("FIREBASE REALTIME", "Username already exists")
+
+                                val userUid = it.value as String
+
+                                database.root.child("Users").child(userUid).child("calendarIdList").get()
+                                    .addOnCompleteListener {
+                                        if(it.result.value != null){
+                                            val arr = it.result.value as ArrayList<String>
+
+                                            arr.add(calId)
+
+                                            database.root.child("Users").child(userUid).child("calendarIdList").setValue(arr)
+                                        }
+                                    }
+
+
+                                error.value = false
+                                showDialog.value = false
+
+
+                            }
+                            else
+                            {
+
+                                error.value = true
+                                errorMessage.value = "Username doesn't exist!"
+
+                            }
+                        }
+                }
+                else{
+                    error.value = true
+                    errorMessage.value = "Username can't be empty!"
+                }
+
+            }) {
+                Text("Confirm", fontFamily = Poppins)
+            }
+
+
+        },
+        title = {
+            Text("Sharing calendar with", fontFamily = Poppins, softWrap = true)
+        },
+        text = {
+
+            Column(){
+                Text("Username:", fontFamily = Poppins)
+                OutlinedTextField(value = username.value, onValueChange = {username.value = it},
+                    isError = error.value, supportingText = {Text(errorMessage.value, fontFamily = Poppins)})
+            }
+
+        },
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+
+
+    )
+}
 
 @Composable
 fun TabScreen(dayList: MutableList<MutableList<HashMap<RecipeCustom, Int>>>) {

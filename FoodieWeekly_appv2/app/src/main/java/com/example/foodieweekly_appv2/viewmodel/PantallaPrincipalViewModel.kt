@@ -48,6 +48,8 @@ class PantallaPrincipalViewModel : ViewModel() {
 
     var weekMealsList : MutableState<MealsInWeek> = mutableStateOf(MealsInWeek())
 
+    var userPreferences : MutableState<List<String>> = mutableStateOf(listOf())
+
 
     /*TODO: Get user preferences*/
     fun settingUp(){
@@ -70,7 +72,12 @@ class PantallaPrincipalViewModel : ViewModel() {
 
                             getCalendars(calendarList)
 
-
+                            firebase.child("Users").child(authenticator.currentUID.value).child("preferences")
+                                .get().addOnCompleteListener {
+                                    if(it.result.value != null){
+                                        userPreferences.value = it.result.value as List<String>
+                                    }
+                                }
 
                             /*TODO: Get calendarList*/
 

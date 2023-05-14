@@ -32,6 +32,7 @@ fun RecipesScreen() {
     Log.d("recipesList", llistaRecipes.value.size.toString())
 
     val vs = remember { mutableStateOf("")}
+    val showFilters = remember {mutableStateOf(false)}
 
 
     BackHandler(enabled = true) {
@@ -73,6 +74,8 @@ fun RecipesScreen() {
                 leadingIcon = { Icon(painterResource(R.drawable.filter_alt), "",
                     modifier = Modifier.wrapContentWidth().
                 clickable {
+
+                    showFilters.value = !showFilters.value
                     /*TODO: modificar filtros, aplicar filtros (REVISAR DOC API)*/
                     /*TODO: arreglar lazyload de recetas*/
                 })},
@@ -88,10 +91,10 @@ fun RecipesScreen() {
 
                         try {
                             if(!vs.value.isNullOrEmpty()){
-                                /*vmR.getRecipesOf(vs.value)
-                                Log.d("RecipesScreen", "with ingredient")*/
+                                vmR.getRecipesOf(vs.value)
+                                Log.d("RecipesScreen", "with ingredient")
 
-                                vmR.getAllRecipesWithFilters("")
+                                /*vmR.getAllRecipesWithFilters("")*/
                             }
                             else{
                                 vmR.get()
@@ -108,6 +111,11 @@ fun RecipesScreen() {
             )
         }
 
+        if(showFilters.value){
+            Row(){
+
+            }
+        }
 
         TabScreenRecipes()
     }

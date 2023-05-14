@@ -1,10 +1,13 @@
 package com.example.foodieweekly_appv2.navigation
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +49,9 @@ fun PrincipalCalaixDeNavegacio(navController: NavHostController) {
         drawerContent = {
             ModalDrawerSheet(){
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
                     Text("Your calendars",
                         Modifier.padding(30.dp),
                     fontFamily = Poppins,
@@ -54,9 +59,7 @@ fun PrincipalCalaixDeNavegacio(navController: NavHostController) {
                     fontWeight = FontWeight.Bold)
 
 
-                    OutlinedButton(onClick = { /*
-
-                    TODO: Open dialog to add calendar*/
+                    OutlinedButton(onClick = {
 
                         showDialog.value = true
 
@@ -75,11 +78,10 @@ fun PrincipalCalaixDeNavegacio(navController: NavHostController) {
                         ShowAlertAddCalendar(showDialog)
                     }
 
+                    Log.d("PrincipalCalaixDeNavegacio", list.value.calendarList.value.size.toString())
                     for (i in 0 until list.value.calendarList.value.size){
 
-                        Button(onClick = { /*
-                        TODO: change calendar view
-                            */
+                        Button(onClick = {
                             vm.pantallaPrincipalViewModel.selectedIndexCalendar.value = i
                             vm.pantallaPrincipalViewModel.changingCalendar()
                         },

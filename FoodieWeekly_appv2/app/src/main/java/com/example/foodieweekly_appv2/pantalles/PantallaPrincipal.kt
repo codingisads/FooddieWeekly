@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodieweekly_appv2.ui.theme.Poppins
+import com.example.foodieweekly_appv2.utils.ShowAlertShareCalendar
 import com.example.foodieweekly_appv2.utils.TabScreen
 
 
@@ -42,6 +43,10 @@ fun PantallaPrincipal(){
     var calorieGoal = remember { vm.userCaloricGoal}
     val dayCalories = remember { vm.selectedDayCalories }
     val percentage = remember { vm.calorieDayPercentage}
+
+
+    var showDialogShare = remember { mutableStateOf(false)}
+
     //vm.getMealsFromDay( vm.weekId.value, vm.selectedIndex.value)
 
         Log.d("PantallaPrincipal", vm.dies.size.toString())
@@ -82,6 +87,9 @@ fun PantallaPrincipal(){
                                             .size(30.dp)
                                             .clickable {
                                                        /*TODO: COMPARTIR CALENDARIS*/
+
+                                                showDialogShare.value = true
+
                                             },
                                         contentDescription = "drawable icons"
                                     )
@@ -90,6 +98,10 @@ fun PantallaPrincipal(){
 
 
 
+                            }
+
+                            if(showDialogShare.value){
+                                ShowAlertShareCalendar(showDialogShare, vm.selectedIndexCalendarId.value)
                             }
 
 
