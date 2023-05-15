@@ -28,7 +28,7 @@ class ShoppingViewModel : ViewModel() {
                 var ingredientQuantityMeasure = usersShoppingList.value[customRecipe.ingredientsNameList[i]]
                 var quantityUnitArr = ingredientQuantityMeasure!!.split(" ")
 
-                var newQuantity = quantityUnitArr[0].toInt() + servings
+                var newQuantity = customRecipe.ingredientsQuantityList[i] * servings
 
                 var newQuantityUnit = newQuantity.toString() + " " + quantityUnitArr[1]
 
@@ -36,7 +36,7 @@ class ShoppingViewModel : ViewModel() {
             }
             else{
                 usersShoppingList.value.put(customRecipe.ingredientsNameList[i],
-                    servings.toString() + " " + customRecipe.ingredientsMeasureList[i])
+                    customRecipe.ingredientsQuantityList[i].toString() + " " + customRecipe.ingredientsMeasureList[i])
             }
         }
 

@@ -81,18 +81,22 @@ fun PantallaPrincipal(){
                                 Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(end = 15.dp)) {
-                                    Icon(
-                                        Icons.Rounded.Share,
-                                        modifier = Modifier
-                                            .size(30.dp)
-                                            .clickable {
-                                                       /*TODO: COMPARTIR CALENDARIS*/
 
-                                                showDialogShare.value = true
+                                    if(vm.calendarList.value.calendarList.value[vm.selectedIndexCalendar.value].ownerUID
+                                    == com.example.foodieweekly_appv2.vm.authenticator.currentUID.value){
+                                        Icon(
+                                            Icons.Rounded.Share,
+                                            modifier = Modifier
+                                                .size(30.dp)
+                                                .clickable {
 
-                                            },
-                                        contentDescription = "drawable icons"
-                                    )
+                                                    showDialogShare.value = true
+
+                                                },
+                                            contentDescription = "drawable icons"
+                                        )
+                                    }
+
                                 }
 
 

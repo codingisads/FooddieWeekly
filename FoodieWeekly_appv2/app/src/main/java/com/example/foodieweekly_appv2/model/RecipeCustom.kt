@@ -2,6 +2,7 @@ package com.example.foodieweekly_appv2.model
 
 import android.util.Log
 import com.example.foodieweekly_appv2.model.recipesApi.Recipe
+import java.lang.Math.ceil
 
 class RecipeCustom {
     public var label : String = ""
@@ -38,9 +39,9 @@ class RecipeCustom {
         this.uri = recipe.uri
 
         this.label = recipe.label
-        this.time = recipe.totalTime.toInt()
-        this.totalKcals = recipe.calories.toInt()
-        this.kcalsPerServing = recipe.calories.toInt() / recipe.yield.toInt()
+        this.time = ceil(recipe.totalTime).toInt()
+        this.totalKcals = ceil(recipe.calories).toInt()
+        this.kcalsPerServing = ceil(recipe.calories).toInt() / recipe.yield.toInt()
 
         if(recipe.images.lARGE!= null){
             this.imageUrl =  recipe.images.lARGE.url
@@ -66,12 +67,12 @@ class RecipeCustom {
                 ingredientsMeasureList.add(recipe.ingredients[i].measure)
             }
 
-            ingredientsQuantityList.add(recipe.ingredients[i].quantity.toInt())
+            ingredientsQuantityList.add(ceil(recipe.ingredients[i].quantity).toInt())
         }
 
         for (i in 0 until recipe.digest.size){
             nutritionLabels.add(recipe.digest[i].label)
-            nutritionQuantity.add(recipe.digest[i].total.toInt())
+            nutritionQuantity.add(ceil(recipe.digest[i].total).toInt())
             nutritionUnits.add(recipe.digest[i].unit)
         }
 

@@ -39,6 +39,7 @@ import com.example.foodieweekly_appv2.utils.ShowAlertToAddRecipe
 import com.example.foodieweekly_appv2.utils.retallaText
 import com.example.foodieweekly_appv2.vm
 import com.google.firebase.database.FirebaseDatabase
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 @Composable
@@ -1071,7 +1072,7 @@ fun ShowRecipeIngredients(ingredientsList : List<Any>, servings : Int){
                                     )) {
                                 Text(ingredients.food, Modifier.weight(2F), fontFamily = Poppins, fontWeight = FontWeight.Bold)
                                 if(ingredients.quantity.roundToInt() > 0){
-                                    Text(ingredients.quantity.roundToInt().toString()+" "+ingredients.measure,
+                                    Text(ceil(ingredients.quantity).toInt().toString()+" "+ingredients.measure,
                                         Modifier.weight(1F),
                                         textAlign = TextAlign.End, fontFamily = Poppins, fontSize = 12.sp)
                                 }

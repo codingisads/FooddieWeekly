@@ -114,51 +114,77 @@ class RealtimeDatabase {
 
     public val addCalendarToUser = fun(calendarId : String, uid : String,
                                        navController: NavHostController, auth : Authenticator,
-    addingNewUser : Boolean) : Unit {
+    addingNewUser : Boolean) {
 
         Log.d("addCalendarToUser", "Calendar ID " + calendarId)
         try{
             FirebaseDatabase.getInstance().reference.root.child("Users").child(uid)
                 .child("calendarIdList").get().addOnCompleteListener {
-                    val ids = it.result.children
 
-                    Log.d("addCalendarToUser", "Calendar ID " + calendarId)
-                    Log.d("addCalendarToUser", it.result.childrenCount.toString())
-                    val calendarIdList = mutableListOf<String>()
+                    if(it.result.value != null){
+                        val ids = it.result.children
 
-                    ids.forEach {
-                        id ->
-                        calendarIdList.add(id.value.toString())
-                        Log.d("addCalendarToUser", id.value.toString())
-                    }
+                        Log.d("addCalendarToUser", "Calendar ID " + calendarId)
+                        Log.d("addCalendarToUser", it.result.childrenCount.toString())
+                        val calendarIdList = mutableListOf<String>()
 
-                    calendarIdList.add(calendarId);
-                    Log.d("addCalendarToUser", uid)
+                        ids.forEach {
+                                id ->
+                            calendarIdList.add(id.value.toString())
+                            Log.d("addCalendarToUser", id.value.toString())
+                        }
+                    /*TODO: arreglar ESTO*/
+                        calendarIdList.add(calendarId)
 
-                    FirebaseDatabase.getInstance().reference.root.child("Users").child(uid)
-                        .child("calendarIdList").setValue(calendarIdList).addOnCompleteListener {
 
-                            Log.d("addCalendarToUser", "done")
+                        FirebaseDatabase.getInstance().reference.root.child("Users").child(uid)
+                            .child("calendarIdList").setValue(calendarIdList).addOnCompleteListener {
 
-                            FirebaseDatabase.getInstance().reference.root.child("Users").child(vm.authenticator.currentUID.value)
-                                .child("calendarIdList").get().addOnCompleteListener {
-                                    val calendarList = it.result.value as ArrayList<String>
+                                Log.d("addCalendarToUser", uid)
+                                Log.d("addCalendarToUser", "done")
 
-                                    if (it.result.childrenCount >= 1) {
+                                FirebaseDatabase.getInstance().reference.root.child("Users")
+                                    .child(uid)
+                                    .child("calendarIdList").get().addOnCompleteListener {
+                                        val calendarList = it.result.value as ArrayList<String>
 
-                                        vm.pantallaPrincipalViewModel.getCalendars(calendarList)
+                                        if (it.result.childrenCount >= 1) {
+
+                                            vm.pantallaPrincipalViewModel.getCalendars(calendarList)
+
+
+                                        }
 
 
                                     }
+
+                                if(addingNewUser){
+                                    auth.goToMainActivity(navController)
                                 }
 
-                            if(addingNewUser){
-                                auth.goToMainActivity(navController)
+
+
                             }
+                    }
+                    else{
+                        val calendarIdList = mutableListOf<String>()
+                        calendarIdList.add(calendarId)
+                        FirebaseDatabase.getInstance().reference.root.child("Users").child(uid)
+                            .child("calendarIdList").setValue(calendarIdList).addOnCompleteListener {
+
+                                Log.d("addCalendarToUser", uid)
+                                Log.d("addCalendarToUser", "done")
+                                vm.pantallaPrincipalViewModel.getCalendars(
+                                    calendarIdList as ArrayList<String>)
 
 
+                                if(addingNewUser){
+                                    auth.goToMainActivity(navController)
+                                }
 
-                        }
+                            }
+                    }
+
 
 
 

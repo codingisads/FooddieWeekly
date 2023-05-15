@@ -40,9 +40,10 @@ interface EdamamService {
         @Query("health") h9 : String? = null,
         @Query("health") h10 : String? = null,
         @Query("health") h11 : String? = null,
+        @Query("health") h12 : String? = null,
+        @Query("health") h13 : String? = null,
         @Query("random") random : Boolean = false,
         @Query("imageSize") imageSize : Array<String> = arrayOf("REGULAR")
     ): Recipes
 
-    /*TODO: Query amb els filtres de les preferencies d'usuari*/
 }

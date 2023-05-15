@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.foodieweekly_appv2.R
+import com.example.foodieweekly_appv2.model.enums.HealthLabels
 import com.example.foodieweekly_appv2.navigation.Destinations
 import com.example.foodieweekly_appv2.ui.theme.Poppins
 import com.example.foodieweekly_appv2.vm
@@ -33,6 +35,8 @@ fun RecipesScreen() {
 
     val vs = remember { mutableStateOf("")}
     val showFilters = remember {mutableStateOf(false)}
+
+    val userPreferences = remember { vm.pantallaPrincipalViewModel.userPreferences.value}
 
 
     BackHandler(enabled = true) {
@@ -72,13 +76,13 @@ fun RecipesScreen() {
                     unfocusedLabelColor = MaterialTheme.colorScheme.outline
                 ),
                 leadingIcon = { Icon(painterResource(R.drawable.filter_alt), "",
-                    modifier = Modifier.wrapContentWidth().
-                clickable {
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .clickable {
 
-                    showFilters.value = !showFilters.value
-                    /*TODO: modificar filtros, aplicar filtros (REVISAR DOC API)*/
-                    /*TODO: arreglar lazyload de recetas*/
-                })},
+                            showFilters.value = !showFilters.value
+                            /*TODO: modificar filtros, aplicar filtros (REVISAR DOC API)*/
+                        })},
                 trailingIcon = { Icon(Icons.Rounded.Search, "")},
                 shape = RoundedCornerShape(25.dp),
                 modifier = Modifier
@@ -91,7 +95,8 @@ fun RecipesScreen() {
 
                         try {
                             if(!vs.value.isNullOrEmpty()){
-                                vmR.getRecipesOf(vs.value)
+                                //vmR.getRecipesOf(vs.value)
+                                vmR.get(vs.value)
                                 Log.d("RecipesScreen", "with ingredient")
 
                                 /*vmR.getAllRecipesWithFilters("")*/
@@ -112,7 +117,34 @@ fun RecipesScreen() {
         }
 
         if(showFilters.value){
-            Row(){
+            Row(Modifier.horizontalScroll(rememberScrollState()).padding(start=10.dp)){
+
+                val health = HealthLabels.values()
+
+                health.forEach {
+                    val selected = remember { mutableStateOf(userPreferences.contains(it.name))}
+                    FilterChip(
+                        selected = selected.value,
+                        onClick = {
+                            selected.value = !selected.value
+                            if(!selected.value){
+                                userPreferences.remove(it.name)
+
+                                Log.d("RecipesScreen selected chips", "starting")
+                                userPreferences.forEach {
+                                    Log.d("RecipesScreen selected chips", it)
+                                }
+                            }
+                            else{
+                                userPreferences.add(it.name)
+                            }
+                                  },
+                        label = {
+                        Text(it.name.replace("_", " "), fontFamily = Poppins, fontSize = 12.sp)
+                    },
+                    modifier = Modifier.padding(end = 10.dp),
+                    shape = RoundedCornerShape(25.dp))
+                }
 
             }
         }

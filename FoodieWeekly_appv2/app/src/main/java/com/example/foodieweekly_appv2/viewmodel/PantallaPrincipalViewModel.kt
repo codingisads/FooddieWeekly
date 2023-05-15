@@ -48,10 +48,10 @@ class PantallaPrincipalViewModel : ViewModel() {
 
     var weekMealsList : MutableState<MealsInWeek> = mutableStateOf(MealsInWeek())
 
-    var userPreferences : MutableState<List<String>> = mutableStateOf(listOf())
+    var userPreferences : MutableState<MutableList<String>> = mutableStateOf(mutableListOf())
 
 
-    /*TODO: Get user preferences*/
+
     fun settingUp(){
         val authenticator = vm.authenticator
         val firebase = FirebaseDatabase.getInstance().reference.root
@@ -75,11 +75,11 @@ class PantallaPrincipalViewModel : ViewModel() {
                             firebase.child("Users").child(authenticator.currentUID.value).child("preferences")
                                 .get().addOnCompleteListener {
                                     if(it.result.value != null){
-                                        userPreferences.value = it.result.value as List<String>
+                                        /*TODO: Get user preferences*/
+                                        userPreferences.value = it.result.value as MutableList<String>
                                     }
                                 }
 
-                            /*TODO: Get calendarList*/
 
                             getWeekId()
 
@@ -101,7 +101,6 @@ class PantallaPrincipalViewModel : ViewModel() {
         getWeekId()
     }
 
-    /*TODO: Crear setting up para signup*/
 
     fun getCalendars(calendar: ArrayList<String>) {
 
@@ -109,18 +108,24 @@ class PantallaPrincipalViewModel : ViewModel() {
 
         calendarList.value.calendarList.value.clear()
         calendarList.value.selectedCalendarIndex = 0
+        calendarsListIds.clear()
+
+        Log.d("getCalendars", calendarList.value.calendarList.value.size.toString())
+
+        Log.d("getCalendars calsize", calendar.size.toString())
+
         for(i in 0 until calendar.size){
             val ca = calendar[i]
-
+            Log.d("getCalendars caca", ca.toString())
             firebase
                 .child("Calendars")
                 .child(calendar[i])
                 .get()
                 .addOnCompleteListener {
                     if(it.result.value != null){
-                        val calendar = com.example.foodieweekly_appv2.model.Calendar()
-                        calendar.parseCalendar(it.result.value as HashMap<Any, Any>)
-                        calendarList.value.calendarList.value.add(calendar)
+                        val calendarDB = com.example.foodieweekly_appv2.model.Calendar()
+                        calendarDB.parseCalendar(it.result.value as HashMap<Any, Any>)
+                        calendarList.value.calendarList.value.add(calendarDB)
                     }
 
 

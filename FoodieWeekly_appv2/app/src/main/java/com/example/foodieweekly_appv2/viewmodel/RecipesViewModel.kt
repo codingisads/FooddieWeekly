@@ -61,14 +61,149 @@ class RecipesViewModel : ViewModel() {
     public var selectedMeal = MealType.Breakfast
 
 
-    fun get() {
+    fun get(ingredient : String = "") {
         viewModelScope.launch(Dispatchers.IO){
 
             try{
+                lateinit var resultat : Recipes;
+                var list = vm.pantallaPrincipalViewModel.userPreferences.value
 
-                val resultat = RecipesClient.servei
-                    .getRecipesOf(RecipesClient.APP_KEY,
-                        RecipesClient.APP_ID)
+                var listValues : MutableList<String> = mutableListOf()
+
+                list.forEach {
+                    listValues.add(it.replace("_", "-"))
+
+                    Log.d("getRecipes",it.replace("_", "-"))
+                }
+
+                list = listValues
+
+                when(list.size){
+                    0 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID)
+                    1 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient, h1 = list[0])
+                    2 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient, h1 = list[0], h2 = list[1])
+                    3 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient, h1 = list[0], h2 = list[1], h3 = list[2])
+                    4 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient, h1 = list[0], h2 = list[1], h3 = list[2], h4 = list[3])
+                    5 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4])
+                    6 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5])
+                    7 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5],
+                            h7 = list[6])
+                    8 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5],
+                            h7 = list[6],
+                            h8 = list[7])
+                    9 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5],
+                            h7 = list[6],
+                            h8 = list[7],
+                            h9 = list[8])
+                    10 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5],
+                            h7 = list[6],
+                            h8 = list[7],
+                            h9 = list[8],
+                            h10 = list[9])
+                    11 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5],
+                            h7 = list[6],
+                            h8 = list[7],
+                            h9 = list[8],
+                            h10 = list[9],
+                            h11 = list[10])
+                    12 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5],
+                            h7 = list[6],
+                            h8 = list[7],
+                            h9 = list[8],
+                            h10 = list[9],
+                            h11 = list[10],
+                            h12 = list[11])
+                    13 -> resultat = RecipesClient.servei
+                        .getRecipesOfWithFilters(RecipesClient.APP_KEY,
+                            RecipesClient.APP_ID,q = ingredient,
+                            h1 = list[0],
+                            h2 = list[1],
+                            h3 = list[2],
+                            h4 = list[3],
+                            h5 = list[4],
+                            h6 = list[5],
+                            h7 = list[6],
+                            h8 = list[7],
+                            h9 = list[8],
+                            h10 = list[9],
+                            h11 = list[10],
+                            h12 = list[11],
+                            h13 = list[12])
+                }
+
 
                 respostaRecipes.value = resultat
 
@@ -951,15 +1086,29 @@ class RecipesViewModel : ViewModel() {
             "snack" -> i = 3
         }
 
+
         var data = vm.pantallaPrincipalViewModel.weekMealsList.value
 
-        Log.d("addRecipeToMealsInDay", "added "+ recipe.label)
-        if(!data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].contains(recipe)){
+
+        var contains = false;
+        var keyRP: RecipeCustom = RecipeCustom()
+        data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].forEach {
+            if(it.key.uri == recipe.uri){
+                contains = true
+                keyRP = it.key
+            }
+        }
+            Log.d("addRecipeToMealsInDay", "added "+ recipe.label)
+        if(!contains){
+
+            Log.d("addRecipeToMealsInDay", "added new")
             data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i].put(recipe, servings)
             data.numMealsAdded++
         }
         else{
-            data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i][recipe] = servings
+            Log.d("addRecipeToMealsInDay", "updated")
+            data.weekMealsList[vm.pantallaPrincipalViewModel.selectedDayIndex.value][i][keyRP] = servings
+            data.numMealsAdded = data.numMealsAdded
         }
 
         vm.pantallaPrincipalViewModel.getDayCalories()

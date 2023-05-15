@@ -12,6 +12,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +36,8 @@ fun ShoppingList(){
 
     var tmpList = HashMap<String, String>()
     tmpList.putAll(vm.shoppingViewModel.usersShoppingList.value)
+
+    var tmpChecked = remember { mutableStateOf(false)}
 
     Column(Modifier
         .background(
@@ -65,12 +68,13 @@ fun ShoppingList(){
                 )
 
                 if(vm.shoppingViewModel.usersShoppingList.value.size > 0){
-                    CheckboxListShopping(tmpList)
+                    CheckboxListShopping(tmpList, tmpChecked)
 
                     Box(Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.BottomEnd){
 
                         Button(onClick = {
+                            tmpChecked.value = false
                                 vm.shoppingViewModel.usersShoppingList.value = tmpList
                                 vm.shoppingViewModel.addShoppingListToFirebase()
                              },
@@ -105,13 +109,13 @@ fun ShoppingList(){
 }
 
 @Composable
-fun CheckboxListShopping(tmpList : HashMap<String, String>){
+fun CheckboxListShopping(tmpList : HashMap<String, String>, checked : MutableState<Boolean>){
     Column(Modifier.fillMaxSize()) {
         var ingredientsList = vm.shoppingViewModel.usersShoppingList.value.keys.toList()
         var quantityUnitsList = vm.shoppingViewModel.usersShoppingList.value.values.toList()
         ingredientsList.forEachIndexed {
                 index ,ingredient  ->
-            var check = remember { mutableStateOf(false) }
+            var check = remember { mutableStateOf(checked.value) }
 
 
             Row(verticalAlignment = Alignment.CenterVertically) {
