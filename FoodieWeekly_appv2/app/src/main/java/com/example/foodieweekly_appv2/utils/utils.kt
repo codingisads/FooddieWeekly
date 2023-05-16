@@ -389,43 +389,52 @@ fun ShowAlertShareCalendar(
                 if(!username.value.isNullOrEmpty()){
                     //Check if username exists, then share
 
-                    database.root.child("UsersUsernames").child(username.value).get()
-                        .addOnSuccessListener {
 
-                            if(it.exists()){
-                                Log.d("FIREBASE REALTIME", "Username already exists")
+                    if(username.value != vm.pantallaPrincipalViewModel.username.value){
+                        database.root.child("UsersUsernames").child(username.value).get()
+                            .addOnSuccessListener {
 
-                                val userUid = it.value as String
+                                if(it.exists()){
+                                    Log.d("FIREBASE REALTIME", "Username already exists")
 
-                                database.root.child("Users").child(userUid).child("calendarIdList").get()
-                                    .addOnCompleteListener {
-                                        if(it.result.value != null){
-                                            val arr = it.result.value as ArrayList<String>
+                                    val userUid = it.value as String
 
-                                            arr.add(calId)
+                                    database.root.child("Users").child(userUid).child("calendarIdList").get()
+                                        .addOnCompleteListener {
+                                            if(it.result.value != null){
+                                                val arr = it.result.value as ArrayList<String>
 
-                                            database.root.child("Users").child(userUid).child("calendarIdList").setValue(arr)
+                                                arr.add(calId)
+
+                                                database.root.child("Users").child(userUid).child("calendarIdList").setValue(arr)
+                                            }
                                         }
-                                    }
 
 
-                                error.value = false
-                                showDialog.value = false
+                                    error.value = false
+                                    showDialog.value = false
 
 
+                                }
+                                else
+                                {
+
+                                    error.value = true
+                                    errorMessage.value = "Username doesn't exist!"
+
+                                }
                             }
-                            else
-                            {
+                    }
+                    else{
+                        error.value = true
+                        errorMessage.value = "Aleady on your calendars!"
+                    }
 
-                                error.value = true
-                                errorMessage.value = "Username doesn't exist!"
 
-                            }
-                        }
                 }
                 else{
                     error.value = true
-                    errorMessage.value = "Username can't be empty!"
+                    errorMessage.value = "Username can't be empty."
                 }
 
             }) {

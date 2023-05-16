@@ -257,13 +257,7 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             isMale.value = true
-                        },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if(isMale.value) MaterialTheme.colorScheme.primary
-                                else Color.Unspecified,
-                                contentColor = if(isMale.value) MaterialTheme.colorScheme.onPrimary
-                                else Color.Unspecified
-                        )) {
+                        }) {
                             Text("Male",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontFamily = Poppins)
@@ -272,13 +266,7 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             isMale.value = false
-                        },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if(!isMale.value) MaterialTheme.colorScheme.primary
-                                else Color.Unspecified,
-                                contentColor = if(!isMale.value) MaterialTheme.colorScheme.onPrimary
-                                else Color.Unspecified
-                            )
+                        }
                         ) {
                             Text("Female",
                                 style = MaterialTheme.typography.titleSmall,
@@ -286,6 +274,24 @@ fun SignupUserBodyConfig(){ //DONE!
                         }
                     }
                 }
+
+                /*
+                ,
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(!isMale.value) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
+                                contentColor = if(!isMale.value) MaterialTheme.colorScheme.onPrimary
+                                else Color.Unspecified
+                            )
+
+
+                ,
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.inverseSurface,
+                                contentColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.inverseSurface
+                            )*/
 
                 Text(text = "I am a " + if(isMale.value) "male" else "famale",
                     style = MaterialTheme.typography.titleSmall,
@@ -359,13 +365,7 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 0;
-                        },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.primary
-                                else Color.Unspecified,
-                                contentColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.onPrimary
-                                else Color.Unspecified
-                            )
+                        }
                         ) {
                             Text("Not very active",
                                 style = MaterialTheme.typography.titleSmall,
@@ -375,13 +375,7 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 1;
-                        },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if(activeLevel.value == 1) MaterialTheme.colorScheme.primary
-                                else Color.Unspecified,
-                                contentColor = if(activeLevel.value == 1) MaterialTheme.colorScheme.onPrimary
-                                else Color.Unspecified
-                            )
+                        }
                         ) {
                             Text(
                                 "Kind of active",
@@ -405,13 +399,7 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 2;
-                        },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if(activeLevel.value == 2) MaterialTheme.colorScheme.primary
-                                else Color.Unspecified,
-                                contentColor = if(activeLevel.value == 2) MaterialTheme.colorScheme.onPrimary
-                                else Color.Unspecified
-                            )
+                        }
                         ) {
                             Text("Active",
                                 style = MaterialTheme.typography.titleSmall,
@@ -421,13 +409,7 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 3;
-                        },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if(activeLevel.value == 3) MaterialTheme.colorScheme.primary
-                                else Color.Unspecified,
-                                contentColor = if(activeLevel.value == 3) MaterialTheme.colorScheme.onPrimary
-                                else Color.Unspecified
-                            )
+                        }
                         ) {
                             Text(
                                 "Very active",

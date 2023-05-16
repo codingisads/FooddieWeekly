@@ -81,7 +81,7 @@ class RecipesViewModel : ViewModel() {
                 when(list.size){
                     0 -> resultat = RecipesClient.servei
                         .getRecipesOfWithFilters(RecipesClient.APP_KEY,
-                            RecipesClient.APP_ID)
+                            RecipesClient.APP_ID,q = ingredient)
                     1 -> resultat = RecipesClient.servei
                         .getRecipesOfWithFilters(RecipesClient.APP_KEY,
                             RecipesClient.APP_ID,q = ingredient, h1 = list[0])
