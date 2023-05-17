@@ -100,7 +100,7 @@ fun PrincipalCalaixDeNavegacio(navController: NavHostController) {
                                     softWrap = true)
                             }
                             else{
-                                Text(list.value.calendarList.value[i].calendarName,
+                                Text(list.value.calendarList.value[i].calendarName + "("+list.value.calendarList.value[i].ownerUsername+ ")",
                                     fontFamily = Poppins,
                                     fontSize = 18.sp, textAlign = TextAlign.Center,
                                     softWrap = true)

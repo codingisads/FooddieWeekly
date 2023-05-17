@@ -886,6 +886,9 @@ recipeUri : String){
             Text("Your annotations", fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = Poppins
             , modifier = Modifier.fillMaxWidth().padding(start = 25.dp, top = 25.dp))
 
+            Text("*Annotations won't be saved in unsaved recipes.", fontSize = 12.sp, fontFamily = Poppins
+                , modifier = Modifier.fillMaxWidth().padding(start = 25.dp, top = 5.dp))
+
             Box(Modifier
                 .fillMaxWidth()
                 .heightIn(min = 200.dp)
@@ -893,7 +896,7 @@ recipeUri : String){
                 .clip(RoundedCornerShape(15.dp))
                 .background(MaterialTheme.colorScheme.surface)) {
 
-                BasicTextField(value = newText.value, onValueChange = {newText.value = it},
+                BasicTextField(value = newText.value, onValueChange = { newText.value = it },
                     Modifier.fillMaxSize().padding(10.dp),
                     textStyle = TextStyle(
                         fontFamily = Poppins, color = MaterialTheme.colorScheme.onSurface))

@@ -5,6 +5,7 @@ class Calendar () {
     public var ownerUID : String = ""
     public var usersUIDList : MutableList<String> = mutableListOf<String>()
     public var calendarName : String = ""
+    var ownerUsername : String = ""
 
     init {
         
@@ -19,6 +20,7 @@ class Calendar () {
         }
 
         this.calendarName = calendarFromFirebase["calendarName"] as String
+        this.ownerUsername = calendarFromFirebase["ownerUsername"] as String
     }
 
 }

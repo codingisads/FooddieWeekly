@@ -35,7 +35,7 @@ fun ShoppingList(){
 
 
     var tmpList = HashMap<String, String>()
-    tmpList.putAll(vm.shoppingViewModel.usersShoppingList.value)
+    tmpList = vm.shoppingViewModel.usersShoppingList.value.clone() as HashMap<String, String>
 
     var tmpChecked = remember { mutableStateOf(false)}
 
@@ -77,6 +77,7 @@ fun ShoppingList(){
                             tmpChecked.value = false
                                 vm.shoppingViewModel.usersShoppingList.value = tmpList
                                 vm.shoppingViewModel.addShoppingListToFirebase()
+                                tmpList = vm.shoppingViewModel.usersShoppingList.value.clone() as HashMap<String, String>
                              },
                             modifier = Modifier.padding(40.dp)) {
 
@@ -115,12 +116,12 @@ fun CheckboxListShopping(tmpList : HashMap<String, String>, checked : MutableSta
         var quantityUnitsList = vm.shoppingViewModel.usersShoppingList.value.values.toList()
         ingredientsList.forEachIndexed {
                 index ,ingredient  ->
-            var check = remember { mutableStateOf(checked.value) }
+            var check = remember { mutableStateOf(checked.value)}
 
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = check.value,
+                    checked = !tmpList.contains(ingredientsList[index]),
                     onCheckedChange =
                     {
                         check.value = it
@@ -142,7 +143,7 @@ fun CheckboxListShopping(tmpList : HashMap<String, String>, checked : MutableSta
                     horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(ingredientsList[index],
                         textDecoration =
-                        if(check.value) TextDecoration.LineThrough
+                        if(!tmpList.contains(ingredientsList[index])) TextDecoration.LineThrough
                         else TextDecoration.None,
                         fontFamily = Poppins,
                         fontSize = 12.sp)

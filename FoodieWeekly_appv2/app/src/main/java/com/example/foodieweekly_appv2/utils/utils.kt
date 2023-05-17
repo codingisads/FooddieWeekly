@@ -404,7 +404,9 @@ fun ShowAlertShareCalendar(
                                             if(it.result.value != null){
                                                 val arr = it.result.value as ArrayList<String>
 
-                                                arr.add(calId)
+                                                if(!arr.contains(calId)){
+                                                    arr.add(calId)
+                                                }
 
                                                 database.root.child("Users").child(userUid).child("calendarIdList").setValue(arr)
                                             }

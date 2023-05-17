@@ -257,7 +257,12 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             isMale.value = true
-                        }) {
+                        },colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if(isMale.value) MaterialTheme.colorScheme.primary
+                            else Color.Transparent,
+                            contentColor = if(isMale.value) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onSurface)
+                        ) {
                             Text("Male",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontFamily = Poppins)
@@ -266,7 +271,12 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             isMale.value = false
-                        }
+                        },colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(!isMale.value) MaterialTheme.colorScheme.primary
+                                else Color.Transparent,
+                            contentColor = if(!isMale.value) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onSurface
+                        )
                         ) {
                             Text("Female",
                                 style = MaterialTheme.typography.titleSmall,
@@ -288,9 +298,9 @@ fun SignupUserBodyConfig(){ //DONE!
                 ,
                             colors = ButtonDefaults.outlinedButtonColors(
                                 containerColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.inverseSurface,
+                                else Color.Transparent,
                                 contentColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.onPrimary
-                                else MaterialTheme.colorScheme.inverseSurface
+                                else MaterialTheme.colorScheme.onSurface
                             )*/
 
                 Text(text = "I am a " + if(isMale.value) "male" else "famale",
@@ -319,7 +329,10 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             datePicker.show()
-                        }
+                        },colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
                         ) {
                             Text("Select a Date",
                                 style = MaterialTheme.typography.titleSmall,
@@ -365,7 +378,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 0;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.primary
+                                else Color.Transparent,
+                                contentColor = if(activeLevel.value == 0) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
                             Text("Not very active",
                                 style = MaterialTheme.typography.titleSmall,
@@ -375,7 +394,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 1;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 1) MaterialTheme.colorScheme.primary
+                                else Color.Transparent,
+                                contentColor = if(activeLevel.value == 1) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
                             Text(
                                 "Kind of active",
@@ -399,7 +424,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 2;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 2) MaterialTheme.colorScheme.primary
+                                else Color.Transparent,
+                                contentColor = if(activeLevel.value == 2) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
                             Text("Active",
                                 style = MaterialTheme.typography.titleSmall,
@@ -409,7 +440,13 @@ fun SignupUserBodyConfig(){ //DONE!
                         OutlinedButton(onClick =
                         {
                             activeLevel.value = 3;
-                        }
+                        },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if(activeLevel.value == 3) MaterialTheme.colorScheme.primary
+                                else Color.Transparent,
+                                contentColor = if(activeLevel.value == 3) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
                             Text(
                                 "Very active",

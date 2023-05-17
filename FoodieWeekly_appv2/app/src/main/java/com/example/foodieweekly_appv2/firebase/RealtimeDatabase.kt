@@ -53,6 +53,7 @@ class RealtimeDatabase {
                         {
                             FirebaseDatabase.getInstance().reference.root.child("Users").child(userUID).setValue(user)
                             FirebaseDatabase.getInstance().reference.root.child("UsersUsernames").child(user.username).setValue(userUID)
+                            vm.pantallaPrincipalViewModel.username.value = user.username
 
 
                         }
@@ -89,6 +90,7 @@ class RealtimeDatabase {
                     newCalendar.ownerUID = uid;
                     newCalendar.calendarName = name;
                     newCalendar.currentWeekId = weekKey.toString();
+                    newCalendar.ownerUsername = vm.pantallaPrincipalViewModel.username.value
 
                     val key = FirebaseDatabase.getInstance().reference.root.child("Calendars").push().key
                     FirebaseDatabase.getInstance().reference.root.child("Calendars").
@@ -134,7 +136,11 @@ class RealtimeDatabase {
                             Log.d("addCalendarToUser", id.value.toString())
                         }
                     /*TODO: arreglar ESTO*/
-                        calendarIdList.add(calendarId)
+
+                        if(!calendarIdList.contains(calendarId)){
+                            calendarIdList.add(calendarId)
+                        }
+
 
 
                         FirebaseDatabase.getInstance().reference.root.child("Users").child(uid)
