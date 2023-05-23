@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +36,7 @@ fun Login(activity : Activity) {
     val authenticator = vm.authenticator
     val navController = vm.navController
     val vm = vm.loginViewModel
-    val errorMsg = remember { mutableStateOf("")}
+    val errorMsg = remember { vm.errorMsg}
 
     Log.d("autenticacion google", "Login")
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(20.dp)) {

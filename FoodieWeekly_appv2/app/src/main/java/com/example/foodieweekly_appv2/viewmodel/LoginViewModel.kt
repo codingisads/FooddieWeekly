@@ -20,6 +20,9 @@ class LoginViewModel : ViewModel() {
     private var _showDialog = mutableStateOf(false);
     public val showDialog = _showDialog;
 
+    private var _errorMsg = mutableStateOf("");
+    public val errorMsg = _errorMsg;
+
     private var _validEmail = mutableStateOf(true)
     public val validEmail = _validEmail
 

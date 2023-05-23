@@ -149,6 +149,7 @@ class Authenticator {
 
                         loggedIn.value = false
                         vm.showDialog.value = true
+                        vm.errorMsg.value = "This user does not exists or incorrect credentials!"
 
                         Log.d("FIREBASE EXC 2", loggedIn.value.toString())
                     }
